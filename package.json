@@ -21,6 +21,7 @@
     "@angular/router": "~14.1.1",
     "@ionic/angular": "^6.2.4",
     "@nrwl/angular": "14.5.10",
+    "ipfs-core": "^0.15.4",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
