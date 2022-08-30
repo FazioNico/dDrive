@@ -58,7 +58,46 @@
             "input": "apps/browser/src/theme/variables.scss"
           }
         ],
-        "scripts": []
+        "scripts": [],
+        "allowedCommonJsDependencies": [
+          "denque",
+          "err-code",
+          "iso-random-stream",
+          "@stablelib/chacha20poly1305",
+          "@stablelib/hkdf",
+          "@stablelib/sha256",
+          "@stablelib/x25519",
+          "it-length",
+          "k-bucket",
+          "delay",
+          "it-pushable",
+          "it-pipe",
+          "it-sort",
+          "it-take",
+          "level",
+          "receptacle",
+          "varint-decoder",
+          "blob-to-it",
+          "browser-readablestream-to-it",
+          "it-all",
+          "it-last",
+          "it-parallel",
+          "it-first",
+          "it-filter",
+          "it-map",
+          "it-drain",
+          "it-peekable",
+          "it-to-buffer",
+          "is-domain-name",
+          "ipfs-utils/src/files/url-source.js",
+          "stream-to-it/source.js",
+          "bytes",
+          "just-safe-get",
+          "mortice",
+          "it-parallel-batch",
+          "iso-constants",
+          "event-iterator"
+        ]
       },
       "configurations": {
         "production": {

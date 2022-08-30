@@ -54,3 +54,7 @@ import 'zone.js'; // Included with Angular CLI.
 if (typeof window !== 'undefined') {
   (window as any).global = window;
 }
+// define global `process` variable
+(global as any).process = {
+  env: { DEBUG: undefined },
+};

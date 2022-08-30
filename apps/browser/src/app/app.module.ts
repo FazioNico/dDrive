@@ -7,12 +7,20 @@ import { IPFSService } from './services/ipfs.service';
 import { DrivePageComponent } from './containers/drive-page/drive-page.component';
 import { NotfoundPageComponent } from './containers/notfound-page/notfound-page.component';
 import { RouterModule } from '@angular/router';
+import { FilesOptionsListComponent } from './components/files-options-list/files-options-list.component';
 
 @NgModule({
-  declarations: [AppComponent, DrivePageComponent, NotfoundPageComponent],
+  declarations: [
+    AppComponent, 
+    DrivePageComponent, 
+    NotfoundPageComponent,
+    FilesOptionsListComponent
+  ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({
+      mode: "ios"
+    }),
     RouterModule.forRoot([
       { path: 'drive', component: DrivePageComponent },
       { path: '404', component: NotfoundPageComponent },

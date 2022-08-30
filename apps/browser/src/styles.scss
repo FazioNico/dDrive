@@ -1,1 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+
+ion-split-pane {
+  --side-max-width: 236px;
+
+  ion-menu {
+    ion-content {
+      .logo {
+        width: 100px;
+        height: 100px;
+        display: block;
+        margin: 4rem auto 1rem;
+      }
+      .menu-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0rem auto 5rem;
+        text-align: center;
+        display: block;
+        position: relative;
+      }
+    }
+
+    ion-list, ion-item, ion-footer, ion-toolbar {
+      background: transparent!important;
+      --background: transparent!important;
+    }
+  }
+}
+
+.alert-wrapper {
+  border-radius:  0.618rem!important;
+  border: 1px solid var(--ion-color-primary)!important;
+}
+
+ion-backdrop {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.3);
+}
+.danger {
+  ion-backdrop {
+    background-color: rgba(var(--ion-color-danger-rgb), 0.5);
+  }
+}
