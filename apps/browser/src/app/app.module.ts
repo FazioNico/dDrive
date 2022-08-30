@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { IPFSService } from './services/ipfs.service';
+import { FilesOptionsListComponent } from './components/files-options-list/files-options-list.component';
 import { DrivePageComponent } from './containers/drive-page/drive-page.component';
 import { NotfoundPageComponent } from './containers/notfound-page/notfound-page.component';
-import { RouterModule } from '@angular/router';
-import { FilesOptionsListComponent } from './components/files-options-list/files-options-list.component';
+import { TablelandService } from './services/tableland.service';
+import { IPFSService } from './services/ipfs.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,10 @@ import { FilesOptionsListComponent } from './components/files-options-list/files
       { path: '**', redirectTo: '/404', pathMatch: 'full' },
     ]),
   ],
-  providers: [IPFSService],
+  providers: [
+    IPFSService,
+    TablelandService
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
