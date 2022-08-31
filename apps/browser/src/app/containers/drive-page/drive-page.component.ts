@@ -18,7 +18,7 @@ import { MediaFileService } from '../../services/mediafile.service';
   styleUrls: ['./drive-page.component.scss'],
 })
 export class DrivePageComponent {
-  @ViewChild('searchbarElement', {static: true, read: ElementRef}) public readonly searchbarElement!: ElementRef<IonSearchbar>;
+  @ViewChild(IonSearchbar, {static: true, read: ElementRef}) public readonly searchbarElement!: ElementRef<IonSearchbar>;
   public breadcrumbs$ = this._mediaFileService.breadcrumbs$.pipe(
     map((breadcrumbs) => {
       const maxBreadcrumbs = this.options.maxBreadcrumbs;

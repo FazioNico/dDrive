@@ -7,7 +7,6 @@
         </ion-col> -->
         <ion-col>
           <ion-searchbar 
-              #searchbarElement
               class="ion-margin-vertical" 
               enterkeyhint="search"
               inputmode="search"
@@ -44,8 +43,26 @@
           *ngFor="let b of breadcrumbs;let i = index;let isLast = last">
           <ion-label>
             <span class="clickable">{{b.name === 'root' ? 'My Drive' : b.name}}</span>
-            <ion-icon slot="end" *ngIf="!isLast" name="chevron-forward-outline" class="ion-padding-start"></ion-icon>
+            <ion-icon 
+                slot="end" 
+                name="chevron-forward-outline" 
+                class="ion-padding-start"
+                *ngIf="(searchbarElement?.nativeElement?.value?.length||0) > 0"></ion-icon>
+            <ion-icon 
+                slot="end" 
+                *ngIf="!isLast" 
+                name="chevron-forward-outline" 
+                class="ion-padding-start"></ion-icon>
           </ion-label>
+      </ion-col>
+      <ion-col
+          size="auto"
+          class="ion-align-items-center" 
+          [ngStyle]="{'display': 'flex'}"
+          *ngIf="(searchbarElement?.nativeElement?.value?.length||0) > 0">
+        <ion-label>
+          <span>search results</span>
+        </ion-label>
       </ion-col>
     </ion-row>
     <ng-template #defaultBreadcrumb>
