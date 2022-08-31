@@ -100,14 +100,25 @@
           *ngFor="let item of items; trackBy:trackByfn" 
           (click)="item.isFolder ? actions('navTo', item) : actions('preview', item)"
           class="item clickable ion-align-items-center ion-padding-start">
-        <ion-col size="auto">
+        <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
           <ion-icon size="large" name="folder-outline" *ngIf="item.isFolder === true"></ion-icon>
           <ion-icon size="large" name="document-outline" *ngIf="item.isFolder !== true"></ion-icon>
         </ion-col>
-        <ion-col size="auto">
+        <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
           <ion-text class="ion-padding-start">
             {{item.name}}
           </ion-text>
+          <ion-chip 
+              color="primary"  
+              size="small" 
+              class="ion-margin-start" 
+              *ngIf="!item.encryptedSymmetricKey && item.isFolder !== true"
+              (click)="$event.stopPropagation(); actions('lockFile', item)">
+            <ion-icon size="small" name="lock-open-outline"></ion-icon>
+            <ion-label>
+              public
+            </ion-label>
+          </ion-chip>
         </ion-col>
         <ion-col class="ion-text-right">
           <ion-text *ngIf="item.isFolder !== true" color="medium">

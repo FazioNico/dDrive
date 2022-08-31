@@ -13,6 +13,7 @@ import { CeramicService } from './services/ceramic.service';
 import { MediaFileService } from './services/mediafile.service';
 import { LoaderService } from './services/loader.service';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
+import { LitService } from './services/lit.service';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { GlobalErrorHandlerService } from './services/global-error-handler.servi
     CeramicService,
     MediaFileService,
     LoaderService,
+    LitService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,

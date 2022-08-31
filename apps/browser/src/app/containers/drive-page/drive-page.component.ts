@@ -48,7 +48,7 @@ export class DrivePageComponent {
   }
 
   async actions(type: string, payload?: any) {
-    // console.log('actions(): ', type, payload);
+    console.log('actions(): ', type, payload);
     switch (true) {
       case type === 'onFileChange': {
         this.searchbarElement.nativeElement.value = '';
@@ -56,10 +56,20 @@ export class DrivePageComponent {
         if (!files[0]) {
           return;
         }
+        // ask for encryption
+        const { role } = await this._displayMessage(this._alertCtrl,{
+          header: 'Encryption',
+          message: `Do you want to encrypt file${files.length > 1 ? 's' : ''}?`,
+          buttons: [
+            { text: 'No', role: 'cancel'},
+            { text: 'Yes', role: 'encrypt' },
+          ],
+        })
+        const encrypt = role === 'encrypt';
         this._loaderService.setStatus(true);
         let i = 0
         while (i !== files.length) {
-          await this._mediaFileService.upload(files[i]);
+          await this._mediaFileService.upload(files[i], encrypt);
           ++i;
         }
         this._loaderService.setStatus(false);

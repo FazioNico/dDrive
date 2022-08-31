@@ -104,6 +104,10 @@
       --box-shadow: none;
       --background-hover-opacity: 0.2;
     }
+
+    ion-chip {
+      transform: scale(0.8);
+    }
   }
 
 }

@@ -36,6 +36,7 @@
     "ipfs-core": "^0.15.4",
     "key-did-provider-ed25519": "^2.0.1",
     "key-did-resolver": "^2.1.0",
+    "lit-js-sdk": "^1.1.216",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "uuid": "^8.3.2",

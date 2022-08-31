@@ -8,6 +8,7 @@ import {
 import { CeramicService } from './ceramic.service';
 import { IPFSService } from './ipfs.service';
 import { v4 as uuidV4 } from 'uuid';
+import { LitService } from './lit.service';
 
 @Injectable()
 export class MediaFileService {
@@ -69,7 +70,8 @@ export class MediaFileService {
 
   constructor(
     private readonly _dataService: CeramicService,
-    private readonly _fileService: IPFSService
+    private readonly _fileService: IPFSService,
+    private readonly _litService: LitService
   ) {}
 
   async getFiles() {
@@ -78,8 +80,9 @@ export class MediaFileService {
     this._items$.next(files);
   }
 
-  async upload(file: File) {
-    const metaData = {
+  async upload(file: File, encrypt = false) {
+    let mediaToUpload: File|Blob = file; 
+    const metaData: any = {
       parent: this._filterBy$.value,
       name: file.name,
       size: file.size,
@@ -87,8 +90,15 @@ export class MediaFileService {
       isFolder: false,
       _id: uuidV4(),
     };
+    // encrypt file
+    if (encrypt) {
+      const {encryptedFile, encryptedSymmetricKey} = await this._litService.encrypt(file);
+      // update variables
+      mediaToUpload = encryptedFile;
+      metaData.encryptedSymmetricKey = encryptedSymmetricKey;
+    }
     // upload file to ipfs
-    const { cid } = await this._fileService.add(file);
+    const { cid } = await this._fileService.add(mediaToUpload);
     // build final object data and save to database
     const newFileData = {
       ...metaData,
