@@ -14,13 +14,15 @@ import { MediaFileService } from './services/mediafile.service';
 import { LoaderService } from './services/loader.service';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { LitService } from './services/lit.service';
+import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
 
 @NgModule({
   declarations: [
     AppComponent, 
     DrivePageComponent, 
     NotfoundPageComponent,
-    FilesOptionsListComponent
+    FilesOptionsListComponent,
+    BytesToSizePipe
   ],
   imports: [
     BrowserModule,
