@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   AlertController,
+  IonSearchbar,
   PopoverController,
   ToastController,
   ToastOptions,
@@ -17,6 +18,7 @@ import { MediaFileService } from '../../services/mediafile.service';
   styleUrls: ['./drive-page.component.scss'],
 })
 export class DrivePageComponent {
+  @ViewChild('searchbarElement', {static: true, read: ElementRef}) public readonly searchbarElement!: ElementRef<IonSearchbar>;
   public breadcrumbs$ = this._mediaFileService.breadcrumbs$.pipe(
     map((breadcrumbs) => {
       const maxBreadcrumbs = this.options.maxBreadcrumbs;
@@ -46,9 +48,10 @@ export class DrivePageComponent {
   }
 
   async actions(type: string, payload?: any) {
-    console.log('actions(): ', type, payload);
+    // console.log('actions(): ', type, payload);
     switch (true) {
       case type === 'onFileChange': {
+        this.searchbarElement.nativeElement.value = '';
         const files = [...payload.target.files];
         if (!files[0]) {
           return;
@@ -78,15 +81,23 @@ export class DrivePageComponent {
         await this._displayMessage(this._toastCtrl, opts);
         break;
       }
+      case type === 'searchByName': {
+        const {detail: {value = null}} = payload;
+        this._mediaFileService.searchByName(value);
+        break;
+      }
       case type === 'navTo': {
         const { _id } = payload;
         this._mediaFileService.navToFolderId(_id);
+        this.searchbarElement.nativeElement.value = '';
         break;
       }
       case type === 'reload':
-        this.ionViewDidEnter();
+        this.searchbarElement.nativeElement.value = '';
+        await this.ionViewDidEnter();
         break;
       case type === 'newFolder': {
+        this.searchbarElement.nativeElement.value = '';
         // ask for folder name
         const opts = {
           header: 'New Folder',

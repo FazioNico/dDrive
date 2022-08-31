@@ -11,6 +11,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 @Injectable()
 export class MediaFileService {
+  private readonly _queryFilterBy$: BehaviorSubject<string|null> = new BehaviorSubject(null as any);
   private readonly _filterBy$: BehaviorSubject<string> = new BehaviorSubject(
     'root'
   );
@@ -44,10 +45,13 @@ export class MediaFileService {
   );
   public readonly items$ = combineLatest([
     this._items$.asObservable().pipe(filter(Boolean)),
-    this._filterBy$.asObservable()
+    this._filterBy$.asObservable(),
+    this._queryFilterBy$.asObservable()
   ]).pipe(
-    map(([items, filterBy]) =>
-      items.filter((item) => item.parent === filterBy)
+    map(([items, filterBy, queryFilter]) =>
+      items.filter((item) => queryFilter 
+        ? item.name.toLowerCase().includes(queryFilter.toLowerCase())
+        : item.parent === filterBy)
     ),
     map((items) => {
       // extract filers & folders
@@ -147,8 +151,16 @@ export class MediaFileService {
     // update state
     this._items$.next(filesToPreserve);
   }
+  
+  searchByName(name: string|null) {
+    if (name) {
+      this._filterBy$.next('root');
+    }
+    this._queryFilterBy$.next(name);
+  }
 
   navToFolderId(id: string) {
+    this._queryFilterBy$.next(null);
     if (id === 'root') {
       this._filterBy$.next('root');
       return;

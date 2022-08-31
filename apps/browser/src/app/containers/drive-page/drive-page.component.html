@@ -6,7 +6,13 @@
           <ion-text class="" color="primary">My Drive</ion-text>
         </ion-col> -->
         <ion-col>
-          <ion-searchbar class="ion-margin-vertical" mode="ios"></ion-searchbar>
+          <ion-searchbar 
+              #searchbarElement
+              class="ion-margin-vertical" 
+              enterkeyhint="search"
+              inputmode="search"
+              [debounce]="500"
+              (ionChange)="actions('searchByName', $event)"></ion-searchbar>
         </ion-col>
         <ion-col class="ion-text-end ion-padding-end ion-hide-md-down">
           <ion-button color="primary" fill="clear" (click)="actions('reload')">
