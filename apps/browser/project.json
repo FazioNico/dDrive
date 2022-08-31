@@ -96,7 +96,40 @@
           "mortice",
           "it-parallel-batch",
           "iso-constants",
-          "event-iterator"
+          "event-iterator",
+          "lit-js-sdk",
+          "near-api-js",
+          "flat",
+          "multihashes",
+          "@stablelib/random",
+          "lodash.clonedeep",
+          "varint",
+          "cross-fetch",
+          "lru_map",
+          "bn.js",
+          "aes-js",
+          "scrypt-js",
+          "bech32",
+          "hash.js",
+          "dataloader",
+          "@tableland/evm",
+          "@tableland/evm/proxies.js",
+          "siwe",
+          "camelcase",
+          "@walletconnect/window-getters",
+          "@walletconnect/window-metadata",
+          "@walletconnect/socket-transport",
+          "@walletconnect/environment",
+          "query-string",
+          "@stablelib/ed25519",
+          "apg-js/src/apg-api/api.js",
+          "apg-js/src/apg-lib/node-exports.js",
+          "@stablelib/xchacha20poly1305",
+          "is-typedarray",
+          "typedarray-to-buffer",
+          "canonicalize",
+          "elliptic",
+          "js-sha3"
         ]
       },
       "configurations": {
@@ -109,8 +142,8 @@
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "2kb",
-              "maximumError": "4kb"
+              "maximumWarning": "4kb",
+              "maximumError": "1mb"
             }
           ],
           "fileReplacements": [
