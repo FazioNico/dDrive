@@ -41,3 +41,21 @@ ion-backdrop {
     background-color: rgba(var(--ion-color-danger-rgb), 0.5);
   }
 }
+
+.clickable {
+  cursor: pointer;
+}
+
+.isDevMod {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 18px;
+  font-size: 0.7rem;
+  background: var(--ion-color-warning);
+  color: var(--ion-color-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+}

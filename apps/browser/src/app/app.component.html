@@ -7,7 +7,7 @@
       <ion-text>
         <span class="menu-title">dDrive</span>
       </ion-text>
-      <ion-list>
+      <ion-list lines="none">
         <ion-item>
           <ion-label>
             Drive
@@ -48,7 +48,11 @@
       </ion-toolbar>
     </ion-footer>
   </ion-menu>
-
   <!-- the main content -->
-  <ion-router-outlet id="main"></ion-router-outlet>
+  <ion-router-outlet id="main">
+    <div *ngIf="!isProduction" class="isDevMod">
+      <span>DEV Environnement</span>
+    </div>
+  </ion-router-outlet>
 </ion-split-pane>
+<ion-progress-bar *ngIf="loaderService.isVisible$|async" type="indeterminate"></ion-progress-bar>

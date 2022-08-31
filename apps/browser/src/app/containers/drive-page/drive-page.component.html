@@ -9,13 +9,13 @@
           <ion-searchbar class="ion-margin-vertical" mode="ios"></ion-searchbar>
         </ion-col>
         <ion-col class="ion-text-end ion-padding-end ion-hide-md-down">
-          <ion-button fill="clear" (click)="actions('reload')">
+          <ion-button color="primary" fill="clear" (click)="actions('reload')">
             <ion-icon name="sync"></ion-icon>
           </ion-button>
-          <ion-button (click)="addFileElement.click()">
+          <ion-button color="primary" (click)="addFileElement.click()">
             upload
           </ion-button>
-          <ion-button fill="outline" (click)="actions('newFolder')">
+          <ion-button color="primary" fill="outline" (click)="actions('newFolder')">
             new folder
           </ion-button>
         </ion-col>
@@ -25,49 +25,63 @@
 </ion-header>
 <ion-content class="ion-padding" fullscreen>
   <input #addFileElement type="file" id="file-input" multiple="true" hidden (change)="actions('onFileChange', $event)" />
-  <ion-grid class="header-grid">
-    <ion-row class="">
-      <ion-col size-xs="12" class="ion-text-left">
-        <ion-breadcrumbs 
-            *ngIf="breadcrumbs$|async as breadcrumbs;else defaultBreadcrumb"
-            [maxItems]="options.maxBreadcrumbs" >
-          <ion-breadcrumb class="clickable" (click)="actions('navToFolderName', b)" *ngFor="let b of breadcrumbs;let i = index">
-            <span>{{b}}</span>
-          </ion-breadcrumb>
-        </ion-breadcrumbs>
-        <ng-template #defaultBreadcrumb>
-          <ion-breadcrumbs>
-            <ion-breadcrumb active="true" color="primary">
-              <span>My Drive</span>
-            </ion-breadcrumb>
-            <ion-breadcrumb></ion-breadcrumb>
-          </ion-breadcrumbs>
-        </ng-template>
+  <!-- breadcrumbs -->
+  <ion-grid class="header-grid ion-padding-start">
+    <ion-row 
+        class="ion-align-items-center"
+        *ngIf="(breadcrumbs$|async) as breadcrumbs;else defaultBreadcrumb">
+      <ion-col
+          size="auto"
+          class="ion-align-items-center" 
+          [ngStyle]="{'display': 'flex'}"
+          (click)="actions('navTo', b)" 
+          *ngFor="let b of breadcrumbs;let i = index;let isLast = last">
+          <ion-label>
+            <span class="clickable">{{b.name === 'root' ? 'My Drive' : b.name}}</span>
+            <ion-icon slot="end" *ngIf="!isLast" name="chevron-forward-outline" class="ion-padding-start"></ion-icon>
+          </ion-label>
       </ion-col>
     </ion-row>
+    <ng-template #defaultBreadcrumb>
+      <ion-row>
+        <ion-col 
+            size="auto" 
+            [ngStyle]="{'display': 'flex'}">
+          <ion-label>
+            <span>My Drive</span>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ng-template>
   </ion-grid>
-
+  <!-- Content Wrapper -->
   <ion-card class="ion-no-padding">
-    <ion-grid class="ion-no-padding">
-      <ng-container *ngIf="currentPath$|async as currentPath" >
+    <!-- Items Content -->
+    <ion-grid 
+        *ngIf="(items$|async) as items" 
+        class="ion-no-padding">
+      <!-- Back to parrent folder Row -->
+      <ng-container *ngIf="(breadcrumbs$|async) as breadcrumbs" >
         <ion-row 
-            *ngIf="currentPath !== 'root'" 
+            *ngIf="breadcrumbs.length > 1" 
             class="item ion-align-items-center ion-padding-start">
           <ion-col size="auto" class="ion-padding-end">
-            <ion-fab-button size="small" translucent="true" mode="ios" (click)="actions('navBack')">
+            <ion-fab-button size="small" translucent="true" mode="ios" (click)="actions('navTo', breadcrumbs[breadcrumbs.length - 2])">
               <ion-icon name="ellipsis-horizontal" size="small" color="primary"></ion-icon>
             </ion-fab-button>
           </ion-col>
         </ion-row>
       </ng-container>
-      <!-- list files -->
+      <!-- Items List Rows-->
       <ion-row 
-          *ngFor="let item of items$|async; trackBy:trackByfn" 
+          *ngFor="let item of items; trackBy:trackByfn" 
           (click)="item.isFolder ? actions('navTo', item) : actions('preview', item)"
           class="item clickable ion-align-items-center ion-padding-start">
-        <ion-col size="auto" class="ion-padding-start">
-          <ion-icon name="folder-outline" *ngIf="item.isFolder === true"></ion-icon>
-          <ion-icon name="document-outline" *ngIf="item.isFolder !== true"></ion-icon>
+        <ion-col size="auto">
+          <ion-icon size="large" name="folder-outline" *ngIf="item.isFolder === true"></ion-icon>
+          <ion-icon size="large" name="document-outline" *ngIf="item.isFolder !== true"></ion-icon>
+        </ion-col>
+        <ion-col size="auto">
           <ion-text class="ion-padding-start">
             {{item.name}}
           </ion-text>

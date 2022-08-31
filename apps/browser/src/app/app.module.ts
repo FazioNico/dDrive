@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
@@ -9,6 +9,10 @@ import { DrivePageComponent } from './containers/drive-page/drive-page.component
 import { NotfoundPageComponent } from './containers/notfound-page/notfound-page.component';
 import { TablelandService } from './services/tableland.service';
 import { IPFSService } from './services/ipfs.service';
+import { CeramicService } from './services/ceramic.service';
+import { MediaFileService } from './services/mediafile.service';
+import { LoaderService } from './services/loader.service';
+import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +35,14 @@ import { IPFSService } from './services/ipfs.service';
   ],
   providers: [
     IPFSService,
-    TablelandService
+    TablelandService,
+    CeramicService,
+    MediaFileService,
+    LoaderService,
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandlerService,
+    }
   ],
   bootstrap: [AppComponent],
 })

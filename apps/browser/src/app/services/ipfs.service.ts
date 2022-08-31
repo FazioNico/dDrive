@@ -15,7 +15,7 @@ export class IPFSService {
     }
     const { cid } = await this._ipfsNode.add(file);
     return {
-      cid,
+      cid: cid.toString(),
     };
   }
 
