@@ -18,7 +18,7 @@ export class MediaFileService {
     'root'
   );
   private readonly _items$: BehaviorSubject<IMediaFile[]> = new BehaviorSubject(
-    [] as any[]
+    [] as IMediaFile[]
   );
   public readonly breadcrumbs$ = combineLatest([
     this._items$.asObservable(),
