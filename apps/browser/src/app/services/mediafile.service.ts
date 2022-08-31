@@ -9,6 +9,7 @@ import { CeramicService } from './ceramic.service';
 import { IPFSService } from './ipfs.service';
 import { v4 as uuidV4 } from 'uuid';
 import { LitService } from './lit.service';
+import { IMediaFile } from '../interfaces/mediafile.interface';
 
 @Injectable()
 export class MediaFileService {
@@ -16,7 +17,7 @@ export class MediaFileService {
   private readonly _filterBy$: BehaviorSubject<string> = new BehaviorSubject(
     'root'
   );
-  private readonly _items$: BehaviorSubject<any[]> = new BehaviorSubject(
+  private readonly _items$: BehaviorSubject<IMediaFile[]> = new BehaviorSubject(
     [] as any[]
   );
   public readonly breadcrumbs$ = combineLatest([
@@ -61,8 +62,8 @@ export class MediaFileService {
       // return sorted datas
       const result = [
         // sort folders first
-        ...folders.sort((a, b) => a.name.localeCompare(b.name)),
-        ...filess.sort((a, b) => a.name.localeCompare(b.name)),
+        ...folders.sort((a, b) => a.name?.localeCompare(b.name)),
+        ...filess.sort((a, b) => a.name?.localeCompare(b.name)),
       ];
       return result;
     })
@@ -82,13 +83,17 @@ export class MediaFileService {
 
   async upload(file: File, encrypt = false) {
     let mediaToUpload: File|Blob = file; 
-    const metaData: any = {
+    const _id = uuidV4(); 
+    const isoDateTime = new Date().toISOString();
+    const metaData: IMediaFile = {
       parent: this._filterBy$.value,
-      name: file.name,
+      name: file.name||_id,
       size: file.size,
       type: file.type,
       isFolder: false,
-      _id: uuidV4(),
+      createdIsoDateTime: isoDateTime,
+      lastModifiedIsoDateTime: isoDateTime,
+      _id,
     };
     // encrypt file
     if (encrypt) {
@@ -100,12 +105,14 @@ export class MediaFileService {
     // upload file to ipfs
     const { cid } = await this._fileService.add(mediaToUpload);
     // build final object data and save to database
-    const newFileData = {
+    const newFileData: IMediaFile = {
       ...metaData,
       cid,
     };
-    const currentFiles = [...this._items$.value];
-    currentFiles.push(newFileData);
+    const currentFiles: IMediaFile[] = [...this._items$.value];
+    currentFiles.push({
+      ...newFileData,
+    });
     // update object data to database
     await this._dataService.updateData(
       { files: currentFiles },
@@ -123,12 +130,15 @@ export class MediaFileService {
       throw new Error('CurrentPath not found');
     }
     // run upload task
-    const metaData = {
+    const isoDateTime = new Date().toISOString();
+    const metaData: IMediaFile = {
       parent: currentPath,
       name,
       size: 0,
       isFolder: true,
       _id: uuidV4(),
+      createdIsoDateTime: isoDateTime,
+      lastModifiedIsoDateTime: isoDateTime,
     };
     const currentFiles = [...this._items$.value];
     currentFiles.push(metaData);
