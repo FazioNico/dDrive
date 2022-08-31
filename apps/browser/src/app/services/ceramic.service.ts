@@ -19,8 +19,8 @@ export class CeramicService {
       return this._mainDocuumentId;
     }
 
-    async connect(options?: CeramicClientConfig) {
-      throw new Error('Not implemented');
+    async connect() {
+      this._auth();
     }
 
     async getAll() {
