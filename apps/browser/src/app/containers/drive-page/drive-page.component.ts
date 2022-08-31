@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { AlertController, PopoverController, ToastController, ToastOptions } from '@ionic/angular';
+import {
+  AlertController,
+  PopoverController,
+  ToastController,
+  ToastOptions,
+} from '@ionic/angular';
 import { OverlayBaseController } from '@ionic/angular/util/overlay';
 import { BehaviorSubject, map, tap } from 'rxjs';
 import { FilesOptionsListComponent } from '../../components/files-options-list/files-options-list.component';
@@ -12,9 +17,8 @@ import { MediaFileService } from '../../services/mediafile.service';
   styleUrls: ['./drive-page.component.scss'],
 })
 export class DrivePageComponent {
-
   public breadcrumbs$ = this._mediaFileService.breadcrumbs$.pipe(
-    map(breadcrumbs => {
+    map((breadcrumbs) => {
       const maxBreadcrumbs = this.options.maxBreadcrumbs;
       if (breadcrumbs.length > maxBreadcrumbs) {
         breadcrumbs.splice(0, breadcrumbs.length - maxBreadcrumbs);
@@ -25,7 +29,7 @@ export class DrivePageComponent {
   public items$ = this._mediaFileService.items$;
   public options = {
     maxBreadcrumbs: 3,
-  }
+  };
 
   constructor(
     private readonly _popCtrl: PopoverController,
@@ -35,7 +39,7 @@ export class DrivePageComponent {
     private readonly _mediaFileService: MediaFileService
   ) {}
 
-  async ionViewDidEnter(){
+  async ionViewDidEnter() {
     this._loaderService.setStatus(true);
     await this._mediaFileService.getFiles();
     this._loaderService.setStatus(false);
@@ -45,16 +49,20 @@ export class DrivePageComponent {
     console.log('actions(): ', type, payload);
     switch (true) {
       case type === 'onFileChange': {
-        const file = payload.target.files[0];
-        if (!file) {
+        const files = [...payload.target.files];
+        if (!files[0]) {
           return;
         }
         this._loaderService.setStatus(true);
-        await this._mediaFileService.upload(file);
+        let i = 0
+        while (i !== files.length) {
+          await this._mediaFileService.upload(files[i]);
+          ++i;
+        }
         this._loaderService.setStatus(false);
         // notify user that file was uploaded successfully
         const opts: ToastOptions = {
-          message: 'File uploaded successfully',
+          message: `File${files.length > 1 ? 's' : ''} uploaded successfully`,
           duration: 2000,
           position: 'bottom',
           color: 'primary',
@@ -62,15 +70,15 @@ export class DrivePageComponent {
             {
               text: 'ok',
               side: 'end',
-              handler: async () =>  await this._toastCtrl.dismiss()
-            }
+              handler: async () => await this._toastCtrl.dismiss(),
+            },
           ],
           keyboardClose: true,
         };
         await this._displayMessage(this._toastCtrl, opts);
         break;
       }
-      case type === 'navTo':{
+      case type === 'navTo': {
         const { _id } = payload;
         this._mediaFileService.navToFolderId(_id);
         break;
@@ -86,8 +94,8 @@ export class DrivePageComponent {
             {
               name: 'folderName',
               type: 'text',
-              placeholder: 'Folder Name'
-            }
+              placeholder: 'Folder Name',
+            },
           ],
           buttons: [
             {
@@ -97,10 +105,13 @@ export class DrivePageComponent {
             {
               text: 'Create',
               role: 'ok',
-            }
-          ]
+            },
+          ],
         };
-        const { data, role } = await this._displayMessage(this._alertCtrl, opts);
+        const { data, role } = await this._displayMessage(
+          this._alertCtrl,
+          opts
+        );
         if (role !== 'ok' || !data.values.folderName) {
           return;
         }
@@ -117,16 +128,16 @@ export class DrivePageComponent {
             {
               text: 'ok',
               side: 'end',
-              handler: async () =>  await this._toastCtrl.dismiss()
-            }
+              handler: async () => await this._toastCtrl.dismiss(),
+            },
           ],
           keyboardClose: true,
         };
         await this._displayMessage(this._toastCtrl, notifOpts);
         break;
-      }  
+      }
       case type === 'openOptions': {
-        const {event = undefined, item = undefined} = payload;
+        const { event = undefined, item = undefined } = payload;
         if (!event || !item) {
           throw new Error('openOptions(): payload is invalid');
         }
@@ -135,8 +146,8 @@ export class DrivePageComponent {
       }
       case type === 'preview': {
         console.log('preview(): ', payload);
-        
-        const {cid = undefined} = payload;
+
+        const { cid = undefined } = payload;
         break;
       }
       case type === 'delete': {
@@ -159,8 +170,8 @@ export class DrivePageComponent {
               {
                 text: 'Delete',
                 role: 'confirm',
-              }
-            ]
+              },
+            ],
           };
           const { role } = await this._displayMessage(this._alertCtrl, opts);
           if (role !== 'confirm') {
@@ -180,8 +191,8 @@ export class DrivePageComponent {
             {
               text: 'ok',
               side: 'end',
-              handler: async () =>  await this._toastCtrl.dismiss()
-            }
+              handler: async () => await this._toastCtrl.dismiss(),
+            },
           ],
           keyboardClose: true,
         };
@@ -194,9 +205,9 @@ export class DrivePageComponent {
   async openOptions($event: MouseEvent, item: any) {
     const ionPopover = await this._popCtrl.create({
       component: FilesOptionsListComponent,
-      componentProps: {isFolder: item.isFolder},
+      componentProps: { isFolder: item.isFolder },
       event: $event,
-      translucent: true
+      translucent: true,
     });
     await ionPopover.present();
     // handle close event
@@ -207,14 +218,17 @@ export class DrivePageComponent {
     await this.actions(type, item);
   }
 
-  trackByfn(index: number, item: {_id: string}) {
+  trackByfn(index: number, item: { _id: string }) {
     return item._id;
   }
 
-  private async _displayMessage(ctrl: OverlayBaseController<any,any>, opts: any) {
+  private async _displayMessage(
+    ctrl: OverlayBaseController<any, any>,
+    opts: any
+  ) {
     const ctrlInstance = await ctrl.create(opts);
     await ctrlInstance.present();
     const { data, role } = await ctrlInstance.onDidDismiss();
-    return {data, role};
-  } 
+    return { data, role };
+  }
 }
