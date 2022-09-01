@@ -129,7 +129,8 @@
           "typedarray-to-buffer",
           "canonicalize",
           "elliptic",
-          "js-sha3"
+          "js-sha3",
+          "events"
         ]
       },
       "configurations": {
@@ -138,7 +139,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "5mb"
             },
             {
               "type": "anyComponentStyle",
