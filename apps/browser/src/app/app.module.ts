@@ -1,7 +1,7 @@
-import { ErrorHandler, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { IonicModule } from '@ionic/angular';
-import { RouterModule } from '@angular/router';
+import { AlertController, IonicModule } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { FilesOptionsListComponent } from './components/files-options-list/files-options-list.component';
@@ -15,6 +15,21 @@ import { LoaderService } from './services/loader.service';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { LitService } from './services/lit.service';
 import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
+
+const getProviderFactory = (_alertCtrl: AlertController, _router: Router) =>  
+  async () => {
+    console.log('APP_INITIALIZER', _alertCtrl, _router);
+    if (!(window as any).ethereum) {
+      const ionAlert = await _alertCtrl.create({
+        header: 'No Ethereum Provider',
+        message: 'Please install MetaMask or similar Ethereum browser extension.',
+        buttons: [ { text: 'ok'} ]
+      });
+      await ionAlert.present();
+      await ionAlert.onDidDismiss();
+      _router.navigate(['/404']);
+    }
+  };
 
 @NgModule({
   declarations: [
@@ -46,6 +61,12 @@ import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: getProviderFactory,
+      multi: true,
+      deps: [AlertController, Router],
     }
   ],
   bootstrap: [AppComponent],
