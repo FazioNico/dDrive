@@ -86,6 +86,21 @@ export class CeramicService {
       // return {hash};
     }
     
+    async authWithDID(did: DID) {
+      // set DID resolver with Ceramic 3ID resolver
+      did.setResolver({
+        ...get3IDResolver(this._db)
+      });
+      console.log('[INFO] Authenticate with DID provider');
+      // Authenticate the DID using the 3ID provider from 3ID Connect, this will trigger the
+      // authentication flow using 3ID Connect and the Ethereum provider
+      await did.authenticate();
+      this._db.did = did;
+      await this._setupProfile();
+      const profile = await this._getProfileFromCeramic();
+      return {profile};
+    }
+
     private async _auth() {
       if ((window as any)['ethereum'] == null) {
       throw new Error('No injected Ethereum provider found')

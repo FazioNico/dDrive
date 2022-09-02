@@ -16,6 +16,9 @@ import { GlobalErrorHandlerService } from './services/global-error-handler.servi
 import { LitService } from './services/lit.service';
 import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
 import { SetupPageComponent } from './containers/setup-page/setup-page.component';
+import { LoginPageComponent } from './containers/login-page/login-page.component';
+import { AuthGuard } from './guards/auth.guard';
+import { DIDService } from './services/did.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -41,6 +44,7 @@ const getProviderFactory =
     FilesOptionsListComponent,
     BytesToSizePipe,
     SetupPageComponent,
+    LoginPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,10 +52,18 @@ const getProviderFactory =
       mode: 'ios',
     }),
     RouterModule.forRoot([
-      { path: 'drive', component: DrivePageComponent },
+      { 
+        path: 'drive', 
+        component: DrivePageComponent,
+        canActivate: [AuthGuard]
+       },
+      {
+        path: 'login',
+        component: LoginPageComponent
+      },
       { path: '404', component: NotfoundPageComponent },
       { path: 'setup', component: SetupPageComponent },
-      { path: '', redirectTo: '/drive', pathMatch: 'full' },
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: '**', redirectTo: '/404', pathMatch: 'full' },
     ]),
   ],
@@ -62,6 +74,8 @@ const getProviderFactory =
     MediaFileService,
     LoaderService,
     LitService,
+    AuthGuard,
+    DIDService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,

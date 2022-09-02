@@ -7,11 +7,11 @@ export class TablelandService {
     private _db!: Connection;
 
     constructor() {
-      this.connect()
-          .then(async () => {
-            const tables = await this._db.list();
-            console.log('[INFO] Existing Tableland Tables: ', tables);
-          });
+      // this.connect()
+      //     .then(async () => {
+      //       const tables = await this._db.list();
+      //       console.log('[INFO] Existing Tableland Tables: ', tables);
+      //     });
     }
 
     async connect(options: ConnectOptions = { network: "testnet", chain: "polygon-mumbai" }) {
