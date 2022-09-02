@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
-
+ion-router-outlet {
+  background:  rgb(244,248,248)!important;
+}
 ion-split-pane {
   --side-max-width: 236px;
 

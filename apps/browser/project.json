@@ -5,7 +5,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/browser",
         "index": "apps/browser/src/index.html",
@@ -15,12 +17,13 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/browser/src/favicon.ico",
-           "apps/browser/src/assets",
-           {
+          "apps/browser/src/assets",
+          {
             "glob": "**/*.svg",
             "input": "node_modules/ionicons/dist/ionicons/svg",
             "output": "./svg"
-          }
+          },
+          "apps/browser/src/manifest.webmanifest"
         ],
         "styles": [
           "apps/browser/src/styles.scss",
@@ -131,7 +134,9 @@
           "elliptic",
           "js-sha3",
           "events"
-        ]
+        ],
+        "serviceWorker": true,
+        "ngswConfigPath": "apps/browser/ngsw-config.json"
       },
       "configurations": {
         "production": {
@@ -187,12 +192,17 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/browser/**/*.ts", "apps/browser/**/*.html"]
+        "lintFilePatterns": [
+          "apps/browser/**/*.ts",
+          "apps/browser/**/*.html"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/browser"],
+      "outputs": [
+        "coverage/apps/browser"
+      ],
       "options": {
         "jestConfig": "apps/browser/jest.config.ts",
         "passWithNoTests": true

@@ -20,6 +20,8 @@ import { LoginPageComponent } from './containers/login-page/login-page.component
 import { AuthGuard } from './guards/auth.guard';
 import { DIDService } from './services/did.service';
 import { FilesPageComponent } from './containers/files-page/files-page.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -72,6 +74,12 @@ const getProviderFactory =
       { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: '**', redirectTo: '/404', pathMatch: 'full' },
     ]),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
   providers: [
     IPFSService,

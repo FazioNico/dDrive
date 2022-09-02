@@ -4,7 +4,8 @@
   }
 
   ion-content {
-    --background: rgba(var(--ion-color-primary-rgb), 0.05);
+    --background: rgb(244,248,248)!important;
+    // --background: rgba(var(--ion-color-primary-rgb), 0.05);
   }
 
   ion-searchbar {
