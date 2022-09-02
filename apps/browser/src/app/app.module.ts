@@ -15,38 +15,42 @@ import { LoaderService } from './services/loader.service';
 import { GlobalErrorHandlerService } from './services/global-error-handler.service';
 import { LitService } from './services/lit.service';
 import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
+import { SetupPageComponent } from './containers/setup-page/setup-page.component';
 
-const getProviderFactory = (_alertCtrl: AlertController, _router: Router) =>  
-  async () => {
+const getProviderFactory =
+  (_alertCtrl: AlertController, _router: Router) => async () => {
     console.log('APP_INITIALIZER', _alertCtrl, _router);
     if (!(window as any).ethereum) {
       const ionAlert = await _alertCtrl.create({
         header: 'No Ethereum Provider',
-        message: 'Please install MetaMask or similar Ethereum browser extension.',
-        buttons: [ { text: 'ok'} ]
+        message:
+          'Please install MetaMask or similar Ethereum browser extension.',
+        buttons: [{ text: 'ok' }],
       });
       await ionAlert.present();
       await ionAlert.onDidDismiss();
-      _router.navigate(['/404']);
+      _router.navigate(['/setup']);
     }
   };
 
 @NgModule({
   declarations: [
-    AppComponent, 
-    DrivePageComponent, 
+    AppComponent,
+    DrivePageComponent,
     NotfoundPageComponent,
     FilesOptionsListComponent,
-    BytesToSizePipe
+    BytesToSizePipe,
+    SetupPageComponent,
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot({
-      mode: "ios"
+      mode: 'ios',
     }),
     RouterModule.forRoot([
       { path: 'drive', component: DrivePageComponent },
       { path: '404', component: NotfoundPageComponent },
+      { path: 'setup', component: SetupPageComponent },
       { path: '', redirectTo: '/drive', pathMatch: 'full' },
       { path: '**', redirectTo: '/404', pathMatch: 'full' },
     ]),
@@ -67,7 +71,7 @@ const getProviderFactory = (_alertCtrl: AlertController, _router: Router) =>
       useFactory: getProviderFactory,
       multi: true,
       deps: [AlertController, Router],
-    }
+    },
   ],
   bootstrap: [AppComponent],
 })
