@@ -58,3 +58,9 @@ if (typeof window !== 'undefined') {
 (global as any).process = {
   env: { DEBUG: undefined },
 };
+
+import { Buffer } from 'buffer';
+if (!(window as any).Buffer) {
+  // add Buffer polyfill 
+  (global as any).Buffer = Buffer;
+}
