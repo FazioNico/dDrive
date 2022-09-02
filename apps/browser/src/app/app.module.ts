@@ -19,6 +19,7 @@ import { SetupPageComponent } from './containers/setup-page/setup-page.component
 import { LoginPageComponent } from './containers/login-page/login-page.component';
 import { AuthGuard } from './guards/auth.guard';
 import { DIDService } from './services/did.service';
+import { FilesPageComponent } from './containers/files-page/files-page.component';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -45,6 +46,7 @@ const getProviderFactory =
     BytesToSizePipe,
     SetupPageComponent,
     LoginPageComponent,
+    FilesPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,14 +54,18 @@ const getProviderFactory =
       mode: 'ios',
     }),
     RouterModule.forRoot([
-      { 
-        path: 'drive', 
+      {
+        path: 'drive',
         component: DrivePageComponent,
-        canActivate: [AuthGuard]
-       },
+        canActivate: [AuthGuard],
+        children: [
+          { path: 'files', component: FilesPageComponent },
+          { path: '', redirectTo: 'files', pathMatch: 'full' },
+        ]
+      },
       {
         path: 'login',
-        component: LoginPageComponent
+        component: LoginPageComponent,
       },
       { path: '404', component: NotfoundPageComponent },
       { path: 'setup', component: SetupPageComponent },

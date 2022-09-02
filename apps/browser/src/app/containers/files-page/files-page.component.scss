@@ -1,0 +1,113 @@
+:host {
+  ion-toolbar {
+    --opacity: 1!important;
+  }
+
+  ion-content {
+    --background: rgba(var(--ion-color-primary-rgb), 0.05);
+  }
+
+  ion-searchbar {
+    padding-bottom: 0!important;
+  }
+
+  .header-grid {
+
+    ion-icon {
+      font-size: 0.8rem;
+    }
+  }
+
+  ion-card {
+    border-radius:  0.618rem!important;
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.4);
+    // box-shadow: 0 0px 15px -12px;
+    box-shadow: none;
+  }
+
+  ion-card {
+    margin-bottom: 2.618rem;
+  }
+
+  ion-row.droppable-container {
+    background: var(--background-app);
+
+    > ion-col {
+      margin: 1.618rem;
+      min-height: 200px;
+      border: dotted 3.14px var(--ion-border-color);
+      background-color: rgba(var(--ion-color-primary-rgb), 0.05);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.125s ease-in-out;
+
+      &:hover {
+        background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+      }
+      &.fileover {
+        background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+
+        * {
+          opacity: 0.5;
+        }
+        ion-img {
+          transform: scale(0.9);
+        }
+      }
+      &.filedrop {
+        background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+
+        * {
+          opacity: 0.2;
+        }
+        ion-img {
+          transform: scale(0.8);
+        }
+      }
+
+      ion-img {
+        max-width: 250px;
+        margin-top: 6.18rem;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1rem;
+        transition: all 0.125s ease-in-out;
+      }
+      span {
+        margin: 0 auto 6.18rem;
+        display: block;
+        font-size: 1.618rem;
+      }
+
+    }
+
+  }
+
+  ion-row.item {
+    background: var(--background-app);
+    border-bottom: 1px solid var(--ion-border-color); // #e0e0e0;
+
+
+    &:hover {
+      background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+      > ion-col {
+        color: var(--ion-color-primary);
+      }
+    }
+
+    &:last-of-type {
+      margin-bottom: -1px;
+    }
+
+    ion-fab-button {
+      --background: transparent;
+      --box-shadow: none;
+      --background-hover-opacity: 0.2;
+    }
+
+    ion-chip {
+      transform: scale(0.8);
+    }
+  }
+
+}
