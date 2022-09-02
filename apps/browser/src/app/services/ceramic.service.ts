@@ -98,7 +98,7 @@ export class CeramicService {
       this._db.did = did;
       await this._setupProfile();
       const profile = await this._getProfileFromCeramic();
-      return {profile};
+      return profile;
     }
 
     private async _auth() {

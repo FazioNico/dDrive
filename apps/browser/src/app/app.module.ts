@@ -82,6 +82,7 @@ const getProviderFactory =
     LitService,
     AuthGuard,
     DIDService,
+    AuthGuard,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,
