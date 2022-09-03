@@ -24,12 +24,27 @@ ion-split-pane {
     }
 
     ion-list, ion-item, ion-footer, ion-toolbar {
-      background: transparent!important;
-      --background: transparent!important;
+      background: transparent;
+      --background: transparent;
     }
   }
 }
 
+ion-avatar ion-img::after {
+  content: "";
+    border-radius: 100%;
+    border: solid 3px #fff;
+    position: absolute;
+    bottom: -5%;
+    right: -8%;
+    width: 30%;
+    height: 30%;
+    background: var(--ion-color-success);
+}
+
+ion-avatar {
+    position: relative;
+}
 .alert-wrapper {
   border-radius:  0.618rem!important;
   border: 1px solid var(--ion-color-primary)!important;

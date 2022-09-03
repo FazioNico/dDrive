@@ -1,0 +1,31 @@
+:host {
+  .active-link {
+    color: var(--ion-color-primary);
+    font-weight: 600;
+    --background: rgba(var(--ion-color-primary-rgb), 0.05);
+  }
+}
+
+ion-popover.profil-popover {
+  --width: 100%;
+  --max-width: 328px;
+
+
+  ion-item {
+    --padding-start: 0;
+
+    ion-avatar {
+      width: 64px;
+      height: 64px;
+    }
+
+    ion-label {
+      line-height: 1.5rem;
+
+      label {
+        display: block;
+      }
+    }
+
+  }
+}

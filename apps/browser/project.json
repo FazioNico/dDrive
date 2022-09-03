@@ -133,7 +133,8 @@
           "canonicalize",
           "elliptic",
           "js-sha3",
-          "events"
+          "events",
+          "ethereum-blockies-base64"
         ],
         "serviceWorker": true,
         "ngswConfigPath": "apps/browser/ngsw-config.json"

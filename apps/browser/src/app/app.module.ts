@@ -22,6 +22,8 @@ import { DIDService } from './services/did.service';
 import { FilesPageComponent } from './containers/files-page/files-page.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { AddressToAvatarPipe } from './pipes/address-to-avatar.pipe';
+import { SliceAddressPipe } from './pipes/slice-address.pipe';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -45,10 +47,12 @@ const getProviderFactory =
     DrivePageComponent,
     NotfoundPageComponent,
     FilesOptionsListComponent,
-    BytesToSizePipe,
     SetupPageComponent,
     LoginPageComponent,
     FilesPageComponent,
+    BytesToSizePipe,
+    AddressToAvatarPipe,
+    SliceAddressPipe,
   ],
   imports: [
     BrowserModule,
