@@ -230,6 +230,46 @@ export class FilesPageComponent {
         this._loaderService.setStatus(false);
         break;
       }
+      case type === 'rename': {
+        const { _id = null, name = null } = payload;
+        // ask for new name
+        const opts = {
+          header: 'Rename',
+          inputs: [
+            {
+              name: 'newName',
+              type: 'text',
+              placeholder: 'New Name',
+              value: name,
+            },
+          ],
+          buttons: [
+            { text: 'Cancel', role: 'cancel' },
+            { text: 'Rename', role: 'ok' },
+          ],
+        };
+        const { data, role } = await this._displayMessage(
+          this._alertCtrl,
+          opts
+        );
+        if (role !== 'ok' || !data.values.newName) {
+          return;
+        }
+        this._loaderService.setStatus(true);
+        await this._mediaFileService.rename(_id, data.values.newName);
+        this._loaderService.setStatus(false);
+        break;
+      }
+      case type === 'share': {
+        const { _id = null, isFolder = false } = payload;
+        if (!_id || isFolder) {
+          throw new Error('share(): payload is invalid');
+        }
+        this._loaderService.setStatus(true);
+        await this._mediaFileService.share(_id);
+        this._loaderService.setStatus(false);
+        break;
+      }
     }
   }
 

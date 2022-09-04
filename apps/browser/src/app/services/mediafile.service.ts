@@ -167,7 +167,24 @@ export class MediaFileService {
     this._items$.next(filesToPreserve);
   }
 
-  async downloadFile(_id: string) {
+  async rename(_id: string, newName: string){
+    const files = [...this._items$.value];
+    const index = this._items$.value.findIndex((item) => item._id === _id);
+    if (index === -1) {
+      throw new Error('File not found');
+    }
+    // rename file
+    files[index].name = newName;
+    // update object data to database
+    await this._dataService.updateData(
+      { files },
+      this._dataService.docId
+    );
+    // update state
+    this._items$.next(files);
+  }
+
+  async downloadFile(_id: string, inBorwser = true) {
     const { cid, name, encryptedSymmetricKey, type } =
       this._items$.value.find((item) => item._id === _id) || {};
     if (!cid) {
@@ -186,11 +203,22 @@ export class MediaFileService {
       result.file = new File([decryptedArrayBuffer], name || cid, { type });
     }
     console.log('[INFO] Creating download link...');
-    // download file from browser
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(result.file);
-    link.download = name || cid;
-    link.click();
+    if (inBorwser) {
+      // download file from browser
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(result.file);
+      link.download = name || cid;
+      link.click();
+    }
+    return result;
+  }
+
+  async share(id: string) {
+    const { cid } = this._items$.value.find((item) => item._id === id) || {};
+    if (!cid) {
+      throw new Error('File not found');
+    }
+    throw new Error('Not implemented');
   }
 
   searchByName(name: string | null) {
