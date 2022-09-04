@@ -4,15 +4,16 @@ import LitJsSdk from 'lit-js-sdk';
 @Injectable()
 export class LitService {
   public readonly chain = 'mumbai';
-  public readonly standardContractType = 'ERC721'
+  public readonly standardContractType = ''
   public readonly contractAddress = '';
 
   private _litNodeClient: any;
 
   private async _connect() {
     const client: {connect: () => Promise<void>} = new LitJsSdk.LitNodeClient({debug: false});
-    await client.connect()
-    this._litNodeClient = client
+    await client.connect();
+    console.log('[INFO] LitNode connected');    
+    this._litNodeClient = client;
   }
 
   async encrypt(file: File | Blob): Promise<{
@@ -70,18 +71,18 @@ export class LitService {
       },
     ];
     const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: this.chain })
-
+    console.log('[INFO] Message signed, try to get encryption key from LitNode');    
     const symmetricKey = await this._litNodeClient.getEncryptionKey({
       accessControlConditions,
       toDecrypt: encryptedSymmetricKey,
       chain: this.chain,
       authSig
     })
-
-    const decryptedFile = await LitJsSdk.decryptFile({
+    console.log('[INFO] Encryption key retrieved, try to decrypt file');
+    const decryptedArrayBuffer:ArrayBuffer = await LitJsSdk.decryptFile({
       symmetricKey: symmetricKey,
       file: encryptedFile,
     });
-    return { decryptedFile }
+    return { decryptedArrayBuffer }
   }
 }

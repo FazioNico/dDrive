@@ -220,6 +220,16 @@ export class FilesPageComponent {
         await this._displayMessage(this._toastCtrl, opts);
         break;
       }
+      case type === 'download': {
+        const { _id = null, isFolder = false } = payload;
+        if (!_id || isFolder) {
+          throw new Error('download(): payload is invalid');
+        }
+        this._loaderService.setStatus(true);
+        await this._mediaFileService.downloadFile(_id);
+        this._loaderService.setStatus(false);
+        break;
+      }
     }
   }
 

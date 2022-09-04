@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  map,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map } from 'rxjs';
 import { CeramicService } from './ceramic.service';
 import { IPFSService } from './ipfs.service';
 import { v4 as uuidV4 } from 'uuid';
@@ -13,7 +8,8 @@ import { IMediaFile } from '../interfaces/mediafile.interface';
 
 @Injectable()
 export class MediaFileService {
-  private readonly _queryFilterBy$: BehaviorSubject<string|null> = new BehaviorSubject(null as any);
+  private readonly _queryFilterBy$: BehaviorSubject<string | null> =
+    new BehaviorSubject(null as any);
   private readonly _filterBy$: BehaviorSubject<string> = new BehaviorSubject(
     'root'
   );
@@ -22,7 +18,7 @@ export class MediaFileService {
   );
   public readonly breadcrumbs$ = combineLatest([
     this._items$.asObservable(),
-    this._filterBy$.asObservable()
+    this._filterBy$.asObservable(),
   ]).pipe(
     map(([items, path]) => {
       if (!items.length) {
@@ -48,12 +44,14 @@ export class MediaFileService {
   public readonly items$ = combineLatest([
     this._items$.asObservable().pipe(filter(Boolean)),
     this._filterBy$.asObservable(),
-    this._queryFilterBy$.asObservable()
+    this._queryFilterBy$.asObservable(),
   ]).pipe(
     map(([items, filterBy, queryFilter]) =>
-      items.filter((item) => queryFilter 
-        ? item.name.toLowerCase().includes(queryFilter.toLowerCase())
-        : item.parent === filterBy)
+      items.filter((item) =>
+        queryFilter
+          ? item.name.toLowerCase().includes(queryFilter.toLowerCase())
+          : item.parent === filterBy
+      )
     ),
     map((items) => {
       // extract filers & folders
@@ -82,12 +80,12 @@ export class MediaFileService {
   }
 
   async upload(file: File, encrypt = false) {
-    let mediaToUpload: File|Blob = file; 
-    const _id = uuidV4(); 
+    let mediaToUpload: File | Blob = file;
+    const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
     const metaData: IMediaFile = {
       parent: this._filterBy$.value,
-      name: file.name||_id,
+      name: file.name || _id,
       size: file.size,
       type: file.type,
       isFolder: false,
@@ -97,7 +95,8 @@ export class MediaFileService {
     };
     // encrypt file
     if (encrypt) {
-      const {encryptedFile, encryptedSymmetricKey} = await this._litService.encrypt(file);
+      const { encryptedFile, encryptedSymmetricKey } =
+        await this._litService.encrypt(file);
       // update variables
       mediaToUpload = encryptedFile;
       metaData.encryptedSymmetricKey = encryptedSymmetricKey;
@@ -105,21 +104,17 @@ export class MediaFileService {
     // upload file to ipfs
     const { cid } = await this._fileService.add(mediaToUpload);
     // build final object data and save to database
-    const newFileData: IMediaFile = {
-      ...metaData,
-      cid,
-    };
-    const currentFiles: IMediaFile[] = [...this._items$.value];
-    currentFiles.push({
-      ...newFileData,
-    });
+    const files = [
+      ...this._items$.value,
+      { ...metaData, cid }
+    ];
     // update object data to database
     await this._dataService.updateData(
-      { files: currentFiles },
+      { files },
       this._dataService.docId
     );
     // update state
-    this._items$.next(currentFiles);
+    this._items$.next(files);
   }
 
   async createFolder(name: string) {
@@ -152,15 +147,15 @@ export class MediaFileService {
   }
 
   async delete(id: string) {
-    const currentFiles = [...this._items$.value];
-    const index = currentFiles.findIndex((item) => item._id === id);
+    const files = [...this._items$.value];
+    const index = files.findIndex((item) => item._id === id);
     if (index === -1) {
       throw new Error('File not found');
     }
     // remove file from list
-    currentFiles.splice(index, 1);
+    files.splice(index, 1);
     // filter files by parent to exclude all files in current folder
-    const filesToPreserve: any[] = currentFiles.filter(
+    const filesToPreserve: any[] = files.filter(
       (item) => item.parent !== id
     );
     // update object data to database
@@ -171,8 +166,34 @@ export class MediaFileService {
     // update state
     this._items$.next(filesToPreserve);
   }
-  
-  searchByName(name: string|null) {
+
+  async downloadFile(_id: string) {
+    const { cid, name, encryptedSymmetricKey, type } =
+      this._items$.value.find((item) => item._id === _id) || {};
+    if (!cid) {
+      throw new Error('File not found');
+    }
+    // get file from ipfs
+    const fileFromCID = await this._fileService.getFromCID(cid);
+    const result: { file: File } = { file: fileFromCID };
+    // decrypt file if needed
+    if (encryptedSymmetricKey) {
+      const { decryptedArrayBuffer } = await this._litService.decrypt(
+        fileFromCID,
+        encryptedSymmetricKey
+      );
+      // convert array buffer to file and overwrite result object
+      result.file = new File([decryptedArrayBuffer], name || cid, { type });
+    }
+    console.log('[INFO] Creating download link...');
+    // download file from browser
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(result.file);
+    link.download = name || cid;
+    link.click();
+  }
+
+  searchByName(name: string | null) {
     if (name) {
       this._filterBy$.next('root');
     }
@@ -192,5 +213,18 @@ export class MediaFileService {
       throw new Error('Folder not found');
     }
     this._filterBy$.next(id);
+  }
+
+  private async _asyncLoad(file: File | Blob, type: string) {
+    const blob = new Blob([file], { type });
+    const previewUrl = URL.createObjectURL(blob);
+    // preload img for faster rendering
+    await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = previewUrl;
+    });
+    return { previewUrl };
   }
 }
