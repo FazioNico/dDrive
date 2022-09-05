@@ -2,13 +2,16 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   AlertController,
   IonSearchbar,
+  ModalController,
   PopoverController,
   ToastController,
   ToastOptions,
 } from '@ionic/angular';
 import { OverlayBaseController } from '@ionic/angular/util/overlay';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
 import { FilesOptionsListComponent } from '../../components/files-options-list/files-options-list.component';
+import { SetupEncryptionComponent } from '../../components/setup-encryption/setup-encryption.component';
+import { DIDService } from '../../services/did.service';
 import { LoaderService } from '../../services/loader.service';
 import { MediaFileService } from '../../services/mediafile.service';
 
@@ -37,8 +40,10 @@ export class FilesPageComponent {
     private readonly _popCtrl: PopoverController,
     private readonly _toastCtrl: ToastController,
     private readonly _alertCtrl: AlertController,
+    private readonly _modalCtrl: ModalController,
     private readonly _loaderService: LoaderService,
-    private readonly _mediaFileService: MediaFileService
+    private readonly _mediaFileService: MediaFileService,
+    private readonly _didService: DIDService
   ) {}
 
   async ionViewDidEnter() {
@@ -57,19 +62,16 @@ export class FilesPageComponent {
           return;
         }
         // ask for encryption
-        const { role } = await this._displayMessage(this._alertCtrl,{
-          header: 'Encryption',
-          message: `Do you want to encrypt file${files.length > 1 ? 's' : ''}?`,
-          buttons: [
-            { text: 'No', role: 'cancel'},
-            { text: 'Yes', role: 'encrypt' },
-          ],
-        })
-        const encrypt = role === 'encrypt';
+        const conditions = await this._askFoEncryption();
+        // check if user canceled operation
+        if (!conditions) {
+          return;
+        }
+        console.log('conditions: ', conditions);
         this._loaderService.setStatus(true);
         let i = 0
         while (i !== files.length) {
-          await this._mediaFileService.upload(files[i], encrypt);
+          await this._mediaFileService.upload(files[i], conditions);
           ++i;
         }
         this._loaderService.setStatus(false);
@@ -291,6 +293,20 @@ export class FilesPageComponent {
 
   trackByfn(index: number, item: { _id: string }) {
     return item._id;
+  }
+
+  private async _askFoEncryption() {
+    const ionModal = await this._modalCtrl.create({
+      component: SetupEncryptionComponent,
+      cssClass: 'modalAlert',
+      componentProps: {
+        walletAddress: this._didService.accountId$.value,
+        chainId: this._didService.chainId$.value,
+      }
+    });
+    await ionModal.present();
+    const { data } = await ionModal.onDidDismiss();
+    return data;
   }
 
   private async _displayMessage(

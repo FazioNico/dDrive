@@ -24,6 +24,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { AddressToAvatarPipe } from './pipes/address-to-avatar.pipe';
 import { SliceAddressPipe } from './pipes/slice-address.pipe';
+import { SetupEncryptionComponent } from './components/setup-encryption/setup-encryption.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NetwokNamePipe } from './pipes/network-name.pipe';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -50,12 +53,15 @@ const getProviderFactory =
     SetupPageComponent,
     LoginPageComponent,
     FilesPageComponent,
+    SetupEncryptionComponent,
     BytesToSizePipe,
     AddressToAvatarPipe,
     SliceAddressPipe,
+    NetwokNamePipe,
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     IonicModule.forRoot({
       mode: 'ios',
     }),
@@ -67,7 +73,7 @@ const getProviderFactory =
         children: [
           { path: 'files', component: FilesPageComponent },
           { path: '', redirectTo: 'files', pathMatch: 'full' },
-        ]
+        ],
       },
       {
         path: 'login',
@@ -82,7 +88,7 @@ const getProviderFactory =
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
       // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
   providers: [

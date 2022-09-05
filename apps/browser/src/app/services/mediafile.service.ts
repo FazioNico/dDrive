@@ -79,7 +79,7 @@ export class MediaFileService {
     this._items$.next(files);
   }
 
-  async upload(file: File, encrypt = false) {
+  async upload(file: File, encryptAccessCondition?: any[]) {
     let mediaToUpload: File | Blob = file;
     const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
@@ -94,12 +94,13 @@ export class MediaFileService {
       _id,
     };
     // encrypt file
-    if (encrypt) {
+    if (encryptAccessCondition && encryptAccessCondition.length > 0) {
       const { encryptedFile, encryptedSymmetricKey } =
-        await this._litService.encrypt(file);
+        await this._litService.encrypt(file, encryptAccessCondition);
       // update variables
       mediaToUpload = encryptedFile;
       metaData.encryptedSymmetricKey = encryptedSymmetricKey;
+      metaData.accessControlConditions = encryptAccessCondition;
     }
     // upload file to ipfs
     const { cid } = await this._fileService.add(mediaToUpload);
@@ -185,7 +186,7 @@ export class MediaFileService {
   }
 
   async downloadFile(_id: string, inBorwser = true) {
-    const { cid, name, encryptedSymmetricKey, type } =
+    const { cid, name, encryptedSymmetricKey, accessControlConditions, type } =
       this._items$.value.find((item) => item._id === _id) || {};
     if (!cid) {
       throw new Error('File not found');
@@ -194,10 +195,11 @@ export class MediaFileService {
     const fileFromCID = await this._fileService.getFromCID(cid);
     const result: { file: File } = { file: fileFromCID };
     // decrypt file if needed
-    if (encryptedSymmetricKey) {
+    if (encryptedSymmetricKey && accessControlConditions) {
       const { decryptedArrayBuffer } = await this._litService.decrypt(
         fileFromCID,
-        encryptedSymmetricKey
+        encryptedSymmetricKey,
+        accessControlConditions
       );
       // convert array buffer to file and overwrite result object
       result.file = new File([decryptedArrayBuffer], name || cid, { type });

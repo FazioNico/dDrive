@@ -1,4 +1,14 @@
 
+export interface IAccessControlConditions {
+  contractAddress?: string;
+  method: string;
+  parameters: string[];
+  returnValueTest: {
+    comparator: string
+    value: string
+  };
+}
+
 export interface IMediaFile {
   _id: string;
   parent: string;
@@ -10,4 +20,5 @@ export interface IMediaFile {
   cid?: string;
   isFolder?: boolean;
   encryptedSymmetricKey?: string;
+  accessControlConditions?: IAccessControlConditions[];
 }
