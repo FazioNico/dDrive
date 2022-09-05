@@ -1,0 +1,11 @@
+:host {
+  ion-item.header {
+    --background: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
+  .container {
+    background: rgb(244,248,248);
+    ion-item {
+      --background: transparent;
+    }
+  }
+}

@@ -26,7 +26,7 @@ export class SetupEncryptionComponent {
   private _buildForm() {
     this.form = new FormGroup({
       walletAddress: new FormGroup({
-        selected: new FormControl(true),
+        selected: new FormControl(false),
         values: new FormArray([
           new FormControl(this.walletAddress)
         ]),

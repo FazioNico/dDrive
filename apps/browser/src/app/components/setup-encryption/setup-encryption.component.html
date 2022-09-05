@@ -3,7 +3,7 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <h1>
+        <h1 class="ion-no-margin">
           <span>Encryption</span>
         </h1>
       </ion-col>
@@ -16,7 +16,7 @@
         </p>
         <div class="ion-text-end">
           <ion-button fill="outline" (click)="modalCtrl.dismiss([], 'cancel')">
-            No
+            No, start upload
           </ion-button>
           <ion-button (click)="isDisplayConditionForm = true">
             Yes
@@ -26,22 +26,22 @@
     </ion-row>
     <ion-row *ngIf="isDisplayConditionForm === true">
       <ion-col *ngIf="form">
-        <p>
-          Define access conditions to your data.
-        </p>
+        <ion-text color="primary">
+          <p>
+            Define access conditions to your data.
+          </p>
+        </ion-text>
         <!-- Chain Id -->
-        <ion-item color="light">
+        <ion-item class="header">
           <ion-label>Blockchain</ion-label>
-          <ion-select [value]="chainId" disabled>
-            <ion-select-option [value]="chainId">
-              {{chainId|networkName}}
-            </ion-select-option>
-          </ion-select>
+          <ion-note slot="end" color="primary">
+            {{chainId|networkName}}
+          </ion-note>
         </ion-item>
         <form [formGroup]="form" class="ion-padding-bottom">
           <ion-accordion-group
             [multiple]="true"
-            [value]="['walletAddress']">
+            [value]="['']">
             <!-- By wallets address owner -->
             <ion-accordion 
                 value="walletAddress" 
@@ -49,13 +49,16 @@
                 toggleIconSlot="end"
                 formGroupName="walletAddress">
               <ion-item 
-                  slot="header" 
-                  color="light"
+                  slot="header"
+                  class="header"
                   (click)="toggleCondition('walletAddress')">
                 <ion-label>Access by wallet address</ion-label>
-                <ion-icon slot="end" [name]="form.get('walletAddress')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
+                <ion-icon 
+                    slot="end" 
+                    color="primary" 
+                    [name]="form.get('walletAddress')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
               </ion-item>
-              <div class="ion-padding-vertical" slot="content">
+              <div class="ion-padding-vertical container" slot="content">
                 <ion-chip 
                   color="primary"
                   *ngFor="let el of form.get('walletAddress')?.get('values')?.value; let i = index">
@@ -78,19 +81,21 @@
                 formGroupName="nftOwner">
               <ion-item 
                   slot="header" 
-                  color="light"
+                  class="header"
                   (click)="toggleCondition('nftOwner')">
                 <ion-label>Must posess any token in an ERC721 collection (NFT Collection)</ion-label>
-                <ion-icon slot="end" [name]="form.get('nftOwner')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
+                <ion-icon 
+                    slot="end"
+                    color="primary" 
+                    [name]="form.get('nftOwner')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
               </ion-item>
-              <div slot="content" class="">
+              <div slot="content" class="container">
                 <ion-item formArrayName="values">
-                  <ion-label position="stacked">Collection contract address</ion-label>
-                  <ion-input formControlName="0" type="text"></ion-input>
+                  <ion-input placeholder="add collection contract address" formControlName="0" type="text"></ion-input>
                 </ion-item>
               </div>
             </ion-accordion>
-            <!-- By DAO members -->
+            <!-- By DAO members
             <ion-accordion 
                 disabled="true"
                 value="daoMember" 
@@ -99,18 +104,21 @@
                 formGroupName="daoMember">
               <ion-item 
                   slot="header" 
-                  color="light"
+                  class="header"
                   (click)="toggleCondition('daoMember')">
                 <ion-label>Must be a member of a DAO</ion-label>
-                <ion-icon slot="end" [name]="form.get('daoMember')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
+                <ion-icon 
+                    slot="end" 
+                    color="primary" 
+                    [name]="form.get('daoMember')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
               </ion-item>
-              <div slot="content" class="">
+              <div slot="content" class="container">
                 <ion-item formArrayName="values">
                   <ion-label position="stacked">DAO contract address</ion-label>
                   <ion-input formControlName="0" type="text"></ion-input>
                 </ion-item>
               </div>
-            </ion-accordion>
+            </ion-accordion> -->
           </ion-accordion-group>
         </form>
         <ion-item class="ion-margin-top" color="warning">
@@ -128,7 +136,7 @@
           Cancel
         </ion-button>
         <ion-button (click)="submit()">
-          Save
+          Start upload
         </ion-button>
       </ion-col>
     </ion-row>

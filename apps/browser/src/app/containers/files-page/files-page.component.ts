@@ -130,6 +130,7 @@ export class FilesPageComponent {
               role: 'ok',
             },
           ],
+          mode: 'md'
         };
         const { data, role } = await this._displayMessage(
           this._alertCtrl,
@@ -249,6 +250,7 @@ export class FilesPageComponent {
             { text: 'Cancel', role: 'cancel' },
             { text: 'Rename', role: 'ok' },
           ],
+          mode: 'md'
         };
         const { data, role } = await this._displayMessage(
           this._alertCtrl,

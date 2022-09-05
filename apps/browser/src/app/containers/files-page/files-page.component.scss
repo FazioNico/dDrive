@@ -10,6 +10,7 @@
 
   ion-searchbar {
     padding-bottom: 0!important;
+    --background: rgba(var(--ion-color-primary-rgb), 0.15);
   }
 
   .header-grid {
