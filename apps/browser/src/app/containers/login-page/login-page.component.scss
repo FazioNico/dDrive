@@ -33,7 +33,7 @@
       display: block;
       width: 100vw;
       height: 100vh;
-      background: rgba(var(--ion-color-primary-rgb), 0.5);
+      background: radial-gradient(circle, transparent 30%, rgba(var(--ion-color-primary-rgb), 0.8) 150%);
     }
 
     ion-col.wrapper {
