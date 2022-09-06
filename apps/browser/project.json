@@ -134,7 +134,8 @@
           "elliptic",
           "js-sha3",
           "events",
-          "ethereum-blockies-base64"
+          "ethereum-blockies-base64",
+          "bowser"
         ],
         "serviceWorker": true,
         "ngswConfigPath": "apps/browser/ngsw-config.json"
