@@ -30,6 +30,7 @@
     "@glazed/did-datastore": "^0.3.2",
     "@glazed/did-session": "^0.1.1",
     "@ionic/angular": "^6.2.4",
+    "@metamask/onboarding": "^1.0.1",
     "@nrwl/angular": "14.5.10",
     "@self.id/web": "^0.4.3",
     "@tableland/sdk": "^3.1.0",

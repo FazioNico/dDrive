@@ -1,7 +1,9 @@
 <ion-content class="ion-no-padding">
   <ion-backdrop *ngIf="isAuthentcating$.value === true"></ion-backdrop>
-  <ion-grid class="ion-no-padding ">
-    <ion-row class="ion-no-padding ion-text-start ion-justify-content-start ion-align-items-center">
+  <ion-grid class="ion-no-padding">
+    <ion-row
+      class="ion-no-padding ion-text-start ion-justify-content-start ion-align-items-center"
+    >
       <ion-col class="wrapper ion-align-items-center" size="10" size-md="6">
         <div>
           <ion-icon src="./assets/images/ipfs-logo.svg" class="logo"></ion-icon>
@@ -10,13 +12,18 @@
           </ion-text>
           <ion-text>
             <p>
-              An open-source decentralized file storage system that uses the
-              <a rel="noopener" href="https://en.wikipedia.org/wiki/InterPlanetary_File_System" target="_blank">InterPlanetary File System (IPFS)</a>
-              to store files in a distributed network of computers.
+              An open-source files storage solution for the decentralized web
+              that is built on top of the
+              InterPlanetary File System (IPFS)  
+              <a rel="noopener" target="_blank" href="https://ipfs.io">
+                <ion-icon name="open-outline" size="small"></ion-icon>
+              </a>
             </p>
-            <ion-button 
+            <ion-button
               #loginButton
-              (click)="login()" [routerLink]="['/drive']">
+              (click)="login()"
+              [routerLink]="['/drive']"
+            >
               Lunch dApp
             </ion-button>
           </ion-text>

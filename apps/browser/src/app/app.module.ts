@@ -32,11 +32,12 @@ import { TotalStoragePipe } from './pipes/total-storage.pipe';
 import { ItemPreviewComponent } from './components/item-preview/item-preview.component';
 import { PreviewFilePipe } from './pipes/preview-file.pipe';
 import { SafePipe } from './pipes/safe.pipe';
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
-    console.log('APP_INITIALIZER', _alertCtrl, _router);
-    if (!(window as any).ethereum) {
+    const onboarding = new MetaMaskOnboarding();
+    if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
       const ionAlert = await _alertCtrl.create({
         header: 'No Ethereum Provider',
         message:
@@ -45,7 +46,9 @@ const getProviderFactory =
       });
       await ionAlert.present();
       await ionAlert.onDidDismiss();
-      _router.navigate(['/setup']);
+      onboarding.startOnboarding();
+    } else {
+      onboarding.stopOnboarding();
     }
   };
 
