@@ -93,3 +93,14 @@ ion-backdrop {
     display: none;
   }
 }
+
+.modalSelectFolder {
+  --min-width: 280px;
+  --max-width: 350px;
+  --max-height: 320px;
+  --height: fit-content;
+
+  ion-content {
+    min-height: 200px;
+  }
+}

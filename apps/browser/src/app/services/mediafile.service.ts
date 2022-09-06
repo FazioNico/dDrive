@@ -79,6 +79,11 @@ export class MediaFileService {
     this._items$.next(files);
   }
 
+  async getAllFolders() {
+    const folders = this._items$.value.filter((item) => item.isFolder);
+    return folders;
+  }
+
   async upload(file: File, encryptAccessCondition?: any[]) {
     let mediaToUpload: File | Blob = file;
     const _id = uuidV4();
@@ -176,6 +181,23 @@ export class MediaFileService {
     }
     // rename file
     files[index].name = newName;
+    // update object data to database
+    await this._dataService.updateData(
+      { files },
+      this._dataService.docId
+    );
+    // update state
+    this._items$.next(files);
+  }
+
+  async moveTo(itemId: string, itemDestination: IMediaFile) {
+    const files = [...this._items$.value];
+    const index = files.findIndex((file) => file._id === itemId);
+    if (index === -1) {
+      throw new Error('File not found');
+    }
+    // move file
+    files[index].parent = itemDestination._id;
     // update object data to database
     await this._dataService.updateData(
       { files },

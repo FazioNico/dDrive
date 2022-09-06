@@ -27,6 +27,7 @@ import { SliceAddressPipe } from './pipes/slice-address.pipe';
 import { SetupEncryptionComponent } from './components/setup-encryption/setup-encryption.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NetwokNamePipe } from './pipes/network-name.pipe';
+import { SelectFolderComponent } from './components/select-folder/select-folder.component';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -58,6 +59,7 @@ const getProviderFactory =
     AddressToAvatarPipe,
     SliceAddressPipe,
     NetwokNamePipe,
+    SelectFolderComponent,
   ],
   imports: [
     BrowserModule,

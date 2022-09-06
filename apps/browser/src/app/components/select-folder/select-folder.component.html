@@ -1,0 +1,41 @@
+<ion-header *ngIf="queryItem$|async as queryItem">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button icon-only *ngIf="queryItem._id !== 'root'" (click)="navBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ queryItem.name }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button icon-only (click)="modalCtrl.dismiss(undefined, 'cancel')">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list *ngIf="lookUp$|async as lookUp">
+    <ion-item 
+        *ngFor="let item of lookUp" 
+        [ngClass]="{'selected': item._id === selelected?._id}"
+        (click)="selelected?._id ? selelected = undefined : selelected = item;">
+      <ion-icon slot="start" name="folder-open-outline"></ion-icon>
+      <ion-label>
+        {{ item.name }}
+      </ion-label>
+      <ion-button fill="none" slot="end" (click)="$event.stopPropagation();queryItem$.next(item);selelected = undefined">
+        <ion-icon name="arrow-forward"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button 
+        slot="end" 
+        [disabled]="selelected === undefined" 
+        (click)="modalCtrl.dismiss(selelected, 'ok')">
+      Deplacer
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -10,6 +10,7 @@ import {
 import { OverlayBaseController } from '@ionic/angular/util/overlay';
 import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
 import { FilesOptionsListComponent } from '../../components/files-options-list/files-options-list.component';
+import { SelectFolderComponent } from '../../components/select-folder/select-folder.component';
 import { SetupEncryptionComponent } from '../../components/setup-encryption/setup-encryption.component';
 import { DIDService } from '../../services/did.service';
 import { LoaderService } from '../../services/loader.service';
@@ -170,12 +171,11 @@ export class FilesPageComponent {
       }
       case type === 'preview': {
         console.log('preview(): ', payload);
-
-        const { cid = undefined } = payload;
+        const { item: {cid = undefined} = null} = payload;
         break;
       }
       case type === 'delete': {
-        const { _id = null, isFolder = false } = payload;
+        const { item: {_id = null, isFolder = false} = null } = payload;
         if (!_id) {
           throw new Error('delete(): payload is invalid');
         }
@@ -224,7 +224,7 @@ export class FilesPageComponent {
         break;
       }
       case type === 'download': {
-        const { _id = null, isFolder = false } = payload;
+        const { item: {_id = null, isFolder = false} = null } = payload;
         if (!_id || isFolder) {
           throw new Error('download(): payload is invalid');
         }
@@ -234,7 +234,7 @@ export class FilesPageComponent {
         break;
       }
       case type === 'rename': {
-        const { _id = null, name = null } = payload;
+        const { item: {_id = null, name = null} = {} } = payload;
         // ask for new name
         const opts = {
           header: 'Rename',
@@ -264,8 +264,37 @@ export class FilesPageComponent {
         this._loaderService.setStatus(false);
         break;
       }
+      case type === 'move': {
+        const folders = await this._mediaFileService.getAllFolders();
+        console.log('move(): folders: ', folders);
+        const ionModal = await this._modalCtrl.create({
+          component: SelectFolderComponent,
+          componentProps: {
+            folders,
+          },
+          cssClass: 'modalSelectFolder'
+        });
+        await ionModal.present();
+        const { data, role } = await ionModal.onDidDismiss();
+        console.log('move(): data: ', data, role);
+        if (role !== 'ok' || !data) {
+          return;
+        }
+        this._loaderService.setStatus(true);
+        this._mediaFileService.moveTo(payload?.item?._id, data);
+        this._loaderService.setStatus(false);
+        await this._displayMessage(this._toastCtrl, {
+          message: 'File moved successfully',
+          duration: 1200,
+          position: 'bottom',
+          color: 'primary',
+          buttons: [ { text: 'ok', side: 'end', handler: async () => await this._toastCtrl.dismiss() } ],
+          keyboardClose: true,
+        })
+        break;
+      }
       case type === 'share': {
-        const { _id = null, isFolder = false } = payload;
+        const { item : {_id = null, isFolder = false} = null } = payload;
         if (!_id || isFolder) {
           throw new Error('share(): payload is invalid');
         }
@@ -290,7 +319,7 @@ export class FilesPageComponent {
     if (role === 'close') {
       return;
     }
-    await this.actions(type, item);
+    await this.actions(type, {item, $event});
   }
 
   trackByfn(index: number, item: { _id: string }) {
