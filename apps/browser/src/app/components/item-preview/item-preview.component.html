@@ -1,0 +1,148 @@
+<ion-header mode="md" class="ion-no-border">
+  <ion-toolbar>
+    <ion-button
+      fill="none"
+      slot="end"
+      class="ion-float-end"
+      (click)="modalCtrl.dismiss(null, 'cancel')"
+    >
+      <ion-icon icon-only name="close"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-grid class="ion-margin-vertical">
+    <ion-row class="ion-align-items-center">
+      <ion-col size="7" class="ion-text-center preview">
+        <ng-container [ngSwitch]="true">
+          <!-- image -->
+          <div *ngSwitchCase="item?.type?.startsWith('image')">
+            <img
+              alt="image preview"
+              *ngIf="item | previewFile | async as url; else skeletImg"
+              [src]="url | safe: 'url'"
+            />
+            <ng-template #skeletImg>
+              <ion-spinner></ion-spinner>
+            </ng-template>            
+          </div>
+          <div *ngSwitchCase="item?.type?.startsWith('audio')">
+            <audio
+              controls
+              autoplay
+              *ngIf="item | previewFile | async as url; else skeletAudio"
+              [src]="url | safe: 'url'"
+            ></audio>
+            <ng-template #skeletAudio>
+              <ion-spinner></ion-spinner>
+            </ng-template>           
+          </div>
+          <!-- video -->
+          <div *ngSwitchCase="item?.type?.startsWith('video')">
+            <video
+              controls
+              autoplay
+              *ngIf="item | previewFile | async as url; else skeletAudio"
+              [src]="url | safe: 'url'"
+            ></video>
+            <ng-template #skeletAudio>
+              <ion-spinner></ion-spinner>
+            </ng-template>
+          </div>
+          <!-- others -->
+          <div *ngSwitchDefault>
+            <img alt="default preview" src="./assets/images/my-doc.svg">
+          </div>
+        </ng-container>
+        <ion-button class="ion-margin-top" expand="full" (click)="modalCtrl.dismiss(item, 'download')">Download</ion-button>
+      </ion-col>
+      <ion-col size="5">
+        <ion-list lines="none">
+          <ion-item>
+            <ion-label class="ion-text-wrap">
+              <p>Name</p>
+              <ion-text color="dark">
+                <p>{{ item.name }}</p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <p>Type</p>
+              <ion-text color="dark">
+                <p>{{ item.type }}</p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <p>Size</p>
+              <ion-text color="dark">
+                <p>{{ item.size | bytesToSize }}</p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <p>IPFS CID</p>
+              <ion-text color="dark">
+                <p class="ion-no-margin ion-text-wrap">
+                  {{ item.cid }}
+                </p>
+              </ion-text>
+            </ion-label>
+            <ion-button
+              slot="end"
+              fill="none"
+              target="_blank"
+              href="https://ipfs.io/ipfs/{{ item.cid }}"
+            >
+              <ion-icon icon-only size="small" name="open-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <p class="ion-margin-bottom">Encryption</p>
+              <ion-chip
+                color="primary"
+                *ngIf="item?.accessControlConditions?.[0]?.method === ''"
+              >
+                <ion-icon name="lock-closed"></ion-icon>
+                <ion-label>wallet address</ion-label>
+              </ion-chip>
+              <ion-chip
+                color="primary"
+                *ngIf="item?.accessControlConditions?.[1]?.method === 'balanceOf'"
+              >
+                <ion-icon name="lock-closed"></ion-icon>
+                <ion-label>posess NFT</ion-label>
+              </ion-chip>
+              <ion-chip color="primary" *ngIf="!item.encryptedSymmetricKey">
+                <ion-icon name="lock-open"></ion-icon>
+                <ion-label>Public</ion-label>
+              </ion-chip>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <p>Create date</p>
+              <ion-text color="dark">
+                <p>{{ item.createdIsoDateTime | date: 'YYYY/MM/dd HH:mm' }}</p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <p>Last modified date</p>
+              <ion-text color="dark">
+                <p>
+                  {{ item.lastModifiedIsoDateTime | date: 'YYYY/MM/dd HH:mm' }}
+                </p>
+              </ion-text>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

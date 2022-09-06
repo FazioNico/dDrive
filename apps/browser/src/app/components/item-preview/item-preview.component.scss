@@ -1,0 +1,25 @@
+:host {
+  ion-spinner {
+    height: 5rem;
+    width: 5rem;
+  }
+
+  ion-grid {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+  }
+  ion-row {
+    height: 100%;
+    position: relative;
+  }
+  ion-col.preview {
+    position: relative;
+
+    div {
+      position: fixed;
+      display: contents;
+    }
+  }
+}

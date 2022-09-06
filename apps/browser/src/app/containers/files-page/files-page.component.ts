@@ -10,6 +10,7 @@ import {
 import { OverlayBaseController } from '@ionic/angular/util/overlay';
 import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
 import { FilesOptionsListComponent } from '../../components/files-options-list/files-options-list.component';
+import { ItemPreviewComponent } from '../../components/item-preview/item-preview.component';
 import { SelectFolderComponent } from '../../components/select-folder/select-folder.component';
 import { SetupEncryptionComponent } from '../../components/setup-encryption/setup-encryption.component';
 import { DIDService } from '../../services/did.service';
@@ -172,7 +173,16 @@ export class FilesPageComponent {
       }
       case type === 'preview': {
         console.log('preview(): ', payload);
-        const { item: {cid = undefined} = null} = payload;
+        const { item } = payload;
+        const ionModal = await this._modalCtrl.create({
+          component: ItemPreviewComponent,
+          componentProps: {
+            item,
+          }
+        });
+        await ionModal.present();
+        const { data, role = 'cancel' } = await ionModal.onDidDismiss();
+        this.actions(role, {item: data})
         break;
       }
       case type === 'delete': {

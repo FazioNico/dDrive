@@ -29,6 +29,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NetwokNamePipe } from './pipes/network-name.pipe';
 import { SelectFolderComponent } from './components/select-folder/select-folder.component';
 import { TotalStoragePipe } from './pipes/total-storage.pipe';
+import { ItemPreviewComponent } from './components/item-preview/item-preview.component';
+import { PreviewFilePipe } from './pipes/preview-file.pipe';
+import { SafePipe } from './pipes/safe.pipe';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -57,11 +60,14 @@ const getProviderFactory =
     FilesPageComponent,
     SetupEncryptionComponent,
     SelectFolderComponent,
+    ItemPreviewComponent,
     BytesToSizePipe,
     AddressToAvatarPipe,
     SliceAddressPipe,
     NetwokNamePipe,
     TotalStoragePipe,
+    PreviewFilePipe,
+    SafePipe,
   ],
   imports: [
     BrowserModule,
