@@ -102,7 +102,7 @@ export class FilesPageComponent {
         break;
       }
       case type === 'navTo': {
-        const { _id } = payload;
+        const { item: {_id} = null} = payload;
         this._mediaFileService.navToFolderId(_id);
         this.searchbarElement.nativeElement.value = '';
         break;
@@ -172,7 +172,6 @@ export class FilesPageComponent {
         break;
       }
       case type === 'preview': {
-        console.log('preview(): ', payload);
         const { item } = payload;
         const ionModal = await this._modalCtrl.create({
           component: ItemPreviewComponent,

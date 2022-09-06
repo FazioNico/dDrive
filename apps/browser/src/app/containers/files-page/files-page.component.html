@@ -39,7 +39,7 @@
           size="auto"
           class="ion-align-items-center" 
           [ngStyle]="{'display': 'flex'}"
-          (click)="actions('navTo', b)" 
+          (click)="actions('navTo', {item: b})" 
           *ngFor="let b of breadcrumbs;let i = index;let isLast = last">
           <ion-label>
             <span class="clickable">{{b.name === 'root' ? 'My Drive' : b.name}}</span>
@@ -94,7 +94,7 @@
             *ngIf="breadcrumbs.length > 1" 
             class="item ion-align-items-center ion-padding-start">
           <ion-col size="auto" class="ion-padding-end">
-            <ion-fab-button size="small" translucent="true" mode="ios" (click)="actions('navTo', breadcrumbs[breadcrumbs.length - 2])">
+            <ion-fab-button size="small" translucent="true" mode="ios" (click)="actions('navTo', {item: breadcrumbs[breadcrumbs.length - 2]})">
               <ion-icon name="ellipsis-horizontal" size="small" color="primary"></ion-icon>
             </ion-fab-button>
           </ion-col>
@@ -103,7 +103,7 @@
       <!-- Items List Rows-->
       <ion-row 
           *ngFor="let item of items; trackBy:trackByfn" 
-          (click)="item.isFolder ? actions('navTo', item) : actions('preview', item)"
+          (click)="item.isFolder ? actions('navTo', {item}) : actions('preview', {item})"
           class="item clickable ion-align-items-center ion-padding-start">
         <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
           <ion-icon size="large" name="folder-outline" *ngIf="item.isFolder === true"></ion-icon>
