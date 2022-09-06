@@ -1,4 +1,41 @@
-<ion-content>
-  <p>login-page works!</p>
-  <ion-button [routerLink]="['/drive']">lunch dApp</ion-button>
+<ion-content class="ion-no-padding">
+  <ion-backdrop *ngIf="isAuthentcating$.value === true"></ion-backdrop>
+  <ion-grid class="ion-no-padding ">
+    <ion-row class="ion-no-padding ion-text-start ion-justify-content-start ion-align-items-center">
+      <ion-col class="wrapper ion-align-items-center" size="10" size-md="6">
+        <div>
+          <ion-icon src="./assets/images/ipfs-logo.svg" class="logo"></ion-icon>
+          <ion-text color="primary">
+            <h1>dDrive</h1>
+          </ion-text>
+          <ion-text>
+            <p>
+              An open-source decentralized file storage system that uses the
+              <a rel="noopener" href="https://en.wikipedia.org/wiki/InterPlanetary_File_System" target="_blank">InterPlanetary File System (IPFS)</a>
+              to store files in a distributed network of computers.
+            </p>
+            <ion-button 
+              #loginButton
+              (click)="login()" [routerLink]="['/drive']">
+              Lunch dApp
+            </ion-button>
+          </ion-text>
+        </div>
+      </ion-col>
+      <!-- <ion-col size="10" size-sm="8" size-md="6" size-lg="4">
+        <ion-card>
+          <ion-card-content>
+            <ion-card-header>
+              <ion-card-title>dDrive</ion-card-title>
+              <ion-card-subtitle>
+                demo
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-button [routerLink]="['/drive']">lunch dApp</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col> -->
+    </ion-row>
+  </ion-grid>
+  <!-- Backdrop that is not visible -->
 </ion-content>
