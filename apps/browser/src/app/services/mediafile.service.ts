@@ -66,6 +66,7 @@ export class MediaFileService {
       return result;
     })
   );
+  public readonly allMedia$ = this._items$.asObservable()
 
   constructor(
     private readonly _dataService: CeramicService,

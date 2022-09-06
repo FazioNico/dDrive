@@ -4,6 +4,16 @@
     font-weight: 600;
     --background: rgba(var(--ion-color-primary-rgb), 0.05);
   }
+
+  .menu-stats {
+    position: absolute;
+    bottom: 0;
+
+    ion-item {
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+  }
 }
 
 ion-popover.profil-popover {

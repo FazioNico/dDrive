@@ -28,6 +28,7 @@ import { SetupEncryptionComponent } from './components/setup-encryption/setup-en
 import { ReactiveFormsModule } from '@angular/forms';
 import { NetwokNamePipe } from './pipes/network-name.pipe';
 import { SelectFolderComponent } from './components/select-folder/select-folder.component';
+import { TotalStoragePipe } from './pipes/total-storage.pipe';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -55,11 +56,12 @@ const getProviderFactory =
     LoginPageComponent,
     FilesPageComponent,
     SetupEncryptionComponent,
+    SelectFolderComponent,
     BytesToSizePipe,
     AddressToAvatarPipe,
     SliceAddressPipe,
     NetwokNamePipe,
-    SelectFolderComponent,
+    TotalStoragePipe,
   ],
   imports: [
     BrowserModule,

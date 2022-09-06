@@ -33,6 +33,7 @@ export class FilesPageComponent {
     })
   );
   public items$ = this._mediaFileService.items$;
+  public readonly allMedia$ = this._mediaFileService.allMedia$;
   public options = {
     maxBreadcrumbs: 3,
   };

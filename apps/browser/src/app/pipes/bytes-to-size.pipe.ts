@@ -5,9 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class BytesToSizePipe implements PipeTransform {
 
-  transform(value?: string|number): string {
+  transform(value?: string|number|null): string {
     if (!value) {
-      return '';
+      return '0 Bytes';
     }
     const bytes = Number(value);
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
