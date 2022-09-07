@@ -4,6 +4,7 @@ import { IonButton, LoadingController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { CeramicService } from '../../services/ceramic.service';
 import { DIDService } from '../../services/did.service';
+import { XMTPService } from '../../services/xmtp.service';
 
 @Component({
   selector: 'd-drive-login-page',
@@ -18,8 +19,9 @@ export class LoginPageComponent  {
   constructor(
     private readonly _router: Router,
     private readonly _loadingCtrl: LoadingController,
-    private _did: DIDService,
-    private _ceramic: CeramicService
+    private readonly _did: DIDService,
+    private readonly _ceramic: CeramicService,
+    private readonly _xmtp: XMTPService
   ) {}
 
   ionViewDidLeave() {
@@ -59,6 +61,8 @@ export class LoginPageComponent  {
     if (!profile) {
       return false;
     }
+    // Connect xmtp
+    await this._xmtp.init(this._did.web3Provider);
     return true;
   }
 }

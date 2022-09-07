@@ -5,6 +5,7 @@ import { IPFSService } from './ipfs.service';
 import { v4 as uuidV4 } from 'uuid';
 import { LitService } from './lit.service';
 import { IMediaFile } from '../interfaces/mediafile.interface';
+import { XMTPService } from './xmtp.service';
 
 @Injectable()
 export class MediaFileService {
@@ -71,7 +72,8 @@ export class MediaFileService {
   constructor(
     private readonly _dataService: CeramicService,
     private readonly _fileService: IPFSService,
-    private readonly _litService: LitService
+    private readonly _litService: LitService,
+    private readonly _xmtpService: XMTPService
   ) {}
 
   async getFiles() {
@@ -89,7 +91,7 @@ export class MediaFileService {
     let mediaToUpload: File | Blob = file;
     const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
-    const metaData: IMediaFile = {
+    const metaData: IMediaFile & {conversation?: any} = {
       parent: this._filterBy$.value,
       name: file.name || _id,
       size: file.size,
@@ -99,6 +101,20 @@ export class MediaFileService {
       lastModifiedIsoDateTime: isoDateTime,
       _id,
     };
+    // check existing shared users account with Notifs protocol
+    const isWalletAddressCondition = encryptAccessCondition?.find(c => c.method === '' && c.parameters?.[0] === ':userAddress');
+    if (encryptAccessCondition && encryptAccessCondition.length > 0 && isWalletAddressCondition) {
+      const destinationAddress = isWalletAddressCondition.returnValueTest.value; 
+      console.log('[INFO] notify shared users: ', destinationAddress);
+      const {conversations = []} = await this._xmtpService.getConversations();
+      const conversation = conversations.find(c => c.peerAddress === destinationAddress);
+      if (conversation) {
+        metaData.conversation = conversation;
+      } else {
+        console.log('[INFO] conversation not found');
+        metaData.conversation = await this._xmtpService.startNewConversation(destinationAddress);
+      }
+    }
     // encrypt file
     if (encryptAccessCondition && encryptAccessCondition.length > 0) {
       const { encryptedFile, encryptedSymmetricKey } =
@@ -111,15 +127,23 @@ export class MediaFileService {
     // upload file to ipfs
     const { cid } = await this._fileService.add(mediaToUpload);
     // build final object data and save to database
+    const { conversation = null, ...fileData} = metaData;
     const files = [
       ...this._items$.value,
-      { ...metaData, cid }
+      { ...fileData, cid }
     ];
     // update object data to database
     await this._dataService.updateData(
       { files },
       this._dataService.docId
     );
+    // notify shared user
+    if (conversation && isWalletAddressCondition) {
+      const { peerAddress } = conversation;
+      const { name } = fileData;
+      const message = `You have a new file shared with you: ${name}`;
+      await this._xmtpService.sendMessage(peerAddress, message);
+    }
     // update state
     this._items$.next(files);
   }
