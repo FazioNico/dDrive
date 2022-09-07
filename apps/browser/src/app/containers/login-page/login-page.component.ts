@@ -2,9 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonButton, LoadingController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
-import { CeramicService } from '../../services/ceramic.service';
-import { DIDService } from '../../services/did.service';
-import { XMTPService } from '../../services/xmtp.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'd-drive-login-page',
@@ -19,9 +17,7 @@ export class LoginPageComponent  {
   constructor(
     private readonly _router: Router,
     private readonly _loadingCtrl: LoadingController,
-    private readonly _did: DIDService,
-    private readonly _ceramic: CeramicService,
-    private readonly _xmtp: XMTPService
+    private readonly _auth: AuthService
   ) {}
 
   ionViewDidLeave() {
@@ -38,8 +34,9 @@ export class LoginPageComponent  {
     await loading.present();
     this.isAuthentcating$.next(true);
     this.loginForm.nativeElement.disabled = true;
-
-    const isAuth = await this._connectServices();
+    // use services to authenticate
+    const isAuth = await this._auth.connectServices();
+    // check result
     if (isAuth) {
       await this._router.navigate(['/drive'])
       .catch(() => {
@@ -49,20 +46,4 @@ export class LoginPageComponent  {
     this._loadingCtrl.dismiss();
   }
 
-  private async _connectServices() {
-    // Authenticate with DID    
-    const ethereum = (window as any)?.ethereum;
-    const did = await this._did.init(ethereum);
-    if (!did) {
-      return false;
-    }
-    // Connect ceramic
-    const profile = await this._ceramic.authWithDID(did);
-    if (!profile) {
-      return false;
-    }
-    // Connect xmtp
-    await this._xmtp.init(this._did.web3Provider);
-    return true;
-  }
 }

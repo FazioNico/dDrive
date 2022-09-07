@@ -33,6 +33,7 @@ import { ItemPreviewComponent } from './components/item-preview/item-preview.com
 import { PreviewFilePipe } from './pipes/preview-file.pipe';
 import { SafePipe } from './pipes/safe.pipe';
 import MetaMaskOnboarding from '@metamask/onboarding';
+import { AuthService } from './services/auth.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -113,7 +114,7 @@ const getProviderFactory =
     LitService,
     AuthGuard,
     DIDService,
-    AuthGuard,
+    AuthService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,
