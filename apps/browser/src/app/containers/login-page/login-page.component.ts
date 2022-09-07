@@ -35,7 +35,12 @@ export class LoginPageComponent  {
     this.isAuthentcating$.next(true);
     this.loginForm.nativeElement.disabled = true;
     // use services to authenticate
-    const isAuth = await this._auth.connectServices();
+    const isAuth = await this._auth.connectServices()
+      .catch((err) => {
+        // TODO: display error message
+        console.error(err);
+        return false;
+      });
     // check result
     if (isAuth) {
       await this._router.navigate(['/drive'])

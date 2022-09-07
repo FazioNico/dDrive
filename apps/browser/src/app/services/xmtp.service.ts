@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ethers } from 'ethers';
 
 interface IXMTPMessage {
-  conversation: Conversation;
+  conversation?: Conversation;
   messagesInConversation: Message[];
 }
 
@@ -24,15 +24,17 @@ export class XMTPService {
     null as any
   );
 
-  async init(web3Provider: ethers.providers.Web3Provider) {
+  async init(web3Provider: ethers.providers.Web3Provider, opts?: ListMessagesOptions | undefined) {
     this._web3Provider = web3Provider;
     // Create the client with your wallet.
     // This will connect to the XMTP development network by default
     const xmtp = await Client.create(this._web3Provider.getSigner());
     this._xmtp.next(xmtp);
-    await this.getConversations();
-    await this.getPreviousMessagesFromExistingConverstion();
-    this._listenAllMessages();
+    const {conversations = []} = await this.getConversations();
+    this._conversations.next(conversations);
+    const messages = await this.getPreviousMessagesFromExistingConverstion(opts);
+    this.messages$.next(messages);
+    this._listenAllUpcomingMessages();
     return xmtp;
   }
 
@@ -45,7 +47,6 @@ export class XMTPService {
       xmtp = await this.init(this._web3Provider);
     }
     const conversations = await xmtp.conversations.list();
-    this._conversations.next(conversations);
     return { conversations };
   }
 
@@ -79,13 +80,13 @@ export class XMTPService {
           messages.map((message) => this._parseMessage(message))
         );
       // add conversation and messages to messages array
-      messages.push({
-        conversation,
-        messagesInConversation,
-      });
-    }
-    // update messages$ BehaviorSubject
-    this.messages$.next(messages);
+      if (messagesInConversation.length > 0) {
+        messages.push({
+          conversation,
+          messagesInConversation,
+        });
+      }
+    };
     console.log('[INFO][XMTP] Messages', messages);
     return messages;
   }
@@ -115,8 +116,7 @@ export class XMTPService {
     return { conversation };
   }
 
-  // TODO: add to message to message BehaviorSubject
-  private async _listenAllMessages() {
+  private async _listenAllUpcomingMessages() {
     if (!this._web3Provider) {
       throw 'Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
     }
@@ -131,7 +131,9 @@ export class XMTPService {
         );
         const parsedMessage = this._parseMessage(message);
         console.log('[INFO][XMTP] Parsed message', parsedMessage);
-        
+        this.messages$.next([{
+          messagesInConversation: [parsedMessage]
+        }]);
       }
       break;
     }

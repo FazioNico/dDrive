@@ -102,20 +102,22 @@ export class CeramicService {
       return profile;
     }
 
-    async updateUserProfil(value: {latestConnectionISODatetime: string}) {
+    async updateUserProfil(value: Partial<IUserProfil>) {
       if (!this._db?.did) {
         await this._auth();
       }
-      const {dDrive: {documentID = null} = {}} = await this._getProfileFromCeramic()||{};
+      const {dDrive: {documentID = null, ...previousProfilData} = {}} = await this._getProfileFromCeramic()||{};
       if (!documentID) {
         throw new Error('No documentID found');
       }
       // save the document `id` to the profile data
       const dDrive: IUserProfil = {
+        latestConnectionISODatetime: new Date().toISOString(),
         documentID,
+        ...previousProfilData,
         ...value
-      };
-      const updatedProfil = {  dDrive };
+      } as IUserProfil;
+      const updatedProfil = { dDrive };
       await this._datastore.merge('BasicProfile', updatedProfil);
       const profile = await this._getProfileFromCeramic();
       return profile;
@@ -180,12 +182,17 @@ export class CeramicService {
           lastModifiedIsoDateTime: new Date().toISOString()
         });
         // save the document `id` to the profile data
-        const updatedProfil = {
-          dDrive: {
-            documentID: doc.id.toString(),
-          }
-        }
-        await this._datastore.merge('BasicProfile', updatedProfil);
+        const dDrive: IUserProfil = {
+          latestConnectionISODatetime: new Date().toISOString(),
+          creationISODatetime: new Date().toISOString(),
+          documentID: doc.id.toString(),
+        };
+        await this._datastore.merge('BasicProfile', { dDrive });
+      } else {
+        // only update latest connectionTime
+        await this.updateUserProfil({
+          latestConnectionISODatetime: new Date().toISOString()
+        });
       }
     }
 

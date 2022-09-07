@@ -35,6 +35,7 @@ import { SafePipe } from './pipes/safe.pipe';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { AuthService } from './services/auth.service';
 import { XMTPService } from './services/xmtp.service';
+import { UserProfilService } from './services/user-profil.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -117,6 +118,7 @@ const getProviderFactory =
     DIDService,
     AuthService,
     XMTPService,
+    UserProfilService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,

@@ -1,6 +1,7 @@
 export interface IUserProfil {
   latestConnectionISODatetime: string;
-  creationISODatetime?: string;
+  latestNotifedISODatetime?: string;
+  creationISODatetime: string;
   documentID: string;
   sharedDocID?: string;
 }
