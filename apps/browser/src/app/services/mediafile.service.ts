@@ -4,8 +4,9 @@ import { CeramicService } from './ceramic.service';
 import { IPFSService } from './ipfs.service';
 import { v4 as uuidV4 } from 'uuid';
 import { LitService } from './lit.service';
-import { IMediaFile } from '../interfaces/mediafile.interface';
+import { IAccessControlConditions, IMediaFile } from '../interfaces/mediafile.interface';
 import { XMTPService } from './xmtp.service';
+import { DIDService } from './did.service';
 
 @Injectable()
 export class MediaFileService {
@@ -67,13 +68,14 @@ export class MediaFileService {
       return result;
     })
   );
-  public readonly allMedia$ = this._items$.asObservable()
+  public readonly allMedia$ = this._items$.asObservable();
 
   constructor(
     private readonly _dataService: CeramicService,
     private readonly _fileService: IPFSService,
     private readonly _litService: LitService,
-    private readonly _xmtpService: XMTPService
+    private readonly _xmtpService: XMTPService,
+    private readonly _didService: DIDService
   ) {}
 
   async getFiles() {
@@ -87,11 +89,11 @@ export class MediaFileService {
     return folders;
   }
 
-  async upload(file: File, encryptAccessCondition?: any[]) {
+  async upload(file: File, encryptAccessCondition?: IAccessControlConditions[]) {
     let mediaToUpload: File | Blob = file;
     const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
-    const metaData: IMediaFile & {conversation?: any} = {
+    const metaData: IMediaFile & { conversation?: any } = {
       parent: this._filterBy$.value,
       name: file.name || _id,
       size: file.size,
@@ -102,17 +104,35 @@ export class MediaFileService {
       _id,
     };
     // check existing shared users account with Notifs protocol
-    const isWalletAddressCondition = encryptAccessCondition?.find(c => c.method === '' && c.parameters?.[0] === ':userAddress');
-    if (encryptAccessCondition && encryptAccessCondition.length > 0 && isWalletAddressCondition) {
-      const destinationAddress = isWalletAddressCondition.returnValueTest.value; 
+    const account = this._didService.accountId$.value;
+    const isWalletAddressCondition = encryptAccessCondition?.find(
+      (c) => c.method === '' && c.parameters.includes(':userAddress') && c.returnValueTest.value !== account
+    );
+    const destinationAddress = isWalletAddressCondition?.returnValueTest?.value;
+    if (
+      encryptAccessCondition &&
+      encryptAccessCondition.length > 0 &&
+      isWalletAddressCondition &&
+      destinationAddress &&
+      destinationAddress !== account
+    ) {
       console.log('[INFO] notify shared users: ', destinationAddress);
-      const {conversations = []} = await this._xmtpService.getConversations();
-      const conversation = conversations.find(c => c.peerAddress === destinationAddress);
+      const { conversations = [] } = await this._xmtpService.getConversations();
+      const conversation = conversations.find(
+        (c) => c.peerAddress === destinationAddress
+      );
       if (conversation) {
+        console.log('[INFO] conversation found: ', conversation);
         metaData.conversation = conversation;
       } else {
         console.log('[INFO] conversation not found');
-        metaData.conversation = await this._xmtpService.startNewConversation(destinationAddress);
+        metaData.conversation = await this._xmtpService.startNewConversation(
+          destinationAddress
+        ).catch((e) => {
+          // TODO: use display error service and do not throw error
+          console.log('[ERROR] startNewConversation: ', e);
+          return null;
+        });
       }
     }
     // encrypt file
@@ -127,22 +147,16 @@ export class MediaFileService {
     // upload file to ipfs
     const { cid } = await this._fileService.add(mediaToUpload);
     // build final object data and save to database
-    const { conversation = null, ...fileData} = metaData;
-    const files = [
-      ...this._items$.value,
-      { ...fileData, cid }
-    ];
+    const { conversation = null, ...fileData } = metaData;
+    const files = [...this._items$.value, { ...fileData, cid }];
     // update object data to database
-    await this._dataService.updateData(
-      { files },
-      this._dataService.docId
-    );
+    await this._dataService.updateData({ files }, this._dataService.docId);
     // notify shared user
     if (conversation && isWalletAddressCondition) {
-      const { peerAddress } = conversation;
       const { name } = fileData;
       const message = `You have a new file shared with you: ${name}`;
-      await this._xmtpService.sendMessage(peerAddress, message);
+      await this._xmtpService.sendMessage(conversation, message);
+      console.log('[INFO] message sent: ', message);
     }
     // update state
     this._items$.next(files);
@@ -186,9 +200,7 @@ export class MediaFileService {
     // remove file from list
     files.splice(index, 1);
     // filter files by parent to exclude all files in current folder
-    const filesToPreserve: any[] = files.filter(
-      (item) => item.parent !== id
-    );
+    const filesToPreserve: any[] = files.filter((item) => item.parent !== id);
     // update object data to database
     await this._dataService.updateData(
       { files: filesToPreserve },
@@ -198,7 +210,7 @@ export class MediaFileService {
     this._items$.next(filesToPreserve);
   }
 
-  async rename(_id: string, newName: string){
+  async rename(_id: string, newName: string) {
     const files = [...this._items$.value];
     const index = this._items$.value.findIndex((item) => item._id === _id);
     if (index === -1) {
@@ -207,10 +219,7 @@ export class MediaFileService {
     // rename file
     files[index].name = newName;
     // update object data to database
-    await this._dataService.updateData(
-      { files },
-      this._dataService.docId
-    );
+    await this._dataService.updateData({ files }, this._dataService.docId);
     // update state
     this._items$.next(files);
   }
@@ -224,10 +233,7 @@ export class MediaFileService {
     // move file
     files[index].parent = itemDestination._id;
     // update object data to database
-    await this._dataService.updateData(
-      { files },
-      this._dataService.docId
-    );
+    await this._dataService.updateData({ files }, this._dataService.docId);
     // update state
     this._items$.next(files);
   }
