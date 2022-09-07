@@ -2,6 +2,7 @@ import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
 import { Injectable } from '@angular/core';
 import { DID } from 'dids';
 import { BehaviorSubject } from 'rxjs';
+import { ethers } from 'ethers';
 
 @Injectable()
 export class DIDService {
@@ -10,48 +11,34 @@ export class DIDService {
   public did!: DID;
   public readonly accountId$ = new BehaviorSubject(null as any);
   public readonly chainId$ = new BehaviorSubject(null as any);
+  public web3Provider!: ethers.providers.Web3Provider;
 
-  async init(ethereumProvider: any) {    
+  async init(ethereumProvider: any) { 
     if (this.did) {
       console.log('[INFO] already authenticated');      
       return this.did;
     }
+    this.web3Provider = new ethers.providers.Web3Provider(ethereumProvider, 'any');
     // Request accounts from the Ethereum provider
-    // if (ethereumProvider.send) {
-    if (!ethereumProvider.request) {
-      throw 'No request function found';
-    }
-    const accounts = await ethereumProvider.request({ method: 'eth_requestAccounts' })
+    const accounts = await this.web3Provider
+      .send('eth_requestAccounts', [])
       .catch((err: any) => {
         throw `Error during Web3 Authetication: ${err?.message||'Unknown error'}`;
       });
-    if (ethereumProvider.isMetaMask) {
-      (ethereumProvider as any).on('connect',(connectInfo: any) => {
-        // console.log('connectInfo', connectInfo);
-      });
-      (ethereumProvider as any).on('chainChanged', (newNetwork: string) => {
-        // When a Provider makes its initial connection, it emits a "network"
-        // event with a null oldNetwork along with the newNetwork. So, if the
-        // oldNetwork exists, it represents a changing network
-        if (newNetwork) {
-            window.location.href = '/login';
-        }
-      });
-      (ethereumProvider as any).on('accountsChanged', (e:string[]) => {
-        // Handle the new accounts, or lack thereof.
-        // "accounts" will always be an array, but it can be empty.
-        if (e) {
-          window.location.href = '/login';
-        }
-      });
-    }
     if ((accounts?.length||0) === 0) {
       throw 'No accounts found. Please unlock your Ethereum account, refresh the page and try again.';
     }
-    this.chainId$.next(ethereumProvider?.chainId);
+    // console.log('[INFO] getNetwork(): ', await web3Povider.getNetwork());
+    // listen event from provider
+    this._listenEvent(this.web3Provider);
+    const { chainId =  (await this.web3Provider?.getNetwork())?.chainId} = (this.web3Provider.provider as any);
+    if (!chainId) {
+      throw 'No chainId found. Please unlock your Ethereum account, refresh the page and try again.';
+    }
+    this.chainId$.next(chainId);
     // Create an EthereumAuthProvider using the Ethereum provider and requested account
     const account: string = accounts[0];
-    const authProvider = new EthereumAuthProvider(ethereumProvider, account);
+    const authProvider = new EthereumAuthProvider(this.web3Provider.provider, account);
     // Connect the created EthereumAuthProvider to the 3ID Connect instance so it can be used to
     // generate the authentication secret
     await this._threeID.connect(authProvider);
@@ -62,5 +49,25 @@ export class DIDService {
       provider: this._threeID.getDidProvider(),
     });
     return this.did;
+  }
+
+  private _listenEvent(web3Provider: ethers.providers.Web3Provider) {
+    const {provider: defaultPprovider} = web3Provider;
+    if (defaultPprovider && defaultPprovider.isMetaMask && (defaultPprovider as any).on) {
+      (defaultPprovider as any).on('accountsChanged',  (accounts: string[]) => {
+        window.location.reload(); 
+      });
+    }
+    web3Provider.on('accountsChanged',  (accounts: string[]) => {
+      window.location.reload();   
+    });
+    web3Provider.on("network", (newNetwork, oldNetwork) => {
+      // When a Provider makes its initial connection, it emits a "network"
+      // event with a null oldNetwork along with the newNetwork. So, if the
+      // oldNetwork exists, it represents a changing network
+      if (oldNetwork) {
+          window.location.reload();
+      }      
+    });
   }
 }
