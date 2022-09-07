@@ -34,6 +34,7 @@ import { PreviewFilePipe } from './pipes/preview-file.pipe';
 import { SafePipe } from './pipes/safe.pipe';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { AuthService } from './services/auth.service';
+import { XMTPService } from './services/xmtp.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -115,6 +116,7 @@ const getProviderFactory =
     AuthGuard,
     DIDService,
     AuthService,
+    XMTPService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,

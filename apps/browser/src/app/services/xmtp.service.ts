@@ -3,9 +3,7 @@ import { Client, Conversation } from '@xmtp/xmtp-js'
 import { BehaviorSubject } from "rxjs";
 import { ethers } from 'ethers'
 
-@Injectable({
-  providedIn: "root"
-})
+@Injectable()
 export class XMTPService {
 
   private _web3Provider!: ethers.providers.Web3Provider;
