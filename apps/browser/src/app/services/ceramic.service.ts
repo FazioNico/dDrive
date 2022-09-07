@@ -5,6 +5,7 @@ import { getResolver as get3IDResolver } from '@ceramicnetwork/3id-did-resolver'
 import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
 import { DID } from 'dids'
 import { DIDDataStore } from '@glazed/did-datastore';
+import { IUserProfil } from "../interfaces/user-profil.interface";
 
 
 @Injectable()
@@ -27,7 +28,7 @@ export class CeramicService {
       if (!this._db?.did) {
         await this._auth();
       }
-      const {dDrive: {documentID = null} = {}} = await this._getProfileFromCeramic();
+      const {dDrive: {documentID = null} = {}} = await this._getProfileFromCeramic()||{};
       if (!documentID) {
         throw new Error('No documentID found');
       }
@@ -101,6 +102,25 @@ export class CeramicService {
       return profile;
     }
 
+    async updateUserProfil(value: {latestConnectionISODatetime: string}) {
+      if (!this._db?.did) {
+        await this._auth();
+      }
+      const {dDrive: {documentID = null} = {}} = await this._getProfileFromCeramic()||{};
+      if (!documentID) {
+        throw new Error('No documentID found');
+      }
+      // save the document `id` to the profile data
+      const dDrive: IUserProfil = {
+        documentID,
+        ...value
+      };
+      const updatedProfil = {  dDrive };
+      await this._datastore.merge('BasicProfile', updatedProfil);
+      const profile = await this._getProfileFromCeramic();
+      return profile;
+    }
+
     private async _auth() {
       if ((window as any)['ethereum'] == null) {
       throw new Error('No injected Ethereum provider found')
@@ -142,11 +162,12 @@ export class CeramicService {
     private async _getProfileFromCeramic() {
       try {
         //use the DIDDatastore to get profile data from Ceramic
-        const profile = await this._datastore.get('BasicProfile')
+        const profile: {dDrive: IUserProfil}|null = await this._datastore.get('BasicProfile')
         //render profile data to the DOM (not written yet)
         return profile;
       } catch (error) {
         console.error(error)
+        return null;
       }
     }
    

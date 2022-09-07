@@ -20,8 +20,8 @@ export class AuthService {
       return false;
     }
     // Connect ceramic
-    const profile = await this._ceramic.authWithDID(did);
-    if (!profile) {
+    const {dDrive} = await this._ceramic.authWithDID(did)||{};
+    if (!dDrive) {
       return false;
     }
     // Connect xmtp
