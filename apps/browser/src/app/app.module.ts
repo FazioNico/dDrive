@@ -36,6 +36,7 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { AuthService } from './services/auth.service';
 import { XMTPService } from './services/xmtp.service';
 import { UserProfilService } from './services/user-profil.service';
+import { NotificationService } from './services/notification.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -119,6 +120,7 @@ const getProviderFactory =
     AuthService,
     XMTPService,
     UserProfilService,
+    NotificationService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,
