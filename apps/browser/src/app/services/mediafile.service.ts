@@ -90,7 +90,7 @@ export class MediaFileService {
   }
 
   async upload(file: File, encryptAccessCondition?: IAccessControlConditions[]) {
-    let mediaToUpload: File | Blob = file;
+    let fileToUpload: File | Blob = file;
     const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
     const metaData: IMediaFile & { conversation?: any } = {
@@ -140,12 +140,12 @@ export class MediaFileService {
       const { encryptedFile, encryptedSymmetricKey } =
         await this._litService.encrypt(file, encryptAccessCondition);
       // update variables
-      mediaToUpload = encryptedFile;
+      fileToUpload = encryptedFile;
       metaData.encryptedSymmetricKey = encryptedSymmetricKey;
       metaData.accessControlConditions = encryptAccessCondition;
     }
     // upload file to ipfs
-    const { cid } = await this._fileService.add(mediaToUpload);
+    const { cid } = await this._fileService.add(fileToUpload);
     // build final object data and save to database
     const { conversation = null, ...fileData } = metaData;
     const files = [...this._items$.value, { ...fileData, cid }];
