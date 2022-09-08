@@ -128,9 +128,12 @@ export class XMTPService {
         console.log(
           `[INFO] {XMTPService} New message received from ${message.senderAddress}: #${message?.id} ${message?.content}`
         );
-        this.messages$.next([{
-          messagesInConversation: [message]
-        }]);
+        this.messages$.next([
+          ...this.messages$.getValue(),
+          {
+            messagesInConversation: [message]
+          }
+        ]);
       }
       break;
     }
