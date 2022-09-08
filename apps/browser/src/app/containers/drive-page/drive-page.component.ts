@@ -36,4 +36,8 @@ export class DrivePageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._subs.forEach((sub) => sub.unsubscribe());
   }
+
+  async displayNotif() {
+    await this._notificationService.displayNotification('content demo')
+  }
 }

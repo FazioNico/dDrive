@@ -59,7 +59,8 @@ export class NotificationService {
       message,
       duration: 5000,
       cssClass: 'notification-toast',
-      icon: 'share-social',
+      icon: 'information-circle',
+      position: 'top',
       buttons: [
         {
           text: 'ok',
@@ -75,6 +76,7 @@ export class NotificationService {
     throw 'Not implemented yet';
   }
 
+  // async updateSharedDoc(){}
 
   private _parseMessage(message: XMTPConversationMessage) {
     return message;
