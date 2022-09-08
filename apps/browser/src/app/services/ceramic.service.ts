@@ -11,7 +11,6 @@ import { IUserProfil } from "../interfaces/user-profil.interface";
 @Injectable()
 export class CeramicService {
 
-    private readonly _threeID = new ThreeIdConnect();
     private readonly _db: CeramicClient = new CeramicClient('https://ceramic-clay.3boxlabs.com');
     private readonly _datastore: DIDDataStore = new DIDDataStore({ ceramic: this._db, model: this._getAliases() });
     private _mainDocuumentId!: string;

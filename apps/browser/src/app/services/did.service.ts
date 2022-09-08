@@ -7,7 +7,7 @@ import { ethers } from 'ethers';
 @Injectable()
 export class DIDService {
 
-  private readonly _threeID = new ThreeIdConnect();
+  // private readonly _threeID!: ThreeIdConnect;
   public did!: DID;
   public readonly accountId$ = new BehaviorSubject(null as any);
   public readonly chainId$ = new BehaviorSubject(null as any);
@@ -41,12 +41,13 @@ export class DIDService {
     const authProvider = new EthereumAuthProvider(this.web3Provider.provider, account);
     // Connect the created EthereumAuthProvider to the 3ID Connect instance so it can be used to
     // generate the authentication secret
-    await this._threeID.connect(authProvider);
+    const threeID = new ThreeIdConnect()
+    await threeID.connect(authProvider);
     this.accountId$.next(account);
     // console.log('[INFO] create DID');      
     this.did = new DID({
       // Get the DID provider from the 3ID Connect instance
-      provider: this._threeID.getDidProvider(),
+      provider: threeID.getDidProvider(),
     });
     return this.did;
   }
