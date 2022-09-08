@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   private async _connectCeramic() {
-    const {did} = this._did;
+    const { did } = this._did;
     const { dDrive } = (await this._ceramic.authWithDID(did)) || {};
     if (!dDrive) {
       throw 'No dDrive found';
@@ -47,26 +47,30 @@ export class AuthService {
       creationISODatetime,
     } = this._userProfilService.userProfil$.value;
     // check how is the most recent date
-    const mostRecentDate = [
-      latestNotifedISODatetime,
-      latestConnectionISODatetime,
-      creationISODatetime,
-    ].filter(Boolean).sort(
-      (a, b) => (b ? new Date(b).getTime() : new Date().getTime() ) - (a ? new Date(a).getTime() : new Date().getTime())
-    ).shift();
-    console.log('mostRecentDate', mostRecentDate,[
+    const mostRecentDate = latestNotifedISODatetime
+      ? latestNotifedISODatetime
+      : [latestConnectionISODatetime, creationISODatetime]
+          .filter(Boolean)
+          .sort(
+            (a, b) =>
+              (b ? new Date(b).getTime() : new Date().getTime()) -
+              (a ? new Date(a).getTime() : new Date().getTime())
+          )
+          .shift();
+    console.log('mostRecentDate', mostRecentDate, [
       latestNotifedISODatetime,
       latestConnectionISODatetime,
       creationISODatetime,
     ]);
-    
-    const opts = mostRecentDate 
-    ? {
-        startTime: new Date(mostRecentDate),
-        endTime: new Date(),
-      } 
-    : undefined;
+    // build options for xmtp messages fetching
+    // this will only return messages that are newer than the `mostRecentDate` constante
+    const opts = mostRecentDate
+      ? {
+          startTime: new Date(mostRecentDate),
+          endTime: new Date(),
+        }
+      : undefined;
+    // init xmtp service with options
     await this._xmtp.init(this._did.web3Provider, opts);
   }
-
 }

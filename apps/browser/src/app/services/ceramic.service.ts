@@ -20,13 +20,9 @@ export class CeramicService {
       return this._mainDocuumentId;
     }
 
-    async connect() {
-      this._auth();
-    }
-
     async getAll() {
       if (!this._db?.did) {
-        await this._auth();
+        throw 'No DID found';
       }
       const {dDrive: {documentID = null} = {}} = await this._getProfileFromCeramic()||{};
       if (!documentID) {
@@ -41,7 +37,7 @@ export class CeramicService {
       [key: string|number]: any;
     }) {
       if (!this._db?.did) {
-        await this._auth();
+        throw 'No DID found';
       }
       console.log('authenticated');
       // The following call will fail if the Ceramic instance does not have an authenticated DID
@@ -58,7 +54,7 @@ export class CeramicService {
         throw new Error('No _id found');
       }
       if (!this._db?.did) {
-        await this._auth();
+        throw 'No DID found';
       }
       data['lastModifiedIsoDateTime'] =  new Date().toISOString();
       const doc = await TileDocument.load(this._db, docId||data['_id']);
@@ -70,7 +66,7 @@ export class CeramicService {
 
     async getData(key: string) {
       if (!this._db?.did) {
-        await this._auth();
+        throw 'No DID found';
       }
       const doc = await TileDocument.load(this._db, key);
       return {
@@ -81,13 +77,13 @@ export class CeramicService {
 
     async deleteData(key: string) {
       if (!this._db?.did) {
-        await this._auth();
+        throw 'No DID found';
       }
       throw new Error('Not implemented');
       // return {hash};
     }
     
-    async authWithDID(did: DID) {
+    async authWithDID(did: DID): Promise<{dDrive: IUserProfil}> {
       // set DID resolver with Ceramic 3ID resolver
       did.setResolver({
         ...get3IDResolver(this._db)
@@ -97,14 +93,24 @@ export class CeramicService {
       // authentication flow using 3ID Connect and the Ethereum provider
       await did.authenticate();
       this._db.did = did;
-      await this._setupProfile();
-      const profile = await this._getProfileFromCeramic();
-      return profile;
+      // get user profil data
+      let {dDrive = null} = await this._getProfileFromCeramic()||{};
+      // create it not exists
+      if (!dDrive) {
+        dDrive = await this._setupProfile();
+      } else {
+        // update last connection date if exist
+        await this.updateUserProfil({
+          latestConnectionISODatetime: new Date().toISOString()
+        });
+      }
+      // return user profil data without update `latestConnectionISODatetime`
+      return {dDrive};
     }
 
     async updateUserProfil(value: Partial<IUserProfil>) {
       if (!this._db?.did) {
-        await this._auth();
+        throw 'No DID found';
       }
       const {dDrive: {documentID = null, ...previousProfilData} = {}} = await this._getProfileFromCeramic()||{};
       if (!documentID) {
@@ -112,53 +118,14 @@ export class CeramicService {
       }
       // save the document `id` to the profile data
       const dDrive: IUserProfil = {
+        ...previousProfilData,
+        ...value,
         latestConnectionISODatetime: new Date().toISOString(),
         documentID,
-        ...previousProfilData,
-        ...value
       } as IUserProfil;
       const updatedProfil = { dDrive };
       await this._datastore.merge('BasicProfile', updatedProfil);
-      const profile = await this._getProfileFromCeramic();
-      return profile;
-    }
-
-    private async _auth() {
-      if ((window as any)['ethereum'] == null) {
-      throw new Error('No injected Ethereum provider found')
-      }
-      await this._authenticateWithEthereum((window as any)['ethereum']);
-    } 
-
-    private async _authenticateWithEthereum(ethereumProvider: any) {
-      // Request accounts from the Ethereum provider
-      const accounts = await ethereumProvider.request({
-        method: 'eth_requestAccounts',
-      })
-      // Create an EthereumAuthProvider using the Ethereum provider and requested account
-      const account = accounts[0];
-      const authProvider = new EthereumAuthProvider(ethereumProvider, account)
-      // Connect the created EthereumAuthProvider to the 3ID Connect instance so it can be used to
-      // generate the authentication secret
-      await this._threeID.connect(authProvider);
-      console.log('[INFO] create CeramicClient');      
-      const did = new DID({
-        // Get the DID provider from the 3ID Connect instance
-        provider: this._threeID.getDidProvider(),
-        resolver: {
-          ...get3IDResolver(this._db)
-        },
-      });
-      console.log('[INFO] Authenticate with DID provider');
-      // Authenticate the DID using the 3ID provider from 3ID Connect, this will trigger the
-      // authentication flow using 3ID Connect and the Ethereum provider
-      await did.authenticate();
-      console.log('[INFO] Authenticated with DID provider with DID: ', did.id);      
-      // The Ceramic client can create and update streams using the authenticated DID
-      this._db.did = did;
-      await this._setupProfile();
-      const profile = await this._getProfileFromCeramic();
-      console.log('>>>', profile);
+      return updatedProfil;
     }
 
     private async _getProfileFromCeramic() {
@@ -174,26 +141,19 @@ export class CeramicService {
     }
    
     private async _setupProfile() {
-      const {dDrive = null} = await this._getProfileFromCeramic()||{};
-      if (!dDrive?.documentID) {
-        // create Document to store all files data
-        const doc = await TileDocument.create(this._db, {
-          files: [],
-          lastModifiedIsoDateTime: new Date().toISOString()
-        });
-        // save the document `id` to the profile data
-        const dDrive: IUserProfil = {
-          latestConnectionISODatetime: new Date().toISOString(),
-          creationISODatetime: new Date().toISOString(),
-          documentID: doc.id.toString(),
-        };
-        await this._datastore.merge('BasicProfile', { dDrive });
-      } else {
-        // only update latest connectionTime
-        await this.updateUserProfil({
-          latestConnectionISODatetime: new Date().toISOString()
-        });
-      }
+      // create Document to store all files data
+      const doc = await TileDocument.create(this._db, {
+        files: [],
+        lastModifiedIsoDateTime: new Date().toISOString()
+      });
+      // save the document `id` to the profile data
+      const dDrive: IUserProfil = {
+        latestConnectionISODatetime: new Date().toISOString(),
+        creationISODatetime: new Date().toISOString(),
+        documentID: doc.id.toString(),
+      };
+      await this._datastore.merge('BasicProfile', { dDrive });
+      return dDrive;
     }
 
     private _getAliases() {

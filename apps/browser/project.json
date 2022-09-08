@@ -135,7 +135,8 @@
           "js-sha3",
           "events",
           "ethereum-blockies-base64",
-          "bowser"
+          "bowser",
+          "@xmtp/xmtp-js"
         ],
         "serviceWorker": true,
         "ngswConfigPath": "apps/browser/ngsw-config.json"
