@@ -8,10 +8,13 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { ethers } from 'ethers';
 
-interface IXMTPMessage {
+export interface IXMTPMessage {
   conversation?: Conversation;
   messagesInConversation: Message[];
 }
+
+export type XMTPConversation = Conversation;
+export type XMTPConversationMessage = Message;
 
 @Injectable()
 export class XMTPService {
@@ -40,7 +43,7 @@ export class XMTPService {
 
   async getConversations() {
     if (!this._web3Provider) {
-      throw 'Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
     }
     let xmtp = this._xmtp.getValue();
     if (!xmtp) {
@@ -56,7 +59,7 @@ export class XMTPService {
     const xmtp = this._xmtp.value;
     const messages = [];
     const conversations = this._conversations.getValue();
-    console.log('[INFO][XMTP] Conversations', conversations);
+    console.log('[INFO] {XMTPService} Conversations', conversations);
     for (const conversation of conversations) {
       // All parameters are optional and can be omitted
       opts = opts
@@ -74,11 +77,7 @@ export class XMTPService {
           return messages.filter(
             (message) => message.senderAddress !== xmtp.address
           );
-        })
-        .then((messages) => 
-          // parse messages to display notifiaction of shared files
-          messages.map((message) => this._parseMessage(message))
-        );
+        });
       // add conversation and messages to messages array
       if (messagesInConversation.length > 0) {
         messages.push({
@@ -87,20 +86,20 @@ export class XMTPService {
         });
       }
     };
-    console.log('[INFO][XMTP] Messages', messages);
+    console.log('[INFO] {XMTPService} Messages', messages);
     return messages;
   }
 
   async sendMessage(conversation: Conversation, message: string) {
     if (!this._web3Provider) {
-      throw 'Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
     }
     await conversation.send(message);
   }
 
   async startNewConversation(address: string) {
     if (!this._web3Provider) {
-      throw 'Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
     }
     let xmtp = this._xmtp.getValue();
     if (!xmtp) {
@@ -118,7 +117,7 @@ export class XMTPService {
 
   private async _listenAllUpcomingMessages() {
     if (!this._web3Provider) {
-      throw 'Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
     }
     const xmtp = this._xmtp.value;
     // Listen for new messages in existing conversations and new conversations
@@ -127,19 +126,15 @@ export class XMTPService {
       // filter out messages from self
       if (message.senderAddress !== xmtp.address) {
         console.log(
-          `[INFO][XMTP] New message received from ${message.senderAddress}: #${message?.id} ${message?.content}`
+          `[INFO] {XMTPService} New message received from ${message.senderAddress}: #${message?.id} ${message?.content}`
         );
-        const parsedMessage = this._parseMessage(message);
-        console.log('[INFO][XMTP] Parsed message', parsedMessage);
         this.messages$.next([{
-          messagesInConversation: [parsedMessage]
+          messagesInConversation: [message]
         }]);
       }
       break;
     }
   }
 
-  private _parseMessage(message: Message) {
-    return message;
-  }
+
 }
