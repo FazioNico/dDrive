@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonButton, LoadingController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
+import { AlertService } from '../../services/alert.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -17,7 +18,8 @@ export class LoginPageComponent  {
   constructor(
     private readonly _router: Router,
     private readonly _loadingCtrl: LoadingController,
-    private readonly _auth: AuthService
+    private readonly _auth: AuthService,
+    private readonly _alertService: AlertService,
   ) {}
 
   async ionViewDidEnter() {
@@ -41,9 +43,10 @@ export class LoginPageComponent  {
     this.loginForm.nativeElement.disabled = true;
     // use services to authenticate
     const isAuth = await this._auth.connectServices()
-      .catch((err) => {
-        // TODO: display error message
+      .catch(async (err) => {
+        // display error message
         console.error(err);
+        await this._alertService.presentAlert('Error', err.message);
         return false;
       });
     // check result

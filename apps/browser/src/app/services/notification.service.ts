@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AlertController, ToastController } from '@ionic/angular';
 import { debounceTime, map, tap } from 'rxjs';
 import { IMediaFile } from '../interfaces/mediafile.interface';
 import { ISharedMediaFile } from '../interfaces/shared-mediafile.interface';
+import { AlertService } from './alert.service';
 import { UserProfilService } from './user-profil.service';
 import { XMTPService } from './xmtp.service';
 
@@ -57,13 +57,12 @@ export class NotificationService {
   constructor(
     private readonly _xmtp: XMTPService,
     private readonly _userService: UserProfilService,
-    private readonly _toastCtrl: ToastController,
-    private readonly _alertController: AlertController
+    private readonly _alertService: AlertService,
+
   ) {}
 
   async displayNotification(message: string) {
-    const toast = await this._toastCtrl.create({
-      message,
+    await this._alertService.presentToast(message, {
       duration: 5000,
       cssClass: 'notification-toast',
       icon: 'information-circle',
@@ -75,7 +74,6 @@ export class NotificationService {
         },
       ],
     });
-    await toast.present();
   }
 
   async sendNotification(
@@ -97,18 +95,15 @@ export class NotificationService {
         .startNewConversation(destinationAddress)
         .then(({ conversation }) => conversation)
         .catch(async (e) => {
-          // TODO: display error with dedicated service
+          // display error with dedicated service
           console.log(
             '[ERROR] {NotificationService} startNewConversation: ',
             e
           );
-          const ionAlert = await this._alertController.create({
-            header: 'Caution',
-            message:
-              e?.message || 'An error occured while sending notification',
-            buttons: ['OK'],
-          });
-          await ionAlert.present();
+          await this._alertService.presentAlert(
+            'Caution',
+            e?.message || 'An error occured while sending notification'
+          );
           return undefined;
         });
     }

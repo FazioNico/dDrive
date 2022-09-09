@@ -37,6 +37,7 @@ import { AuthService } from './services/auth.service';
 import { XMTPService } from './services/xmtp.service';
 import { UserProfilService } from './services/user-profil.service';
 import { NotificationService } from './services/notification.service';
+import { AlertService } from './services/alert.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -121,6 +122,7 @@ const getProviderFactory =
     XMTPService,
     UserProfilService,
     NotificationService,
+    AlertService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,

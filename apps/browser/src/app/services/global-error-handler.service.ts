@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable, NgZone } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertService } from './alert.service';
 import { LoaderService } from './loader.service';
 
 @Injectable()
@@ -7,7 +7,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
 
   constructor(
     private readonly _loader: LoaderService,
-    private readonly _alertCtrl: AlertController,
+    private readonly _alertService: AlertService,
     private _zone: NgZone
   ) { }
 
@@ -21,13 +21,7 @@ export class GlobalErrorHandlerService implements ErrorHandler {
     // use `NgZone.run`, too update loader state even if the error is thrown outside the ngZone
     this._zone.run(() =>  this._loader.setStatus(false));
     // show alert
-    const ionAlert = await this._alertCtrl.create({
-      header: 'Error',
-      message,
-      buttons: ['OK'],
-      cssClass: 'danger'
-    });
-    await ionAlert.present();
+    await this._alertService.presentAlert('Error', message);
   }
 }
 
