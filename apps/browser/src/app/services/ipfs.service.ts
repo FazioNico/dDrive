@@ -13,7 +13,10 @@ export class IPFSService {
     if (!nodeIsOnline) {
       throw new Error('IPFS node is not online');
     }
-    const { cid } = await this._ipfsNode.add(file);
+    const { cid } = await this._ipfsNode.add(file, {
+      timeout: 10000,
+      preload: true,
+    });
     await this.pin(cid.toString());
     return {
       cid: cid.toString(),
@@ -28,7 +31,9 @@ export class IPFSService {
     if (!nodeIsOnline) {
       throw new Error('IPFS node is not online');
     }
-    await this._ipfsNode.pin.add(cid);
+    await this._ipfsNode.pin.add(cid, {
+      timeout: 10000,
+    });
   }
 
   async unpin(cid: string) {
@@ -39,7 +44,9 @@ export class IPFSService {
     if (!nodeIsOnline) {
       throw new Error('IPFS node is not online');
     }
-    await this._ipfsNode.pin.rm(cid);
+    await this._ipfsNode.pin.rm(cid, {
+      timeout: 10000,
+    });
   }
 
   async getFromCID(cid: string, type?: string): Promise<File> {
@@ -50,7 +57,10 @@ export class IPFSService {
     if (!nodeIsOnline) {
       throw new Error('IPFS node is not online');
     }
-    const asyncUint8Array = this._ipfsNode.cat(cid);
+    const asyncUint8Array = this._ipfsNode.cat(cid, {
+      timeout: 10000,
+      preload: true,
+    });
     const blobsPart = [];
     for await (const chunk of asyncUint8Array) {
       blobsPart.push(chunk);
