@@ -23,7 +23,7 @@ export class DrivePageComponent implements OnInit, OnDestroy {
     const sub = this._notificationService.notifications$.subscribe(
       async (messages) => {
         if (messages.length === 1) {
-          await this._notificationService.displayNotification(messages[0].content);
+          await this._notificationService.displayNotification(messages[0]);
         } else if (messages.length > 1) {
           const content = `You have ${messages.length} new notifications`;
           await this._notificationService.displayNotification(content);
@@ -35,9 +35,5 @@ export class DrivePageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._subs.forEach((sub) => sub.unsubscribe());
-  }
-
-  async displayNotif() {
-    await this._notificationService.displayNotification('content demo')
   }
 }

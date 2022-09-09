@@ -4,9 +4,13 @@ import { CeramicService } from './ceramic.service';
 import { IPFSService } from './ipfs.service';
 import { v4 as uuidV4 } from 'uuid';
 import { LitService } from './lit.service';
-import { IAccessControlConditions, IMediaFile } from '../interfaces/mediafile.interface';
+import {
+  IAccessControlConditions,
+  IMediaFile,
+} from '../interfaces/mediafile.interface';
 import { XMTPService } from './xmtp.service';
 import { DIDService } from './did.service';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class MediaFileService {
@@ -74,8 +78,9 @@ export class MediaFileService {
     private readonly _dataService: CeramicService,
     private readonly _fileService: IPFSService,
     private readonly _litService: LitService,
-    private readonly _xmtpService: XMTPService,
-    private readonly _didService: DIDService
+    // private readonly _xmtpService: XMTPService,
+    private readonly _didService: DIDService,
+    private readonly _notificationSerivce: NotificationService
   ) {}
 
   async getFiles() {
@@ -89,13 +94,16 @@ export class MediaFileService {
     return folders;
   }
 
-  async upload(file: File, encryptAccessCondition?: IAccessControlConditions[]) {
-    let fileToUpload: File | Blob = file;
+  async upload(
+    file: File | Blob,
+    accessControlConditions: IAccessControlConditions[] = []
+  ) {
+    // build file metadata object
     const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
-    const metaData: IMediaFile & { conversation?: any } = {
+    const metaData: IMediaFile = {
       parent: this._filterBy$.value,
-      name: file.name || _id,
+      name: (file as File)?.name || _id,
       size: file.size,
       type: file.type,
       isFolder: false,
@@ -103,62 +111,36 @@ export class MediaFileService {
       lastModifiedIsoDateTime: isoDateTime,
       _id,
     };
-    // check existing shared users account with Notifs protocol
-    const account = this._didService.accountId$.value;
-    const isWalletAddressCondition = encryptAccessCondition?.find(
-      (c) => c.method === '' && c.parameters.includes(':userAddress') && c.returnValueTest.value !== account
-    );
-    const destinationAddress = isWalletAddressCondition?.returnValueTest?.value;
-    if (
-      encryptAccessCondition &&
-      encryptAccessCondition.length > 0 &&
-      isWalletAddressCondition &&
-      destinationAddress &&
-      destinationAddress !== account
-    ) {
-      console.log('[INFO] notify shared users: ', destinationAddress);
-      const { conversations = [] } = await this._xmtpService.getConversations();
-      const conversation = conversations.find(
-        (c) => c.peerAddress === destinationAddress
-      );
-      if (conversation) {
-        console.log('[INFO] conversation found: ', conversation);
-        metaData.conversation = conversation;
-      } else {
-        console.log('[INFO] conversation not found');
-        metaData.conversation = await this._xmtpService.startNewConversation(
-          destinationAddress
-        ).catch((e) => {
-          // TODO: use display error service and do not throw error
-          console.log('[ERROR] startNewConversation: ', e);
-          return null;
-        });
-      }
-    }
-    // encrypt file
-    if (encryptAccessCondition && encryptAccessCondition.length > 0) {
+    // encrypt file if needed
+    if (accessControlConditions.length > 0) {
       const { encryptedFile, encryptedSymmetricKey } =
-        await this._litService.encrypt(file, encryptAccessCondition);
-      // update variables
-      fileToUpload = encryptedFile;
+        await this._litService.encrypt(file, accessControlConditions);
+      // update file variable with encrypted file
+      file = encryptedFile;
+      // update variables with encrypted data
       metaData.encryptedSymmetricKey = encryptedSymmetricKey;
-      metaData.accessControlConditions = encryptAccessCondition;
+      metaData.accessControlConditions = accessControlConditions;
     }
     // upload file to ipfs
-    const { cid } = await this._fileService.add(fileToUpload);
-    // build final object data and save to database
-    const { conversation = null, ...fileData } = metaData;
-    const files = [...this._items$.value, { ...fileData, cid }];
+    const { cid } = await this._fileService.add(file);
+    // add CID to file metadata
+    metaData.cid = cid;
+    // update files list with new file metadata
+    const files = [...this._items$.value, metaData];
     // update object data to database
     await this._dataService.updateData({ files }, this._dataService.docId);
     // notify shared user
-    if (conversation && isWalletAddressCondition) {
-      const { name } = fileData;
-      const message = `You have a new file shared with you: ${name}`;
-      await this._xmtpService.sendMessage(conversation, message);
-      console.log('[INFO] message sent: ', message);
+    const destinationAddress = this._isWalletAddressEcryptionCondition(
+      accessControlConditions
+    );
+    if (destinationAddress) {
+      await this._notificationSerivce.sendNotification(
+        metaData,
+        this._didService.accountId$.value,
+        destinationAddress
+      );
     }
-    // update state
+    // update service state
     this._items$.next(files);
   }
 
@@ -298,16 +280,18 @@ export class MediaFileService {
     this._filterBy$.next(id);
   }
 
-  private async _asyncLoad(file: File | Blob, type: string) {
-    const blob = new Blob([file], { type });
-    const previewUrl = URL.createObjectURL(blob);
-    // preload img for faster rendering
-    await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = resolve;
-      img.onerror = reject;
-      img.src = previewUrl;
-    });
-    return { previewUrl };
+  private _isWalletAddressEcryptionCondition(
+    encryptAccessCondition: IAccessControlConditions[] | undefined
+  ) {
+    // check existing shared users account with Notifs protocol
+    const account = this._didService.accountId$.value;
+    const isWalletAddressCondition = encryptAccessCondition?.find(
+      (c) =>
+        c.method === '' &&
+        c.parameters.includes(':userAddress') &&
+        c.returnValueTest.value !== account
+    );
+    const destinationAddress = isWalletAddressCondition?.returnValueTest?.value;
+    return destinationAddress;
   }
 }
