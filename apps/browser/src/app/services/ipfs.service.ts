@@ -14,9 +14,32 @@ export class IPFSService {
       throw new Error('IPFS node is not online');
     }
     const { cid } = await this._ipfsNode.add(file);
+    await this.pin(cid.toString());
     return {
       cid: cid.toString(),
     };
+  }
+
+  async pin(cid: string) {
+    if (!this._ipfsNode) {
+      this._ipfsNode = await create();
+    }
+    const nodeIsOnline = this._ipfsNode.isOnline();
+    if (!nodeIsOnline) {
+      throw new Error('IPFS node is not online');
+    }
+    await this._ipfsNode.pin.add(cid);
+  }
+
+  async unpin(cid: string) {
+    if (!this._ipfsNode) {
+      this._ipfsNode = await create();
+    }
+    const nodeIsOnline = this._ipfsNode.isOnline();
+    if (!nodeIsOnline) {
+      throw new Error('IPFS node is not online');
+    }
+    await this._ipfsNode.pin.rm(cid);
   }
 
   async getFromCID(cid: string, type?: string): Promise<File> {

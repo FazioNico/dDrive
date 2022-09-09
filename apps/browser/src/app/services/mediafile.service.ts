@@ -179,17 +179,39 @@ export class MediaFileService {
     if (index === -1) {
       throw new Error('File not found');
     }
+    const cid = files[index].cid;
+    if (cid) {
+      // unpin file from ipfs
+      await this._fileService.unpin(cid);
+    }
     // remove file from list
     files.splice(index, 1);
-    // filter files by parent to exclude all files in current folder
-    const filesToPreserve: any[] = files.filter((item) => item.parent !== id);
+    // find all children files
+    const children = files.filter(
+      (item) => item.parent === id,
+    );
+    // unpin all children files
+    await Promise.all(
+      children.map(async (child) => {
+        if (child.cid) {
+          await this._fileService.unpin(child.cid);
+        }
+      })
+    );
+    // remove all children files
+    children.forEach((child) => {
+      const childIndex = files.findIndex((item) => item._id === child._id);
+      if (childIndex !== -1) {
+        files.splice(childIndex, 1);
+      }
+    });
     // update object data to database
     await this._dataService.updateData(
-      { files: filesToPreserve },
+      { files },
       this._dataService.docId
     );
     // update state
-    this._items$.next(filesToPreserve);
+    this._items$.next(files);
   }
 
   async rename(_id: string, newName: string) {
