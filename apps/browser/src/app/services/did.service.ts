@@ -52,6 +52,13 @@ export class DIDService {
     return this.did;
   }
 
+  async disconnect() {
+    if (!this.did) {
+      return;
+    }
+    this.did = undefined as any;
+  }
+
   private _listenEvent(web3Provider: ethers.providers.Web3Provider) {
     const {provider: defaultPprovider} = web3Provider;
     if (defaultPprovider && defaultPprovider.isMetaMask && (defaultPprovider as any).on) {

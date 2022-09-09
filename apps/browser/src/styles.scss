@@ -117,3 +117,7 @@ ion-toast.notification-toast {
     font-size: 15px;
   }
 }
+div#lit-connect-modal-container {
+  z-index: 99999;
+  position: absolute;
+}

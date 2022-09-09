@@ -20,6 +20,11 @@ export class LoginPageComponent  {
     private readonly _auth: AuthService
   ) {}
 
+  async ionViewDidEnter() {
+    await this._auth.disconnectServices();
+    window?.localStorage?.clear();
+  }
+
   ionViewDidLeave() {
     this.isAuthentcating$.next(false);
     this.loginForm.nativeElement.disabled = false;

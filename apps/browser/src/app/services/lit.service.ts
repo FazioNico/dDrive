@@ -30,6 +30,10 @@ export class LitService {
     this._litNodeClient = client;
   }
 
+  public async connect(){
+    await this._connect();
+  }
+
   async encrypt(file: File | Blob, accessControlConditions: any[]): Promise<{
     encryptedFile: Blob;
     encryptedSymmetricKey: string;
@@ -90,5 +94,13 @@ export class LitService {
       file: encryptedFile,
     });
     return { decryptedArrayBuffer }
+  }
+
+  async disconnect() {
+    if (!this._litNodeClient) {
+      return;
+    }
+    await LitJsSdk.disconnectWeb3()
+    console.log('[INFO] LitNode disconnected');    
   }
 }

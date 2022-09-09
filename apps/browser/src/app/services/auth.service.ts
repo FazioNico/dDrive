@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CeramicService } from './ceramic.service';
 import { DIDService } from './did.service';
+import { LitService } from './lit.service';
 import { UserProfilService } from './user-profil.service';
 import { XMTPService } from './xmtp.service';
 
@@ -10,7 +11,8 @@ export class AuthService {
     private readonly _did: DIDService,
     private readonly _ceramic: CeramicService,
     private readonly _xmtp: XMTPService,
-    private readonly _userProfilService: UserProfilService
+    private readonly _lit: LitService,
+    private readonly _userProfilService: UserProfilService,
   ) {}
 
   async connectServices() {
@@ -21,6 +23,12 @@ export class AuthService {
     // Connect xmtp
     this._connectXMTP();
     return true;
+  }
+
+  async disconnectServices() {
+    await this._did.disconnect();
+    await this._lit.disconnect();
+    await this._xmtp.disconnect();
   }
 
   private async _connectDID() {

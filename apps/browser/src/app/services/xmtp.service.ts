@@ -41,6 +41,14 @@ export class XMTPService {
     return xmtp;
   }
 
+  async disconnect() {
+    const xmtp = this._xmtp.getValue();
+    if (!xmtp) {
+      return;
+    }
+    await xmtp.close();
+  }
+
   async getConversations() {
     if (!this._web3Provider) {
       throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
