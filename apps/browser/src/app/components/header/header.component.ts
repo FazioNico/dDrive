@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { IonSearchbar } from '@ionic/angular';
 
 @Component({
   selector: 'd-drive-header',
@@ -7,6 +8,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class HeaderComponent {
   @Output() public readonly actions:EventEmitter<{type: string; payload?: any}> = new EventEmitter();
+  @ViewChild(IonSearchbar, {static: false, read: ElementRef}) public readonly searchbarElement!: ElementRef<IonSearchbar>;
 
 
 }

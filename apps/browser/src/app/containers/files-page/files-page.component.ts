@@ -10,6 +10,7 @@ import {
 import { OverlayBaseController } from '@ionic/angular/util/overlay';
 import { BehaviorSubject, firstValueFrom, map, tap } from 'rxjs';
 import { FilesOptionsListComponent } from '../../components/files-options-list/files-options-list.component';
+import { HeaderComponent } from '../../components/header/header.component';
 import { ItemPreviewComponent } from '../../components/item-preview/item-preview.component';
 import { SelectFolderComponent } from '../../components/select-folder/select-folder.component';
 import { SetupEncryptionComponent } from '../../components/setup-encryption/setup-encryption.component';
@@ -23,7 +24,7 @@ import { MediaFileService } from '../../services/mediafile.service';
   styleUrls: ['./files-page.component.scss'],
 })
 export class FilesPageComponent {
-  @ViewChild(IonSearchbar, {static: true, read: ElementRef}) public readonly searchbarElement!: ElementRef<IonSearchbar>;
+  @ViewChild(HeaderComponent, {static: false}) public readonly header!: HeaderComponent;
   public breadcrumbs$ = this._mediaFileService.breadcrumbs$.pipe(
     map((breadcrumbs) => {
       const maxBreadcrumbs = this.options.maxBreadcrumbs;
@@ -59,7 +60,7 @@ export class FilesPageComponent {
     console.log('actions(): ', type, payload);
     switch (true) {
       case type === 'onFileChange': {
-        this.searchbarElement.nativeElement.value = '';
+        this.header.searchbarElement.nativeElement.value = '';
         const files = [...payload.target.files];
         if (!files[0]) {
           return;
@@ -104,15 +105,15 @@ export class FilesPageComponent {
       case type === 'navTo': {
         const { item: {_id} = null} = payload;
         this._mediaFileService.navToFolderId(_id);
-        this.searchbarElement.nativeElement.value = '';
+        this.header.searchbarElement.nativeElement.value = '';
         break;
       }
       case type === 'reload':
-        this.searchbarElement.nativeElement.value = '';
+        this.header.searchbarElement.nativeElement.value = '';
         await this.ionViewDidEnter();
         break;
       case type === 'newFolder': {
-        this.searchbarElement.nativeElement.value = '';
+        this.header.searchbarElement.nativeElement.value = '';
         // ask for folder name
         const opts = {
           header: 'New Folder',

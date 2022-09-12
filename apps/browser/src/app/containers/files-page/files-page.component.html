@@ -30,7 +30,7 @@
                 slot="end" 
                 name="chevron-forward-outline" 
                 class="ion-padding-start"
-                *ngIf="(searchbarElement?.nativeElement?.value?.length||0) > 0"></ion-icon>
+                *ngIf="(header?.searchbarElement?.nativeElement?.value?.length||0) > 0"></ion-icon>
             <ion-icon 
                 slot="end" 
                 *ngIf="!isLast" 
@@ -42,7 +42,7 @@
           size="auto"
           class="ion-align-items-center" 
           [ngStyle]="{'display': 'flex'}"
-          *ngIf="(searchbarElement?.nativeElement?.value?.length||0) > 0">
+          *ngIf="(header?.searchbarElement?.nativeElement?.value?.length||0) > 0">
         <ion-label>
           <span>search results</span>
         </ion-label>
