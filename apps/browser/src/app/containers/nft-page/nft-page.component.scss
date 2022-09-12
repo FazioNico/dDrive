@@ -1,0 +1,24 @@
+:host {
+  ion-content {
+    --background: rgb(244,248,248)!important;
+  }
+
+  ion-card {
+    border-radius:  0.618rem!important;
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+    box-shadow: none;
+
+    ion-item, ion-list {
+      background: transparent;
+      --background: transparent;
+    }
+    &:hover {
+      background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+      color: var(--ion-color-primary);
+    }
+  }
+
+  ion-card {
+    margin-bottom: 2.618rem;
+  }
+}

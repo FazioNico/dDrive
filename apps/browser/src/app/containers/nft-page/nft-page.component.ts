@@ -21,5 +21,19 @@ export class NFTPageComponent implements OnInit {
 
   async actions(type: string, payload?: any) {
     console.log('actions(): ', type, payload);
+    switch (true) {
+      case type === 'openUri': {
+        const {tokenUri = null} = payload;
+        if (tokenUri) {
+          window.open(tokenUri, '_blank');
+        }
+        break;
+      }
+      case type === 'searchByName': {
+        const {detail: {value = null}} = payload;
+        this._nftService.searchByName(value);
+        break;
+      }
+    }
   }
 }

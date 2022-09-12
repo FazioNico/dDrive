@@ -3,13 +3,26 @@ import Moralis from 'moralis';
 import { EvmChain, EvmNft } from '@moralisweb3/evm-utils';
 import { MoralisCore } from '@moralisweb3/core';
 import { MoralisEvmApi } from '@moralisweb3/evm-api';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map } from 'rxjs';
 
 @Injectable()
 export class NFTService {
-  public readonly nfts$ = new BehaviorSubject([] as EvmNft[]);
+  private readonly _nfts$ = new BehaviorSubject([] as EvmNft[]);
+  private readonly _queryFilterBy$: BehaviorSubject<string | null> =
+  new BehaviorSubject(null as any);
   private _core!: MoralisCore;
   private _evmApi!: MoralisEvmApi;
+  public readonly nfts$ = combineLatest([
+    this._nfts$.pipe(filter(Boolean)),
+    this._queryFilterBy$,
+  ]).pipe(
+    map(([nfts, queryFilterBy]) => {
+      if (!queryFilterBy) {
+        return nfts;
+      }
+      return nfts.filter((nft) => nft.name ? nft.name.toLowerCase().includes(queryFilterBy.toLowerCase()) : false);
+    })
+  );
 
   async connect() {
     this._core = MoralisCore.create();
@@ -43,8 +56,12 @@ export class NFTService {
     const nfts = await Promise.all(
       chains.map(async (chain) => this.getWalletNFTs(address, chain))
     ).then((nfts) => nfts.flat());
-    this.nfts$.next(nfts);
+    this._nfts$.next(nfts);
     console.log('[INFO] nfts', nfts);    
     return nfts;
+  }
+
+  searchByName(name: string) {
+    this._queryFilterBy$.next(name);
   }
 }

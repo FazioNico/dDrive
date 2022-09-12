@@ -1,18 +1,56 @@
 <ion-header mode="ios" collapse="fade" [translucent]="true">
   <d-drive-header (actions)="actions($event.type, $event.payload)"></d-drive-header>
 </ion-header>
-<ion-content>
-  <ion-grid>
-    <ion-row *ngIf="nfts$.value.length > 0 ">
-      <ion-col size="12">
-        <ion-list>
-          <ion-item *ngFor="let nft of nfts$.value">
-            <ion-label>
-              <h2>{{ nft.name }}</h2>
-            </ion-label>
-          </ion-item>
-        </ion-list>
+<ion-content class="ion-padding" fullscreen>
+  <ion-grid *ngIf="(nfts$|async) as nfts">
+    <ion-row *ngIf="nfts.length > 0 ">
+      <ion-col siize="12" size-sm="6" size-md="4" *ngFor="let nft of nfts">
+        <ion-card class="ion-no-padding" (click)="actions('openUri', nft)">
+          <ion-img [src]="nft.metadata?.['image']"></ion-img>
+          <ion-card-header>
+            <ion-card-subtitle>{{nft.symbol}}</ion-card-subtitle>
+            <ion-card-title>{{nft?.name}}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item>
+                <ion-label>
+                  Contract Address
+                </ion-label>
+                <ion-note slot="end">
+                  {{nft.tokenAddress.lowercase | sliceAddress}}
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  Token hash
+                </ion-label>
+                <ion-note slot="end">
+                  {{nft.tokenHash | sliceAddress}}
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  Token Standard
+                </ion-label>
+                <ion-note slot="end">
+                  {{nft.contractType}}
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  Blockchain
+                </ion-label>
+                <ion-note slot="end">
+                  {{nft.chain.name}}
+                </ion-note>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  
 </ion-content>
