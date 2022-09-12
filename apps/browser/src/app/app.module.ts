@@ -38,6 +38,8 @@ import { XMTPService } from './services/xmtp.service';
 import { UserProfilService } from './services/user-profil.service';
 import { NotificationService } from './services/notification.service';
 import { AlertService } from './services/alert.service';
+import { NFTService } from './services/nft.services';
+import { NFTPageComponent } from './containers/nft-page/nft-page.component';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -76,6 +78,7 @@ const getProviderFactory =
     TotalStoragePipe,
     PreviewFilePipe,
     SafePipe,
+    NFTPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -90,6 +93,7 @@ const getProviderFactory =
         canActivate: [AuthGuard],
         children: [
           { path: 'files', component: FilesPageComponent },
+          { path: 'nfts', component: NFTPageComponent },
           { path: '', redirectTo: 'files', pathMatch: 'full' },
         ],
       },
@@ -123,6 +127,7 @@ const getProviderFactory =
     UserProfilService,
     NotificationService,
     AlertService,
+    NFTService,
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService,
