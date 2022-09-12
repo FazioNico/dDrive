@@ -1,16 +1,8 @@
 :host {
-  ion-toolbar {
-    --opacity: 1!important;
-  }
 
   ion-content {
     --background: rgb(244,248,248)!important;
     // --background: rgba(var(--ion-color-primary-rgb), 0.05);
-  }
-
-  ion-searchbar {
-    padding-bottom: 0!important;
-    --background: rgba(var(--ion-color-primary-rgb), 0.15);
   }
 
   .item-stats {

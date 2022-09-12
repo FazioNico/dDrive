@@ -18,4 +18,8 @@ export class NFTPageComponent implements OnInit {
     const account = await this._did.accountId$.value;
     await this._nftService.getWalletNFTsFromAllChain(account);
   }
+
+  async actions(type: string, payload?: any) {
+    console.log('actions(): ', type, payload);
+  }
 }

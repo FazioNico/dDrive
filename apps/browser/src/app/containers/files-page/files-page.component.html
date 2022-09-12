@@ -1,32 +1,15 @@
 <ion-header mode="ios" collapse="fade" [translucent]="true">
-  <ion-toolbar>
-    <ion-grid class="ion-no-padding ion-padding-horizontal">
-      <ion-row class="ion-no-padding ion-align-items-center">
-        <!-- <ion-col size="auto">
-          <ion-text class="" color="primary">My Drive</ion-text>
-        </ion-col> -->
-        <ion-col>
-          <ion-searchbar 
-              class="ion-margin-vertical" 
-              enterkeyhint="search"
-              inputmode="search"
-              [debounce]="500"
-              (ionChange)="actions('searchByName', $event)"></ion-searchbar>
-        </ion-col>
-        <ion-col class="ion-text-end ion-padding-end ion-hide-md-down">
-          <ion-button color="primary" fill="clear" (click)="actions('reload')">
-            <ion-icon name="sync"></ion-icon>
-          </ion-button>
-          <ion-button color="primary" (click)="addFileElement.click()">
-            Add File
-          </ion-button>
-          <ion-button color="primary" fill="outline" (click)="actions('newFolder')">
-            New Folder
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-toolbar>
+  <d-drive-header (actions)="actions($event.type, $event.payload)">
+    <ion-button color="primary" fill="clear" (click)="actions( 'reload' )">
+      <ion-icon name="sync"></ion-icon>
+    </ion-button>
+    <ion-button color="primary" (click)="addFileElement.click()">
+      Add File
+    </ion-button>
+    <ion-button color="primary" fill="outline" (click)="actions('newFolder')">
+      New Folder
+    </ion-button>
+  </d-drive-header>
 </ion-header>
 <ion-content class="ion-padding" fullscreen>
   <input #addFileElement type="file" id="file-input" multiple="true" hidden (change)="actions('onFileChange', $event)" />

@@ -1,3 +1,6 @@
+<ion-header mode="ios" collapse="fade" [translucent]="true">
+  <d-drive-header (actions)="actions($event.type, $event.payload)"></d-drive-header>
+</ion-header>
 <ion-content>
   <ion-grid>
     <ion-row *ngIf="nfts$.value.length > 0 ">

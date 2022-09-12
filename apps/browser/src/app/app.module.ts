@@ -40,6 +40,7 @@ import { NotificationService } from './services/notification.service';
 import { AlertService } from './services/alert.service';
 import { NFTService } from './services/nft.services';
 import { NFTPageComponent } from './containers/nft-page/nft-page.component';
+import { HeaderComponent } from './components/header/header.component';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -79,6 +80,7 @@ const getProviderFactory =
     PreviewFilePipe,
     SafePipe,
     NFTPageComponent,
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
