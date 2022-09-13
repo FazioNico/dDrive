@@ -47,6 +47,10 @@ export class LoginPageComponent  {
         // display error message
         console.error(err);
         await this._alertService.presentAlert('Error', err.message);
+        // toggle btn
+        this.loginForm.nativeElement.disabled = false;
+        await this._auth.disconnectServices();
+        this.isAuthentcating$.next(false);
         return false;
       });
     // check result
@@ -56,7 +60,10 @@ export class LoginPageComponent  {
         this.ionViewDidLeave();
       });
     }
-    this._loadingCtrl.dismiss();
+    if (await this._loadingCtrl.getTop()) {
+      this._loadingCtrl.dismiss();
+    }
+    this.isAuthentcating$.next(false);
   }
 
 }
