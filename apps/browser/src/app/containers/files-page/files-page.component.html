@@ -100,6 +100,17 @@
               color="primary"  
               size="small" 
               class="ion-margin-start" 
+              *ngIf="item.encryptedSymmetricKey && item.isFolder !== true && (item.accessControlConditions|isShared:account$.value)"
+              (click)="$event.stopPropagation(); actions('share', {item})">
+            <ion-icon size="small" name="share-social-outline"></ion-icon>
+            <ion-label>
+              is shared
+            </ion-label>
+          </ion-chip>
+          <ion-chip 
+              color="primary"  
+              size="small" 
+              class="ion-margin-start" 
               *ngIf="!item.encryptedSymmetricKey && item.isFolder !== true"
               (click)="$event.stopPropagation(); actions('lockFile', item)">
             <ion-icon size="small" name="lock-open-outline"></ion-icon>

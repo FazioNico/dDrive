@@ -61,7 +61,11 @@ export class SetupEncryptionComponent {
       .get('walletAddress')
       ?.get('selected')
       ?.patchValue(walletsAddress.length > 0);
-    this.form.get('walletAddress')?.get('values')?.patchValue(walletsAddress);
+    const walletAddressArrayValue = (this.form.get('walletAddress')?.get('values') as FormArray)
+    walletAddressArrayValue.clear();
+    walletsAddress.forEach((address) => {
+      walletAddressArrayValue.push(new FormControl(address));
+    });
     // this.form.get('nftOwner')?.get('values')?.patchValue([nftContractAddress]);
     // this.form.get('daoMember')?.get('values')?.patchValue([daoContractAddress]);
     this.accordionsOpen = accordionsOpen;

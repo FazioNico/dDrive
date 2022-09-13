@@ -41,6 +41,7 @@ export class FilesPageComponent {
   public options = {
     maxBreadcrumbs: 3,
   };
+  public account$ = this._didService.accountId$;
 
   constructor(
     private readonly _popCtrl: PopoverController,

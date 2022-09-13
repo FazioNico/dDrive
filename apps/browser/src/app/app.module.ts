@@ -42,6 +42,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { NFTPageComponent } from './containers/nft-page/nft-page.component';
 import { NFTService } from './services/nft.services';
 import { NgxEnvModule } from '@ngx-env/core';
+import { IsSharePipe } from './pipes/is-shared.pipe';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -80,6 +81,7 @@ const getProviderFactory =
     TotalStoragePipe,
     PreviewFilePipe,
     SafePipe,
+    IsSharePipe,
     NFTPageComponent,
     HeaderComponent,
   ],

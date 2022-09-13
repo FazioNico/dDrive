@@ -135,7 +135,10 @@
         <ion-button fill="outline" (click)="modalCtrl.dismiss(null, 'cancel')">
           Cancel
         </ion-button>
-        <ion-button (click)="submit()">
+        <!-- disable button if form is not touched oor invalid -->
+        <ion-button 
+            [disabled]="form?.invalid"
+          (click)="submit()">
           Start {{ !item ? 'upload' : 'share'}}
         </ion-button>
       </ion-col>
