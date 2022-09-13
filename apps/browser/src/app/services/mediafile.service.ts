@@ -8,7 +8,6 @@ import {
   IAccessControlConditions,
   IMediaFile,
 } from '../interfaces/mediafile.interface';
-import { XMTPService } from './xmtp.service';
 import { DIDService } from './did.service';
 import { NotificationService } from './notification.service';
 
@@ -78,7 +77,6 @@ export class MediaFileService {
     private readonly _dataService: CeramicService,
     private readonly _fileService: IPFSService,
     private readonly _litService: LitService,
-    // private readonly _xmtpService: XMTPService,
     private readonly _didService: DIDService,
     private readonly _notificationSerivce: NotificationService
   ) {}
@@ -96,21 +94,27 @@ export class MediaFileService {
 
   async upload(
     file: File | Blob,
-    accessControlConditions: IAccessControlConditions[] = []
+    accessControlConditions: IAccessControlConditions[] = [],
+    metaDataValue: IMediaFile|undefined = undefined
   ) {
     // build file metadata object
     const _id = uuidV4();
     const isoDateTime = new Date().toISOString();
-    const metaData: IMediaFile = {
-      parent: this._filterBy$.value,
-      name: (file as File)?.name || _id,
-      size: file.size,
-      type: file.type,
-      isFolder: false,
-      createdIsoDateTime: isoDateTime,
-      lastModifiedIsoDateTime: isoDateTime,
-      _id,
-    };
+    const metaData: IMediaFile = !metaDataValue 
+      ? {
+          parent: this._filterBy$.value,
+          name: (file as File)?.name || _id,
+          size: file.size,
+          type: file.type,
+          isFolder: false,
+          createdIsoDateTime: isoDateTime,
+          lastModifiedIsoDateTime: isoDateTime,
+          _id,
+        }
+      : {
+        ...metaDataValue,
+        lastModifiedIsoDateTime: isoDateTime,
+      };
     // encrypt file if needed
     if (accessControlConditions.length > 0) {
       const { encryptedFile, encryptedSymmetricKey } =
@@ -182,14 +186,14 @@ export class MediaFileService {
     const cid = files[index].cid;
     if (cid) {
       // unpin file from ipfs
-      await this._fileService.unpin(cid);
+      await this._fileService.unpin(cid).catch((err) => {
+        console.log('[ERROR] unpin: ', err);
+      });
     }
     // remove file from list
     files.splice(index, 1);
     // find all children files
-    const children = files.filter(
-      (item) => item.parent === id,
-    );
+    const children = files.filter((item) => item.parent === id);
     // unpin all children files
     await Promise.all(
       children.map(async (child) => {
@@ -206,10 +210,7 @@ export class MediaFileService {
       }
     });
     // update object data to database
-    await this._dataService.updateData(
-      { files },
-      this._dataService.docId
-    );
+    await this._dataService.updateData({ files }, this._dataService.docId);
     // update state
     this._items$.next(files);
   }
@@ -272,12 +273,17 @@ export class MediaFileService {
     return result;
   }
 
-  async share(id: string) {
-    const { cid } = this._items$.value.find((item) => item._id === id) || {};
+  async shareWithEncryption(file: IMediaFile) {
+    const {cid, accessControlConditions, ...fileMetadata} = file;
     if (!cid) {
       throw new Error('File not found');
     }
-    throw new Error('Not implemented');
+    // get file from ipfs
+    const {file: fileFromCID} = await this.downloadFile(file._id, false);
+    // re upload file to ipfs with new encryption
+    await this.upload(fileFromCID, accessControlConditions, fileMetadata);
+    // delete old pin
+    await this.delete(file._id);
   }
 
   searchByName(name: string | null) {
@@ -315,5 +321,15 @@ export class MediaFileService {
     );
     const destinationAddress = isWalletAddressCondition?.returnValueTest?.value;
     return destinationAddress;
+  }
+
+  private _buildAbsolutPath(file: IMediaFile): string{
+    const path = [file.name];
+    let parent = this._items$.value.find((item) => item._id === file.parent);
+    while (parent !== undefined) {
+      path.unshift(parent.name);
+      parent = this._items$.value.find((item) => item._id === parent?.parent);
+    }
+    return path.join('/');
   }
 }

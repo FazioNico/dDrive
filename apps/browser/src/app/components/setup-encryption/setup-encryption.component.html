@@ -4,7 +4,7 @@
     <ion-row>
       <ion-col>
         <h1 class="ion-no-margin">
-          <span>Encryption</span>
+          <span>{{!item ? '' : 'Shared ' }}Encryption {{!item ? '' : 'condition' }} </span>
         </h1>
       </ion-col>
     </ion-row>
@@ -41,7 +41,7 @@
         <form [formGroup]="form" class="ion-padding-bottom">
           <ion-accordion-group
             [multiple]="true"
-            [value]="['']">
+            [value]="accordionsOpen">
             <!-- By wallets address owner -->
             <ion-accordion 
                 value="walletAddress" 
@@ -68,7 +68,7 @@
                 </ion-chip>
                 <br/>
                 <ion-item>
-                  <ion-input #inputWalletAddress placeholder="new wallet address"></ion-input>
+                  <ion-input #inputWalletAddress placeholder="add wallet address"></ion-input>
                   <ion-button size="small" fill="outline" slot="end" (click)="addValue('walletAddress.values', inputWalletAddress.value + ''); inputWalletAddress.value = ''">add</ion-button>
                 </ion-item>
               </div>
@@ -136,7 +136,7 @@
           Cancel
         </ion-button>
         <ion-button (click)="submit()">
-          Start upload
+          Start {{ !item ? 'upload' : 'share'}}
         </ion-button>
       </ion-col>
     </ion-row>

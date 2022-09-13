@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
+import {
+  IAccessControlConditions,
+  IMediaFile,
+} from '../../interfaces/mediafile.interface';
 import { NetwokNamePipe } from '../../pipes/network-name.pipe';
 
 @Component({
@@ -11,39 +15,56 @@ import { NetwokNamePipe } from '../../pipes/network-name.pipe';
 export class SetupEncryptionComponent {
   @Input() walletAddress!: string;
   @Input() chainId!: string;
+  @Input() item!: IMediaFile;
   form!: FormGroup;
   isDisplayConditionForm = false;
-  constructor(
-    public readonly modalCtrl: ModalController
-  ) {
-  }
+  accordionsOpen: string[] = [];
+  constructor(public readonly modalCtrl: ModalController) {}
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this._buildForm();
+    if (this.item?.accessControlConditions?.length) {
+      this.isDisplayConditionForm = true;
+      this._patchValues(this.item.accessControlConditions);
+    }
   }
-
 
   private _buildForm() {
     this.form = new FormGroup({
       walletAddress: new FormGroup({
         selected: new FormControl(false),
-        values: new FormArray([
-          new FormControl(this.walletAddress)
-        ]),
+        values: new FormArray([new FormControl(this.walletAddress)]),
       }),
       nftOwner: new FormGroup({
         selected: new FormControl(false),
-        values: new FormArray([
-          new FormControl()
-        ]),
+        values: new FormArray([new FormControl()]),
       }),
       daoMember: new FormGroup({
         selected: new FormControl(false),
-        values: new FormArray([
-          new FormControl()
-        ]),
+        values: new FormArray([new FormControl()]),
       }),
     });
+  }
+
+  private _patchValues(accessControlConditions: IAccessControlConditions[]) {
+    const accordionsOpen: string[] = [];
+    const walletsAddress: string[] = [];
+    let nftContractAddress: string | undefined;
+    let daoContractAddress: string | undefined;
+    accessControlConditions.forEach((condition) => {
+      if (this._isWalletAddressEcryptionCondition(condition)) {
+        accordionsOpen.push('walletAddress');
+        walletsAddress.push(condition.returnValueTest.value);
+      }
+    });
+    this.form
+      .get('walletAddress')
+      ?.get('selected')
+      ?.patchValue(walletsAddress.length > 0);
+    this.form.get('walletAddress')?.get('values')?.patchValue(walletsAddress);
+    // this.form.get('nftOwner')?.get('values')?.patchValue([nftContractAddress]);
+    // this.form.get('daoMember')?.get('values')?.patchValue([daoContractAddress]);
+    this.accordionsOpen = accordionsOpen;
   }
 
   public addValue(controlname: string, value: string) {
@@ -66,18 +87,26 @@ export class SetupEncryptionComponent {
       walletsAddress: [],
       nftContractAddress: undefined,
       daoContractAddress: undefined,
-    }
+    };
     if (this.form.get('walletAddress')?.get('selected')?.value === true) {
-      result.walletsAddress = this.form.get('walletAddress')?.get('values')?.value;
+      result.walletsAddress = this.form
+        .get('walletAddress')
+        ?.get('values')?.value;
     }
     if (this.form.get('nftOwner')?.get('selected')?.value === true) {
-      result.nftContractAddress = this.form.get('nftOwner')?.get('values')?.value?.pop();
+      result.nftContractAddress = this.form
+        .get('nftOwner')
+        ?.get('values')
+        ?.value?.pop();
     }
     if (this.form.get('daoMember')?.get('selected')?.value === true) {
-      result.daoContractAddress = this.form.get('daoMember')?.get('values')?.value?.pop();
+      result.daoContractAddress = this.form
+        .get('daoMember')
+        ?.get('values')
+        ?.value?.pop();
     }
     const conditions = this._normalizeData(result);
-    await this.modalCtrl.dismiss(conditions);
+    await this.modalCtrl.dismiss(conditions, 'ok');
   }
 
   private _normalizeData(data: {
@@ -93,14 +122,12 @@ export class SetupEncryptionComponent {
             contractAddress: '',
             standardContractType: '',
             method: '',
-            parameters: [
-              ':userAddress',
-            ],
+            parameters: [':userAddress'],
             returnValueTest: {
               comparator: '=',
-              value
-            }
-          }
+              value,
+            },
+          };
         })
       );
     }
@@ -109,13 +136,11 @@ export class SetupEncryptionComponent {
         contractAddress: data.nftContractAddress,
         standardContractType: 'ERC721',
         method: 'balanceOf',
-        parameters: [
-          ':userAddress'
-        ],
+        parameters: [':userAddress'],
         returnValueTest: {
           comparator: '>',
-          value: '0'
-        }
+          value: '0',
+        },
       });
     }
     if (data.daoContractAddress) {
@@ -123,36 +148,40 @@ export class SetupEncryptionComponent {
         contractAddress: data.daoContractAddress,
         standardContractType: 'ERC20',
         method: 'members',
-        parameters: [
-          ':userAddress',
-        ],
+        parameters: [':userAddress'],
         returnValueTest: {
           comparator: '=',
-          value: 'true'
-        }
+          value: 'true',
+        },
       });
     }
     // add object `or` condition between each condition
-    const result = accessControlConditions.map((condition, i) => {
-      if (i === accessControlConditions.length - 1) {
-        return [condition];
-      }
-      return [
-        condition,
-        {operator: "or"}
-      ];
-    })
-    .flat()
-    .map(
-      (condition: any) => {
+    const result = accessControlConditions
+      .map((condition, i) => {
+        if (i === accessControlConditions.length - 1) {
+          return [condition];
+        }
+        return [condition, { operator: 'or' }];
+      })
+      .flat()
+      .map((condition: any) => {
         if (condition.operator) {
           return condition;
         }
         return {
           chain: new NetwokNamePipe().transform(this.chainId),
           ...condition,
-        }
+        };
       });
     return result;
+  }
+
+  private _isWalletAddressEcryptionCondition(
+    encryptAccessCondition: IAccessControlConditions
+  ) {
+    return (
+      encryptAccessCondition.method === '' &&
+      encryptAccessCondition.parameters.includes(':userAddress')
+    );
   }
 }

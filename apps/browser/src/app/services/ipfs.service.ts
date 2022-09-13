@@ -5,6 +5,12 @@ import { create, IPFS } from 'ipfs-core';
 export class IPFSService {
   private _ipfsNode!: IPFS;
 
+  async disconect() {
+    if (this._ipfsNode) {
+      await this._ipfsNode.stop();
+    }
+  }
+
   async add(file: File | Blob) {
     if (!this._ipfsNode) {
       this._ipfsNode = await create();
@@ -16,10 +22,11 @@ export class IPFSService {
     const { cid } = await this._ipfsNode.add(file, {
       timeout: 10000,
       preload: true,
+      progress: (prog) => console.log(`received: ${prog}`),
     });
     await this.pin(cid.toString());
     return {
-      cid: cid.toString(),
+      cid: cid.toString()
     };
   }
 

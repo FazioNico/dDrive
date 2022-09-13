@@ -14,6 +14,7 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { ItemPreviewComponent } from '../../components/item-preview/item-preview.component';
 import { SelectFolderComponent } from '../../components/select-folder/select-folder.component';
 import { SetupEncryptionComponent } from '../../components/setup-encryption/setup-encryption.component';
+import { IMediaFile } from '../../interfaces/mediafile.interface';
 import { DIDService } from '../../services/did.service';
 import { LoaderService } from '../../services/loader.service';
 import { MediaFileService } from '../../services/mediafile.service';
@@ -24,7 +25,8 @@ import { MediaFileService } from '../../services/mediafile.service';
   styleUrls: ['./files-page.component.scss'],
 })
 export class FilesPageComponent {
-  @ViewChild(HeaderComponent, {static: false}) public readonly header!: HeaderComponent;
+  @ViewChild(HeaderComponent, { static: false })
+  public readonly header!: HeaderComponent;
   public breadcrumbs$ = this._mediaFileService.breadcrumbs$.pipe(
     map((breadcrumbs) => {
       const maxBreadcrumbs = this.options.maxBreadcrumbs;
@@ -73,7 +75,7 @@ export class FilesPageComponent {
         }
         console.log('conditions: ', conditions);
         this._loaderService.setStatus(true);
-        let i = 0
+        let i = 0;
         while (i !== files.length) {
           await this._mediaFileService.upload(files[i], conditions);
           ++i;
@@ -98,12 +100,14 @@ export class FilesPageComponent {
         break;
       }
       case type === 'searchByName': {
-        const {detail: {value = null}} = payload;
+        const {
+          detail: { value = null },
+        } = payload;
         this._mediaFileService.searchByName(value);
         break;
       }
       case type === 'navTo': {
-        const { item: {_id} = null} = payload;
+        const { item: { _id } = null } = payload;
         this._mediaFileService.navToFolderId(_id);
         this.header.searchbarElement.nativeElement.value = '';
         break;
@@ -134,7 +138,7 @@ export class FilesPageComponent {
               role: 'ok',
             },
           ],
-          mode: 'md'
+          mode: 'md',
         };
         const { data, role } = await this._displayMessage(
           this._alertCtrl,
@@ -178,15 +182,15 @@ export class FilesPageComponent {
           component: ItemPreviewComponent,
           componentProps: {
             item,
-          }
+          },
         });
         await ionModal.present();
         const { data, role = 'cancel' } = await ionModal.onDidDismiss();
-        this.actions(role, {item: data})
+        this.actions(role, { item: data });
         break;
       }
       case type === 'delete': {
-        const { item: {_id = null, isFolder = false} = null } = payload;
+        const { item: { _id = null, isFolder = false } = null } = payload;
         if (!_id) {
           throw new Error('delete(): payload is invalid');
         }
@@ -235,7 +239,7 @@ export class FilesPageComponent {
         break;
       }
       case type === 'download': {
-        const { item: {_id = null, isFolder = false} = null } = payload;
+        const { item: { _id = null, isFolder = false } = null } = payload;
         if (!_id || isFolder) {
           throw new Error('download(): payload is invalid');
         }
@@ -245,7 +249,7 @@ export class FilesPageComponent {
         break;
       }
       case type === 'rename': {
-        const { item: {_id = null, name = null} = {} } = payload;
+        const { item: { _id = null, name = null } = {} } = payload;
         // ask for new name
         const opts = {
           header: 'Rename',
@@ -261,7 +265,7 @@ export class FilesPageComponent {
             { text: 'Cancel', role: 'cancel' },
             { text: 'Rename', role: 'ok' },
           ],
-          mode: 'md'
+          mode: 'md',
         };
         const { data, role } = await this._displayMessage(
           this._alertCtrl,
@@ -283,7 +287,7 @@ export class FilesPageComponent {
           componentProps: {
             folders,
           },
-          cssClass: 'modalSelectFolder'
+          cssClass: 'modalSelectFolder',
         });
         await ionModal.present();
         const { data, role } = await ionModal.onDidDismiss();
@@ -299,19 +303,68 @@ export class FilesPageComponent {
           duration: 1200,
           position: 'bottom',
           color: 'primary',
-          buttons: [ { text: 'ok', side: 'end', handler: async () => await this._toastCtrl.dismiss() } ],
+          buttons: [
+            {
+              text: 'ok',
+              side: 'end',
+              handler: async () => await this._toastCtrl.dismiss(),
+            },
+          ],
           keyboardClose: true,
-        })
+        });
         break;
       }
       case type === 'share': {
-        const { item : {_id = null, isFolder = false} = null } = payload;
-        if (!_id || isFolder) {
+        const { item = null } = <{ item?: IMediaFile }>payload;
+        if (!item || item.isFolder) {
           throw new Error('share(): payload is invalid');
         }
-        this._loaderService.setStatus(true);
-        await this._mediaFileService.share(_id);
-        this._loaderService.setStatus(false);
+        if (!item.accessControlConditions && !item.encryptedSymmetricKey) {
+          // TODO: use browser API too share CID link from IPFS gateway
+          const url = `https://ipfs.io/ipfs/${item.cid}`;
+          throw 'share() from public file not implemented yet';
+        } else {
+          // open share modal
+          const ionModal = await this._modalCtrl.create({
+            component: SetupEncryptionComponent,
+            cssClass: 'modalAlert',
+            componentProps: {
+              item,
+              walletAddress: this._didService.accountId$.value,
+              chainId: this._didService.chainId$.value,
+            },
+          });
+          await ionModal.present();
+          const { data, role } = await ionModal.onDidDismiss();
+          if (role !== 'ok' || !data) {
+            return;
+          }
+          console.log('share(): data: ', data);
+          // send new condition to shared method from media file service
+          this._loaderService.setStatus(true);
+          await this._mediaFileService.shareWithEncryption({
+            ...item,
+            accessControlConditions: data,
+          });
+          this._loaderService.setStatus(false);
+          // notify user that file was uploaded successfully
+          const opts: ToastOptions = {
+            message: `File shared successfully`,
+            duration: 2000,
+            position: 'bottom',
+            color: 'primary',
+            buttons: [
+              {
+                text: 'ok',
+                side: 'end',
+                handler: async () => await this._toastCtrl.dismiss(),
+              },
+            ],
+            keyboardClose: true,
+          };
+          await this._displayMessage(this._toastCtrl, opts);
+        }
+
         break;
       }
     }
@@ -330,7 +383,7 @@ export class FilesPageComponent {
     if (role === 'close') {
       return;
     }
-    await this.actions(type, {item, $event});
+    await this.actions(type, { item, $event });
   }
 
   trackByfn(index: number, item: { _id: string }) {
@@ -344,7 +397,7 @@ export class FilesPageComponent {
       componentProps: {
         walletAddress: this._didService.accountId$.value,
         chainId: this._didService.chainId$.value,
-      }
+      },
     });
     await ionModal.present();
     const { data } = await ionModal.onDidDismiss();
