@@ -94,6 +94,16 @@ ion-backdrop {
   }
 }
 
+.header-grid {
+
+  ion-icon {
+    font-size: 0.8rem;
+  }
+  .item-stats {
+    --background: transparent;
+  }
+}
+
 .modalSelectFolder {
   --min-width: 280px;
   --max-width: 350px;

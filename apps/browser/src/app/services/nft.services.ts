@@ -13,6 +13,9 @@ export class NFTService {
   new BehaviorSubject(null as any);
   private _core!: MoralisCore;
   private _evmApi!: MoralisEvmApi;
+  private readonly _chains = environment.production 
+    ? [EvmChain.POLYGON, EvmChain.BSC, EvmChain.ETHEREUM, EvmChain.CRONOS]
+    : [EvmChain.MUMBAI, EvmChain.BSC_TESTNET, EvmChain.RINKEBY, EvmChain.CRONOS_TESTNET]
   public readonly nfts$ = combineLatest([
     this._nfts$.pipe(filter(Boolean)),
     this._queryFilterBy$,
@@ -24,6 +27,9 @@ export class NFTService {
       return nfts.filter((nft) => nft.name ? nft.name.toLowerCase().includes(queryFilterBy.toLowerCase()) : false);
     })
   );
+  public get chainNames() {
+    return this._chains.map(chain => chain.name);
+  }
 
   async connect() {
     this._core = MoralisCore.create();
@@ -51,10 +57,7 @@ export class NFTService {
 
   async getWalletNFTsFromAllChain(address: string) {
     // await this.connect();
-    const chains = 
-    environment.production 
-      ? [EvmChain.POLYGON, EvmChain.BSC, EvmChain.ETHEREUM, EvmChain.CRONOS]
-      : [EvmChain.MUMBAI, EvmChain.BSC_TESTNET, EvmChain.RINKEBY, EvmChain.CRONOS_TESTNET];
+    const chains = this._chains;
     const nfts = await Promise.all(
       chains.map(async (chain) => this.getWalletNFTs(address, chain))
     ).then((nfts) => nfts.flat());
