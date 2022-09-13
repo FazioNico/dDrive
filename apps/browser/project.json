@@ -137,7 +137,10 @@
           "ethereum-blockies-base64",
           "bowser",
           "@xmtp/xmtp-js",
-          "@moralisweb3/core"
+          "moralis",
+          "@moralisweb3/core",
+          "@moralisweb3/evm-api",
+          "@moralisweb3/evm-utils"
         ],
         "serviceWorker": true,
         "ngswConfigPath": "apps/browser/ngsw-config.json"
