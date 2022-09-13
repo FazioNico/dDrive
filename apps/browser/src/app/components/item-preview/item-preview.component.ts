@@ -9,6 +9,7 @@ import { IMediaFile } from '../../interfaces/mediafile.interface';
 })
 export class ItemPreviewComponent {
   @Input() item!: IMediaFile;
+  @Input() account!: string;
 
   constructor(
     public readonly modalCtrl: ModalController

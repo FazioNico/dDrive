@@ -183,7 +183,9 @@ export class FilesPageComponent {
           component: ItemPreviewComponent,
           componentProps: {
             item,
+            account: this._didService.accountId$.value,
           },
+          cssClass: 'ion-modal-preview-file',
         });
         await ionModal.present();
         const { data, role = 'cancel' } = await ionModal.onDidDismiss();
