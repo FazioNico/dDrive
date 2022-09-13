@@ -1,8 +1,7 @@
 <ion-split-pane contentId="main">
   <!--  the side menu  -->
-  <ion-menu contentId="main">
+  <ion-menu contentId="main" #menuElement>
     <ion-content>
-      <!-- <ion-img class="menu-logo" src="./assets/images/ipfs-logo.svg"></ion-img> -->
       <ion-icon src="./assets/images/ipfs-logo.svg" class="logo"></ion-icon>
       <ion-text>
         <span class="menu-title">dDrive</span>
@@ -12,30 +11,26 @@
           routerLink="/drive/files"
           routerDirection="root"
           routerLinkActive="active-link"
+          (click)="menuElement.close()"
         >
-          <ion-label> Drive </ion-label>
+          <ion-label>Drive</ion-label>
         </ion-item>
         <ion-item
           routerLink="/drive/nfts"
           routerDirection="root"
           routerLinkActive="active-link"
+          (click)="menuElement.close()"
         >
-          <ion-label> NFTs </ion-label>
+          <ion-label>NFTs</ion-label>
         </ion-item>
         <ion-item>
-          <ion-label> Recents </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label> Shared </ion-label>
+          <ion-label
+          routerLink="/drive/shared"
+          routerDirection="root"
+          routerLinkActive="active-link"
+          (click)="menuElement.close()">Shared</ion-label>
         </ion-item>
       </ion-list>
-      <!-- <div class="menu-stats ion-padding">
-        <ion-item>
-          <ion-icon slot="start" name="cloud-outline"></ion-icon>
-          <ion-label>Storage total space</ion-label>
-        </ion-item>
-        <ion-progress-bar [value]="[]|totalStorage"></ion-progress-bar>
-      </div> -->
     </ion-content>
     <ion-footer id="auto-trigger">
       <ion-toolbar>
