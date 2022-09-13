@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import LitJsSdk from 'lit-js-sdk';
+import { environment } from "../../environments/environment";
 import { IAccessControlConditions } from "../interfaces/mediafile.interface";
 
 @Injectable()
 export class LitService {
-  public readonly chain = 'mumbai';
+  public readonly chain = environment.defaultChain;
   public readonly standardContractType = ''
   public readonly contractAddress = '';
   public defaultAccessControls = [

@@ -4,7 +4,7 @@
   "prefix": "d-drive",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@ngx-env/builder:browser",
       "outputs": [
         "{options.outputPath}"
       ],
@@ -175,7 +175,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@ngx-env/builder:dev-server",
       "configurations": {
         "production": {
           "browserTarget": "browser:build:production"
@@ -187,7 +187,7 @@
       "defaultConfiguration": "development"
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@ngx-env/builder:extract-i18n",
       "options": {
         "browserTarget": "browser:build"
       }
@@ -202,7 +202,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@ngx-env/builder:karma",
       "outputs": [
         "coverage/apps/browser"
       ],

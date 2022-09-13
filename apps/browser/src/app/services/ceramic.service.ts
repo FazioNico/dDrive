@@ -6,12 +6,13 @@ import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
 import { DID } from 'dids'
 import { DIDDataStore } from '@glazed/did-datastore';
 import { IUserProfil } from "../interfaces/user-profil.interface";
+import { environment } from "../../environments/environment";
 
 
 @Injectable()
 export class CeramicService {
 
-    private readonly _db: CeramicClient = new CeramicClient('https://ceramic-clay.3boxlabs.com');
+    private readonly _db: CeramicClient = new CeramicClient(environment.ceramic.apiHost);
     private readonly _datastore: DIDDataStore = new DIDDataStore({ ceramic: this._db, model: this._getAliases() });
     private _mainDocuumentId!: string;
 

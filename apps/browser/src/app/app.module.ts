@@ -41,6 +41,7 @@ import { AlertService } from './services/alert.service';
 import { HeaderComponent } from './components/header/header.component';
 import { NFTPageComponent } from './containers/nft-page/nft-page.component';
 import { NFTService } from './services/nft.services';
+import { NgxEnvModule } from '@ngx-env/core';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -85,6 +86,7 @@ const getProviderFactory =
   imports: [
     BrowserModule,
     ReactiveFormsModule,
+    NgxEnvModule,
     IonicModule.forRoot({
       mode: 'ios',
     }),
