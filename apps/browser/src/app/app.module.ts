@@ -38,9 +38,9 @@ import { XMTPService } from './services/xmtp.service';
 import { UserProfilService } from './services/user-profil.service';
 import { NotificationService } from './services/notification.service';
 import { AlertService } from './services/alert.service';
-import { NFTService } from './services/nft.services';
-import { NFTPageComponent } from './containers/nft-page/nft-page.component';
 import { HeaderComponent } from './components/header/header.component';
+import { NFTPageComponent } from './containers/nft-page/nft-page.component';
+import { NFTService } from './services/nft.services';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
