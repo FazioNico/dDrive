@@ -137,7 +137,7 @@
         </ion-button>
         <!-- disable button if form is not touched oor invalid -->
         <ion-button 
-            [disabled]="form?.invalid"
+            [disabled]="form.invalid"
           (click)="submit()">
           Start {{ !item ? 'upload' : 'share'}}
         </ion-button>
