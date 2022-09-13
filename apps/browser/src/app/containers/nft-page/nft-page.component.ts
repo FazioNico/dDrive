@@ -15,11 +15,14 @@ export class NFTPageComponent implements OnInit {
   private readonly _chainNames = [
     'all', 
     ...this._nftService.chainNames
-  ].map((chain, i) => ({
+  ]
+  .map((chain, i) => ({
     name: chain,
     selected: i === 0 ? true : false,
-  }));
-  public readonly chainNames$ = new BehaviorSubject(this._chainNames);
+  }))
+  .sort((a,b) => a.name.localeCompare(b.name));
+  public readonly chainNames$ = new BehaviorSubject(this._chainNames)
+
   public readonly nfts$ = combineLatest([
     this._nftService.nfts$,
     this.chainNames$,
@@ -32,7 +35,7 @@ export class NFTPageComponent implements OnInit {
       if (selectedChainNames.length === 0 || selectedChainNames[0] === 'all') {
         return nfts;
       } else {
-        return nfts.filter((nft) => selectedChainNames.includes(nft.chain.name?.toLowerCase()));
+        return nfts.filter((nft) => selectedChainNames.includes(nft.chain.name?.toLowerCase()|| 'unknown'));
       }
     })
   );

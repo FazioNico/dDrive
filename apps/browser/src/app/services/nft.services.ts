@@ -28,7 +28,7 @@ export class NFTService {
     })
   );
   public get chainNames() {
-    return this._chains.map(chain => chain.name);
+    return this._chains.map(chain => chain.name||'unknown chain');
   }
 
   async connect() {
