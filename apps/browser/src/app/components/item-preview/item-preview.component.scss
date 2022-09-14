@@ -1,29 +1,75 @@
 :host {
+
+  ion-content {
+    --background: var(--ion-container-background)!important;
+  }
+
   ion-spinner {
     height: 5rem;
     width: 5rem;
   }
 
-  ion-grid {
+  .close-btn {
     position: absolute;
     top: 0;
-    height: 100%;
+    right: 0;
+    margin: 1rem;
+    z-index: 1;
+  }
+
+  ion-grid {
+    // position: absolute;
+    // top: 0;
+    // height: 100%;
     width: 100%;
   }
-  ion-row {
-    height: 100%;
+  ion-row, ion-col, ion-list {
+    height: 100vh;
     position: relative;
   }
   ion-col.preview {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+  }
 
-    div {
-      position: fixed;
-      display: contents;
-    }
+  ion-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    align-content: center;
   }
 
   ion-chip {
     transform: scale(0.8);
+  }
+
+  img {
+    max-height: 100vh;
+  }
+
+  .download-btn {
+    position: absolute;
+    bottom: 2rem;
+  }
+  
+  .bg-image {
+    position: absolute;
+    top:0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-position: center;
+    background-size: cover;
+    background-repeat: none;
+    background-size: 300%;
+    z-index: -1;
+    -webkit-filter: blur(80px);
+    filter: blur(80px);
   }
 }

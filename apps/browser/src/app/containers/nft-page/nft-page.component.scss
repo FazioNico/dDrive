@@ -1,6 +1,6 @@
 :host {
   ion-content {
-    --background: rgb(244,248,248)!important;
+    --background: var(--ion-container-background)!important;
   }
 
   ion-chip.chain-chip {

@@ -92,10 +92,12 @@
           <ion-icon size="large" name="folder-outline" *ngIf="item.isFolder === true"></ion-icon>
           <ion-icon size="large" name="document-outline" *ngIf="item.isFolder !== true"></ion-icon>
         </ion-col>
-        <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
+        <ion-col class="ion-align-items-center ion-text-wrap" size="auto" [ngStyle]="{'display': 'flex'}">
           <ion-text class="ion-padding-start">
             {{item.name}}
           </ion-text>
+        </ion-col>
+        <ion-col size="auto" class="ion-hide-md-down">
           <ion-chip 
               color="primary"  
               size="small" 
@@ -119,12 +121,10 @@
             </ion-label>
           </ion-chip>
         </ion-col>
-        <ion-col class="ion-text-right">
-          <ion-text *ngIf="item.isFolder !== true" color="medium">
+        <ion-col class="ion-text-right ion-align-items-center ion-justify-content-end" [ngStyle]="{'display': 'flex'}">
+          <ion-text *ngIf="item.isFolder !== true" color="medium" class="ion-hide-md-down">
             {{item.size|bytesToSize}}
           </ion-text>
-        </ion-col>
-        <ion-col size="auto">
           <ion-fab-button size="small" translucent="true" mode="ios" (click)="$event.stopPropagation();actions('openOptions', {event: $event, item})">
             <ion-icon color="medium" size="small" color="primary" name="ellipsis-vertical"></ion-icon>
           </ion-fab-button>

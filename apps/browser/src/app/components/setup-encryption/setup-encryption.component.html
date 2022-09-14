@@ -3,17 +3,21 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <h1 class="ion-no-margin">
-          <span>{{!item ? '' : 'Shared ' }}Encryption {{!item ? '' : 'condition' }} </span>
-        </h1>
+        <ion-text color="dark">
+          <h1 class="ion-no-margin">
+            <span>{{!item ? '' : 'Shared ' }}Encryption {{!item ? '' : 'condition' }} </span>
+          </h1>
+        </ion-text>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="isDisplayConditionForm === false">
       <ion-col>
-        <p>
-          Do you want to encrypt your data using Lit network protocol? <br/>
-          This will allow you to define custom controls access condition to your data to prevent unauthorized access.
-        </p>
+        <ion-text color="dark">
+          <p>
+            Do you want to encrypt your data using Lit network protocol? <br/>
+            This will allow you to define custom controls access condition to your data to prevent unauthorized access.
+          </p>
+        </ion-text>
         <div class="ion-text-end">
           <ion-button fill="outline" (click)="modalCtrl.dismiss([], 'cancel')">
             No, start upload

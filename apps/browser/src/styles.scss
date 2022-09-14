@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 ion-router-outlet {
-  background:  rgb(244,248,248)!important;
+  background:  var(--ion-container-background)!important;
 }
 ion-split-pane {
   --side-max-width: 236px;
@@ -33,7 +33,7 @@ ion-split-pane {
 ion-avatar ion-img::after {
   content: "";
     border-radius: 100%;
-    border: solid 3px #fff;
+    border: solid 3px var(--ion-background-color);
     position: absolute;
     bottom: -5%;
     right: -8%;

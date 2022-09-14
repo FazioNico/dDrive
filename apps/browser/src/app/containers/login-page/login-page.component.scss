@@ -37,7 +37,7 @@
     }
 
     ion-col.wrapper {
-      background: rgb(244,248,248);
+      background: var(--ion-container-background);
       height: 100%;
       padding: 4rem;
       display: flex;

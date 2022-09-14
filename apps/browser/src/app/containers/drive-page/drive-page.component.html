@@ -41,7 +41,7 @@
           <ion-label>
             {{ accountId | sliceAddress }}
           </ion-label>
-          <ion-buttons slot="end" (click)="$event.stopPropagation()">
+          <!-- <ion-buttons slot="end" (click)="$event.stopPropagation()">
             <ion-button size="small">
               <ion-icon
                 size="small"
@@ -49,23 +49,24 @@
                 name="settings-sharp"
               ></ion-icon>
             </ion-button>
-          </ion-buttons>
+          </ion-buttons> -->
         </ion-item>
       </ion-toolbar>
     </ion-footer>
 
     <ion-popover
+      #popOverProfil
       class="profil-popover"
       trigger="auto-trigger"
       size="auto"
       side="top"
       alignment="start"
       [keepContentsMounted]="true"
-      [dismissOnSelect]="true"
+      [dismissOnSelect]="false"
     >
       <ng-template>
         <ion-content class="ion-padding">
-          <ion-item *ngIf="accountId$ | async as accountId" lines="none">
+          <ion-item *ngIf="accountId$ | async as accountId" lines="none" class="item-profil"> 
             <ion-avatar slot="start" >
               <ion-img [src]="accountId | addressToAvatar"></ion-img>
             </ion-avatar>
@@ -86,12 +87,20 @@
               {{ chainId$ | async | networkName }}
             </ion-label>
           </ion-item>
+          <ion-item lines="none" class="ion-margin-top">
+            <ion-icon size="small" name="moon-outline" slot="start"></ion-icon>
+            <ion-toggle slot="end" color="primary" [checked]="darkMode" (ionChange)="toggleDarkMode()"></ion-toggle>
+            <ion-label>
+              Dark mode
+            </ion-label>
+          </ion-item>
           <ion-item
             [detail]="false"
             routerLink="/login"
             routerDirection="root"
             lines="none"
             class="ion-margin-top"
+            (click)="popOverProfil.dismiss()"
           >
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <ion-label>

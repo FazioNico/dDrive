@@ -1,30 +1,27 @@
-<ion-header mode="md" class="ion-no-border">
-  <ion-toolbar>
-    <ion-button
-      fill="none"
-      slot="end"
-      class="ion-float-end"
-      (click)="modalCtrl.dismiss(null, 'cancel')"
-    >
-      <ion-icon icon-only name="close"></ion-icon>
-    </ion-button>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
-  <ion-grid class="ion-margin-vertical">
-    <ion-row class="ion-align-items-center">
-      <ion-col size="7" class="ion-text-center preview">
+<ion-content [fullscreen]="true" class="ion-no-padding">
+  <ion-button
+    fill="none"
+    class="close-btn"
+    (click)="modalCtrl.dismiss(null, 'cancel')"
+  >
+    <ion-icon icon-only name="close"></ion-icon>
+  </ion-button>
+  <ion-grid class="ion-no-padding">
+    <ion-row class="ion-align-items-center ion-no-padding">
+      <ion-col size="12" size-md="7" class="ion-text-center preview ion-no-padding">
         <ng-container [ngSwitch]="true">
           <!-- image -->
           <div *ngSwitchCase="item?.type?.startsWith('image')">
-            <img
-              alt="image preview"
-              *ngIf="item | previewFile | async as url; else skeletImg"
-              [src]="url | safe: 'url'"
-            />
+            <ng-container *ngIf="item | previewFile | async as url; else skeletImg">
+              <div class="bg-image" [style.backgroundImage]="'url('+ url+')'"></div>
+              <img
+                alt="image preview"
+                [src]="url | safe: 'url'"
+              />
+            </ng-container>
             <ng-template #skeletImg>
               <ion-spinner></ion-spinner>
-            </ng-template>            
+            </ng-template>
           </div>
           <div *ngSwitchCase="item?.type?.startsWith('audio')">
             <audio
@@ -35,7 +32,7 @@
             ></audio>
             <ng-template #skeletAudio>
               <ion-spinner></ion-spinner>
-            </ng-template>           
+            </ng-template>
           </div>
           <!-- video -->
           <div *ngSwitchCase="item?.type?.startsWith('video')">
@@ -51,13 +48,17 @@
           </div>
           <!-- others -->
           <div *ngSwitchDefault>
-            <img alt="default preview" src="./assets/images/my-doc.svg">
+            <img alt="default preview" src="./assets/images/my-doc.svg" />
           </div>
         </ng-container>
-        <ion-button class="ion-margin-top" expand="full" (click)="modalCtrl.dismiss(item, 'download')">Download</ion-button>
+        <ion-button
+          class="download-btn"
+          (click)="modalCtrl.dismiss(item, 'download')"
+          >Download</ion-button
+        >
       </ion-col>
-      <ion-col size="5">
-        <ion-list lines="none">
+      <ion-col size="12" size-md="5">
+        <ion-list lines="none" class="ion-padding">
           <ion-item>
             <ion-label class="ion-text-wrap">
               <p>Name</p>
@@ -121,13 +122,16 @@
                 <ion-icon size="small" name="lock-open"></ion-icon>
                 <ion-label>Public</ion-label>
               </ion-chip>
-              <ion-chip 
-                  color="primary"  
-                  *ngIf="item.encryptedSymmetricKey && item.isFolder !== true && (item.accessControlConditions|isShared:account)">
+              <ion-chip
+                color="primary"
+                *ngIf="
+                  item.encryptedSymmetricKey &&
+                  item.isFolder !== true &&
+                  (item.accessControlConditions | isShared: account)
+                "
+              >
                 <ion-icon size="small" name="share-social-outline"></ion-icon>
-                <ion-label>
-                  shared
-                </ion-label>
+                <ion-label> shared </ion-label>
               </ion-chip>
             </ion-label>
           </ion-item>
