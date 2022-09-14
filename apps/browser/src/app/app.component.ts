@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { environment } from '../environments/environment';
 import { LoaderService } from './services/loader.service';
 
@@ -7,14 +7,11 @@ import { LoaderService } from './services/loader.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'browser';
   isProduction: boolean = environment.production;
 
   constructor(
     public loaderService: LoaderService
   ) {}
-  ngOnInit() {
-    console.log('Hello from Angular!');
-  }
 }

@@ -60,6 +60,14 @@ const getProviderFactory =
     } else {
       onboarding.stopOnboarding();
     }
+    console.log('[INFO] dDrive version: ', );
+    // manage console.log(); in production
+    if (environment.production) {
+      console.log = function (arg) {
+        // do nothing
+      };
+    }
+    
   };
 
 @NgModule({

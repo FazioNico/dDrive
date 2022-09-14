@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  version: process.env['NG_APP_VERSION'],
   moralis: {
     apiKey: process.env['NG_APP_MORALIS_API_KEY']
   },
