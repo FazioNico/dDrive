@@ -44,7 +44,7 @@
         <ion-card class="ion-no-padding">
           <ion-img
             class="clickable"
-            [src]="nft.metadata?.['image']"
+            [src]="nft.metadata?.['image']||'./assets/images/ipfs-logo.svg'"
             (click)="actions('openUri', nft)"
           ></ion-img>
           <ion-card-header>
