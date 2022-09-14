@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, of } from 'rxjs';
 import { HeaderComponent } from '../../components/header/header.component';
 import { DIDService } from '../../services/did.service';
 import { LoaderService } from '../../services/loader.service';
@@ -21,8 +21,8 @@ export class NFTPageComponent implements OnInit {
     selected: i === 0 ? true : false,
   }))
   .sort((a,b) => a.name.localeCompare(b.name));
+  public readonly maxItemToDisplay$ = new BehaviorSubject(27);
   public readonly chainNames$ = new BehaviorSubject(this._chainNames)
-
   public readonly nfts$ = combineLatest([
     this._nftService.nfts$,
     this.chainNames$,
@@ -82,6 +82,24 @@ export class NFTPageComponent implements OnInit {
           chains[payload].selected = !chains[payload].selected;
         }
         this.chainNames$.next(chains);
+        this.maxItemToDisplay$.next(27);
+        break;
+      }
+      case type === 'displayMoreItem': {
+        const totalItem = await firstValueFrom(this.nfts$).then(items => items.length)
+        const max = this.maxItemToDisplay$.value;
+        const t = setTimeout(async () => {
+          console.log('Done');
+          payload.target.complete();
+          this.maxItemToDisplay$.next(this.maxItemToDisplay$.value + 9);
+          // App logic to determine if all data is loaded
+          // and disable the infinite scroll
+          if (max >= totalItem) {
+            payload.target.disabled = true;
+          }
+          clearTimeout(t);
+        }, 500);
+        break;
       }
     }
   }

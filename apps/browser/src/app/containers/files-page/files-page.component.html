@@ -11,7 +11,7 @@
     </ion-button>
   </d-drive-header>
 </ion-header>
-<ion-content class="ion-padding" fullscreen>
+<ion-content class="ion-padding" fullscreen role="feed">
   <input #addFileElement type="file" id="file-input" multiple="true" hidden (change)="actions('onFileChange', $event)" />
   <!-- breadcrumbs -->
   <ion-grid class="header-grid ion-padding-start">
@@ -85,7 +85,8 @@
       </ng-container>
       <!-- Items List Rows-->
       <ion-row 
-          *ngFor="let item of items; trackBy:trackByfn" 
+          role="article"
+          *ngFor="let item of items|slice: 0 : maxItemToDisplay$.value; trackBy:trackByfn" 
           (click)="item.isFolder ? actions('navTo', {item}) : actions('preview', {item})"
           class="item clickable ion-align-items-center ion-padding-start">
         <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
@@ -132,5 +133,11 @@
       </ion-row>
     </ion-grid>
   </ion-card>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="actions('displayMoreItem',$event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
   
 </ion-content>

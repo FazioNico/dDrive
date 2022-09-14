@@ -42,6 +42,7 @@ export class FilesPageComponent {
     maxBreadcrumbs: 3,
   };
   public account$ = this._didService.accountId$;
+  public readonly maxItemToDisplay$ = new BehaviorSubject(25);
 
   constructor(
     private readonly _popCtrl: PopoverController,
@@ -111,6 +112,7 @@ export class FilesPageComponent {
         const { item: { _id } = null } = payload;
         this._mediaFileService.navToFolderId(_id);
         this.header.searchbarElement.nativeElement.value = '';
+        this.maxItemToDisplay$.next(25);
         break;
       }
       case type === 'reload':
@@ -368,6 +370,22 @@ export class FilesPageComponent {
           await this._displayMessage(this._toastCtrl, opts);
         }
 
+        break;
+      }
+      case type === 'displayMoreItem': {
+        const totalItem = await firstValueFrom(this.items$).then(items => items.length)
+        const max = this.maxItemToDisplay$.value;
+        const t = setTimeout(async () => {
+          console.log('Done');
+          payload.target.complete();
+          this.maxItemToDisplay$.next(this.maxItemToDisplay$.value + 10);
+          // App logic to determine if all data is loaded
+          // and disable the infinite scroll
+          if (max >= totalItem) {
+            payload.target.disabled = true;
+          }
+          clearTimeout(t);
+        }, 500);
         break;
       }
     }

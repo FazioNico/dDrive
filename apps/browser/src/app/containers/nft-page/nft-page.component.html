@@ -39,7 +39,7 @@
         size-sm="6"
         size-md="6"
         size-lg="4"
-        *ngFor="let nft of nfts; trackBy: trackByfn"
+        *ngFor="let nft of nfts|slice: 0 : maxItemToDisplay$.value; trackBy: trackByfn"
       >
         <ion-card class="ion-no-padding">
           <ion-img
@@ -83,4 +83,11 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="actions('displayMoreItem',$event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
 </ion-content>
