@@ -7,7 +7,9 @@
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2020 browser module main",
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "webpack-analyzer:analyze:browser:prod": "nx build --prod --stats-json",
+    "webpack-analyzer:browser": "npx webpack-bundle-analyzer dist/apps/browser/stats.json"
   },
   "private": true,
   "dependencies": {
