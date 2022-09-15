@@ -26,15 +26,16 @@ export class MediaFileService {
     this._filterBy$.asObservable(),
   ]).pipe(
     map(([items, path]) => {
+      const ROOT = { name: 'root', _id: 'root' };
       if (!items?.length) {
-        return [];
+        return [ROOT];
       }
       const breadcrumbs: { _id: string; name: string }[] = [];
       // find `root` parent folder from current path
       while (!breadcrumbs.find((b) => b.name === 'root')) {
         const parent = items.find((item) => item._id === path && item.isFolder);
         if (!parent) {
-          breadcrumbs.unshift({ name: 'root', _id: 'root' });
+          breadcrumbs.unshift(ROOT);
           break;
         }
         breadcrumbs.unshift({ name: parent.name, _id: parent._id });

@@ -88,7 +88,13 @@
   </ion-grid>
   <ng-container *ngIf="items$ | async as items; else skeletonHTML">
     <!-- Content Wrapper -->
-    <ion-card *ngIf="items.length > 0; else noItems" class="ion-no-padding">
+    <ion-card
+      *ngIf="
+        items.length > 0 || (allMedia$ | async)?.length !== 0;
+        else noItems
+      "
+      class="ion-no-padding"
+    >
       <!-- Items Content -->
       <ion-grid
         dDriveDropable
@@ -243,7 +249,7 @@
         <ion-row>
           <ion-col>
             <ion-text color="medium">
-              <h3>No shared medias</h3>
+              <h3>No medias</h3>
             </ion-text>
           </ion-col>
         </ion-row>
