@@ -2,6 +2,11 @@
 ion-router-outlet {
   background:  var(--ion-container-background)!important;
 }
+
+ion-progress-bar {
+  height: 0.8rem;
+}
+
 ion-split-pane {
   --side-max-width: 236px;
 
@@ -46,22 +51,6 @@ ion-avatar {
     position: relative;
 }
 
-.alert-wrapper {
-  border-radius:  0.618rem!important;
-  // border: 1px solid var(--ion-color-primary)!important;
-  // background: #fff!important;
-  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.12)!important;
-}
-
-ion-backdrop {
-  background-color: rgba(var(--ion-color-primary-rgb), 0.3);
-}
-.danger {
-  ion-backdrop {
-    background-color: rgba(var(--ion-color-danger-rgb), 0.5);
-  }
-}
-
 .clickable {
   cursor: pointer;
 }
@@ -80,6 +69,16 @@ ion-backdrop {
   z-index: 999999;
 }
 
+.header-grid {
+
+  ion-icon {
+    font-size: 0.8rem;
+  }
+  .item-stats {
+    --background: transparent;
+  }
+}
+
 .modalAlert {
   --width: fit-content;
   --min-width: 250px;
@@ -94,13 +93,19 @@ ion-backdrop {
   }
 }
 
-.header-grid {
+.alert-wrapper {
+  border-radius:  0.618rem!important;
+  // border: 1px solid var(--ion-color-primary)!important;
+  // background: #fff!important;
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.12)!important;
+}
 
-  ion-icon {
-    font-size: 0.8rem;
-  }
-  .item-stats {
-    --background: transparent;
+ion-backdrop {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.3);
+}
+.danger {
+  ion-backdrop {
+    background-color: rgba(var(--ion-color-danger-rgb), 0.5);
   }
 }
 
@@ -142,6 +147,7 @@ div#lit-connect-modal-container {
 body.dark .lcm-modal-container {
   background: var(--ion-container-background);
   border-color: #172e30;
+  border-radius: 0.618rem;
   /* color: #fff; */
 
   p.lcm-wallet-name {

@@ -72,12 +72,12 @@
                 </ion-chip>
                 <br/>
                 <ion-item>
-                  <ion-input #inputWalletAddress placeholder="add wallet address"></ion-input>
+                  <ion-input #inputWalletAddress placeholder="add wallet address" type="text"></ion-input>
                   <ion-button size="small" fill="outline" slot="end" (click)="addValue('walletAddress.values', inputWalletAddress.value + ''); inputWalletAddress.value = ''">add</ion-button>
                 </ion-item>
               </div>
             </ion-accordion>
-            <!-- By NFT contract holders -->
+            <!-- By NFT contract holders
             <ion-accordion 
                 value="nftOwner" 
                 toggleIcon="" 
@@ -94,11 +94,11 @@
                     [name]="form.get('nftOwner')?.get('selected')?.value === true ? 'checkbox': 'square-outline'"></ion-icon>
               </ion-item>
               <div slot="content" class="container">
-                <ion-item formArrayName="values">
+                <ion-item formArrayName="values" class="ion-padding-vertical">
                   <ion-input placeholder="add collection contract address" formControlName="0" type="text"></ion-input>
                 </ion-item>
               </div>
-            </ion-accordion>
+            </ion-accordion> -->
             <!-- By DAO members
             <ion-accordion 
                 disabled="true"

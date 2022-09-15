@@ -3,7 +3,7 @@
     --background: rgba(var(--ion-color-primary-rgb), 0.15);
   }
   .container {
-    background: var(--ion-container-background);
+    background: rgba(var(--ion-color-primary-rgb), 0.05);
     ion-item {
       --background: transparent;
     }

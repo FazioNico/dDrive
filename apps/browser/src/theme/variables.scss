@@ -1,3 +1,4 @@
+// Colors
 :root {	
 	--ion-color-primary: #34797d;
 	--ion-color-primary-rgb: 52,121,125;
@@ -55,10 +56,9 @@
 	--ion-color-light-shade: #d7d8da;
 	--ion-color-light-tint: #f5f6f9;
 
-  // --ion-background-content: #f5f6fa;
-
-	// --background-app: #fff;
-
+}
+// Theme variables
+:root {
 	--ion-border-color: #e0e0e0;
 
 	--ion-backdrop-color: var(--ion-color-primary);
@@ -137,22 +137,18 @@
   --ion-color-light-shade: #1e2023;
   --ion-color-light-tint: #383a3e;
 
-	--ion-container-background: #202829;
-	// --ion-item-background: #111818;
-	--ion-border-color: #172e30;
 }
 
 
 /*
- * iOS Dark Theme
+ * Dark Theme variables
  * -------------------------------------------
  */
 
- .ios body.dark {
+ body.dark {
 
-
-  --ion-text-color: #ffffff;
-  --ion-text-color-rgb: 255, 255, 255;
+  --ion-text-color: rgb(194, 219, 208);
+  --ion-text-color-rgb: 194, 219, 208;
 
   --ion-color-step-50: #0d0d0d;
   --ion-color-step-100: #1a1a1a;
@@ -174,17 +170,25 @@
   --ion-color-step-900: #e6e6e6;
   --ion-color-step-950: #f2f2f2;
 
-	--ion-background-color: #152122;
+	--ion-background-color: #202829;
   --ion-background-color-rgb: 21, 33, 34;
+	--ion-container-background: #152122;
 	
-  --ion-item-background: #152122;
+  --ion-item-background: #202829;
+  --ion-card-background: #202829;
 
-  --ion-card-background: #152122;
+	--ion-border-color: #334340;
 }
 
-.ios body.dark ion-modal {
+body.dark ion-modal {
   --ion-background-color: #202829;
   --ion-toolbar-background: #202829;
   --ion-toolbar-border-color: var(--ion-color-step-250);
-  --ion-item-background: #152122;
+  --ion-item-background: #202829;
+}
+
+body.dark ion-popover {
+  &::part(content) {
+    border: 0.5px solid var(--ion-color-step-100, #e6e6e6);
+  }
 }
