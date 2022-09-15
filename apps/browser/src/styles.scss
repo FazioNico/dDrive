@@ -133,7 +133,22 @@ ion-toast.notification-toast {
     font-size: 15px;
   }
 }
+
+// lit connect modal dark mode
 div#lit-connect-modal-container {
   z-index: 99999;
   position: absolute;
+}
+body.dark .lcm-modal-container {
+  background: var(--ion-container-background);
+  border-color: #172e30;
+  /* color: #fff; */
+
+  p.lcm-wallet-name {
+    color: #fff;
+  }
+
+  .lcm-wallet-container:hover {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
 }

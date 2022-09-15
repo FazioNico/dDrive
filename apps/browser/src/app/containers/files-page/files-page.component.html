@@ -70,6 +70,8 @@
     <!-- Items Content -->
     <ion-grid 
         *ngIf="(items$|async) as items" 
+        dDriveDropable 
+        (fileDropped)="actions('onFileChange', $event)"
         class="ion-no-padding">
       <!-- Back to parrent folder Row -->
       <ng-container *ngIf="(breadcrumbs$|async) as breadcrumbs" >
@@ -129,6 +131,15 @@
           <ion-fab-button size="small" translucent="true" mode="ios" (click)="$event.stopPropagation();actions('openOptions', {event: $event, item})">
             <ion-icon color="medium" size="small" color="primary" name="ellipsis-vertical"></ion-icon>
           </ion-fab-button>
+        </ion-col>
+      </ion-row>
+      <!-- Dropable zone -->
+      <ion-row  *ngIf="items.length <= 0" (click)="addFileElement.click()"  class="droppable-container ion-align-items-center ion-padding">
+        <ion-col>
+          <ion-img src="./assets/images/upload-file.svg"></ion-img>
+          <ion-text color="primary">
+            <span>Drop Files Here to Upload</span>
+          </ion-text>
         </ion-col>
       </ion-row>
     </ion-grid>

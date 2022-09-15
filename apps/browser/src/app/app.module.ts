@@ -43,6 +43,7 @@ import { NFTPageComponent } from './containers/nft-page/nft-page.component';
 import { NFTService } from './services/nft.services';
 import { NgxEnvModule } from '@ngx-env/core';
 import { IsSharePipe } from './pipes/is-shared.pipe';
+import { DropableDirective } from './directives/dropable.directive';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -92,6 +93,7 @@ const getProviderFactory =
     IsSharePipe,
     NFTPageComponent,
     HeaderComponent,
+    DropableDirective,
   ],
   imports: [
     BrowserModule,
