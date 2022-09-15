@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   AlertController,
+  IonInput,
   IonSearchbar,
   ModalController,
   PopoverController,
@@ -27,6 +28,8 @@ import { MediaFileService } from '../../services/mediafile.service';
 export class FilesPageComponent {
   @ViewChild(HeaderComponent, { static: false })
   public readonly header!: HeaderComponent;
+  @ViewChild('addFileElement', { static: false, read: ElementRef })
+  public readonly addFileElement!: ElementRef<HTMLInputElement>;
   public breadcrumbs$ = this._mediaFileService.breadcrumbs$.pipe(
     map((breadcrumbs) => {
       const maxBreadcrumbs = this.options.maxBreadcrumbs;
@@ -63,6 +66,9 @@ export class FilesPageComponent {
   async actions(type: string, payload?: any) {
     console.log('actions(): ', type, payload);
     switch (true) {
+      case type === 'addFile':
+        this.addFileElement.nativeElement.click();
+        break;
       case type === 'onFileChange': {
         this.header.searchbarElement.nativeElement.value = '';
         const files = [...payload.target.files];

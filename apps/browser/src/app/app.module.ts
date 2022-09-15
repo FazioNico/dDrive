@@ -45,6 +45,7 @@ import { NgxEnvModule } from '@ngx-env/core';
 import { IsSharePipe } from './pipes/is-shared.pipe';
 import { DropableDirective } from './directives/dropable.directive';
 import { SharedPageComponent } from './containers/shared-page/shared-page.component';
+import { DropableComponent } from './components/dropable/dropable.component';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -95,6 +96,7 @@ const getProviderFactory =
     NFTPageComponent,
     HeaderComponent,
     DropableDirective,
+    DropableComponent,
   ],
   imports: [
     BrowserModule,

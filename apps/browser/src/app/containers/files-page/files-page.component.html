@@ -4,7 +4,7 @@
       <ion-icon name="sync"></ion-icon>
     </ion-button>
     <ion-button color="primary" (click)="addFileElement.click()">
-      Add File
+      Add Files
     </ion-button>
     <ion-button color="primary" fill="outline" (click)="actions('newFolder')">
       New Folder
@@ -217,19 +217,10 @@
             </ion-fab-button>
           </ion-col>
         </ion-row>
-        <!-- Dropable zone -->
-        <ion-row
+        <!-- Dropable area -->
+        <d-drive-dropable 
           *ngIf="items.length <= 0"
-          (click)="addFileElement.click()"
-          class="droppable-container ion-align-items-center ion-padding"
-        >
-          <ion-col>
-            <ion-img src="./assets/images/upload-file.svg"></ion-img>
-            <ion-text color="primary">
-              <span>Drop Files Here to Upload</span>
-            </ion-text>
-          </ion-col>
-        </ion-row>
+          (actions)="actions($event.type, $event.payload)"></d-drive-dropable>
       </ion-grid>
     </ion-card>
     <ion-infinite-scroll
@@ -245,14 +236,23 @@
     </ion-infinite-scroll>
     <!-- No Items -->
     <ng-template #noItems>
-      <ion-grid class="ion-text-center">
+      <ion-grid class="ion-text-center noItems">
         <ion-row>
-          <ion-col>
+          <ion-col class="ion-text-center">
+            <ion-text color="primary">
+              <h3>
+                There is no files stored yet
+              </h3>
+            </ion-text>
             <ion-text color="medium">
-              <h3>No medias</h3>
+              <p>
+                You can upload any files types by clicking on the <code>Add files</code> button or by
+                dragging and dropping files in the dropable area.
+              </p>
             </ion-text>
           </ion-col>
         </ion-row>
+        <d-drive-dropable (actions)="actions($event.type, $event.payload)"></d-drive-dropable>
       </ion-grid>
     </ng-template>
   </ng-container>

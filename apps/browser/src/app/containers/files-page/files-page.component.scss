@@ -40,55 +40,11 @@
     }
   }
 
-  ion-row.droppable-container {
-
-    > ion-col {
-      margin: 1.618rem;
-      min-height: 200px;
-      border: dotted 3.14px var(--ion-border-color);
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.125s ease-in-out;
-
-      &:hover {
-        background-color: rgba(var(--ion-color-primary-rgb), 0.1);
-      }
-      &.fileover {
-        background-color: rgba(var(--ion-color-primary-rgb), 0.15);
-
-        * {
-          opacity: 0.5;
-        }
-        ion-img {
-          transform: scale(0.9);
-        }
-      }
-      &.filedrop {
-        background-color: rgba(var(--ion-color-primary-rgb), 0.1);
-
-        * {
-          opacity: 0.2;
-        }
-        ion-img {
-          transform: scale(0.8);
-        }
-      }
-
-      ion-img {
-        max-width: 250px;
-        margin-top: 6.18rem;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 1rem;
-        transition: all 0.125s ease-in-out;
-      }
-      span {
-        margin: 0 auto 6.18rem;
-        display: block;
-        font-size: 1.618rem;
-      }
-
+  ion-grid.noItems {
+    p {
+      max-width: 618px;
+      margin: 1rem auto 0;
     }
-
   }
+
 }
