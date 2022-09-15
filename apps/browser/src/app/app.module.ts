@@ -44,6 +44,7 @@ import { NFTService } from './services/nft.services';
 import { NgxEnvModule } from '@ngx-env/core';
 import { IsSharePipe } from './pipes/is-shared.pipe';
 import { DropableDirective } from './directives/dropable.directive';
+import { SharedPageComponent } from './containers/shared-page/shared-page.component';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -61,14 +62,13 @@ const getProviderFactory =
     } else {
       onboarding.stopOnboarding();
     }
-    console.log('[INFO] dDrive version: ', );
+    console.log('[INFO] dDrive version: ');
     // manage console.log(); in production
     if (environment.production) {
       console.log = function (arg) {
         // do nothing
       };
     }
-    
   };
 
 @NgModule({
@@ -82,6 +82,7 @@ const getProviderFactory =
     FilesPageComponent,
     SetupEncryptionComponent,
     SelectFolderComponent,
+    SharedPageComponent,
     ItemPreviewComponent,
     BytesToSizePipe,
     AddressToAvatarPipe,
@@ -110,6 +111,7 @@ const getProviderFactory =
         children: [
           { path: 'files', component: FilesPageComponent },
           { path: 'nfts', component: NFTPageComponent },
+          { path: 'shared', component: SharedPageComponent },
           { path: '', redirectTo: 'files', pathMatch: 'full' },
         ],
       },
@@ -144,10 +146,10 @@ const getProviderFactory =
     NotificationService,
     AlertService,
     NFTService,
-    {
-      provide: ErrorHandler,
-      useClass: GlobalErrorHandlerService,
-    },
+    // {
+    //   provide: ErrorHandler,
+    //   useClass: GlobalErrorHandlerService,
+    // },
     {
       provide: APP_INITIALIZER,
       useFactory: getProviderFactory,
