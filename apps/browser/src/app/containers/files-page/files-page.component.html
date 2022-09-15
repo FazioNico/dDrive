@@ -1,6 +1,6 @@
 <ion-header mode="ios" collapse="fade" [translucent]="true">
   <d-drive-header (actions)="actions($event.type, $event.payload)">
-    <ion-button color="primary" fill="clear" (click)="actions( 'reload' )">
+    <ion-button color="primary" fill="clear" (click)="actions('reload')">
       <ion-icon name="sync"></ion-icon>
     </ion-button>
     <ion-button color="primary" (click)="addFileElement.click()">
@@ -12,52 +12,73 @@
   </d-drive-header>
 </ion-header>
 <ion-content class="ion-padding" fullscreen role="feed">
-  <input #addFileElement type="file" id="file-input" multiple="true" hidden (change)="actions('onFileChange', $event)" />
+  <input
+    #addFileElement
+    type="file"
+    id="file-input"
+    multiple="true"
+    hidden
+    (change)="actions('onFileChange', $event)"
+  />
   <!-- breadcrumbs -->
   <ion-grid class="header-grid ion-padding-start">
-    <ion-row 
-        class="ion-align-items-center"
-        *ngIf="(breadcrumbs$|async) as breadcrumbs;else defaultBreadcrumb">
+    <ion-row
+      class="ion-align-items-center"
+      *ngIf="breadcrumbs$ | async as breadcrumbs; else defaultBreadcrumb"
+    >
       <ion-col
-          size="auto"
-          class="ion-align-items-center" 
-          [ngStyle]="{'display': 'flex'}"
-          (click)="actions('navTo', {item: b})" 
-          *ngFor="let b of breadcrumbs;let i = index;let isLast = last">
-          <ion-label>
-            <span class="clickable">{{b.name === 'root' ? 'My Drive' : b.name}}</span>
-            <ion-icon 
-                slot="end" 
-                name="chevron-forward-outline" 
-                class="ion-padding-start"
-                *ngIf="(header?.searchbarElement?.nativeElement?.value?.length||0) > 0"></ion-icon>
-            <ion-icon 
-                slot="end" 
-                *ngIf="!isLast" 
-                name="chevron-forward-outline" 
-                class="ion-padding-start"></ion-icon>
-          </ion-label>
+        size="auto"
+        class="ion-align-items-center"
+        [ngStyle]="{ display: 'flex' }"
+        (click)="actions('navTo', { item: b })"
+        *ngFor="let b of breadcrumbs; let i = index; let isLast = last"
+      >
+        <ion-label>
+          <span class="clickable">{{
+            b.name === 'root' ? 'My Drive' : b.name
+          }}</span>
+          <ion-icon
+            slot="end"
+            name="chevron-forward-outline"
+            class="ion-padding-start"
+            *ngIf="
+              (header?.searchbarElement?.nativeElement?.value?.length || 0) > 0
+            "
+          ></ion-icon>
+          <ion-icon
+            slot="end"
+            *ngIf="!isLast"
+            name="chevron-forward-outline"
+            class="ion-padding-start"
+          ></ion-icon>
+        </ion-label>
       </ion-col>
       <ion-col
-          size="auto"
-          class="ion-align-items-center" 
-          [ngStyle]="{'display': 'flex'}"
-          *ngIf="(header?.searchbarElement?.nativeElement?.value?.length||0) > 0">
+        size="auto"
+        class="ion-align-items-center"
+        [ngStyle]="{ display: 'flex' }"
+        *ngIf="
+          (header?.searchbarElement?.nativeElement?.value?.length || 0) > 0
+        "
+      >
         <ion-label>
           <span>search results</span>
         </ion-label>
       </ion-col>
-      <ion-col >
+      <ion-col>
         <ion-item lines="none" class="ion-float-end item-stats ion-text-end">
-          <ion-label color="medium">{{allMedia$|async|totalStorage|bytesToSize}} Storage</ion-label>
+          <ion-label color="medium"
+            >{{
+              allMedia$ | async | totalStorage | bytesToSize
+            }}
+            Storage</ion-label
+          >
         </ion-item>
       </ion-col>
     </ion-row>
     <ng-template #defaultBreadcrumb>
       <ion-row>
-        <ion-col 
-            size="auto" 
-            [ngStyle]="{'display': 'flex'}">
+        <ion-col size="auto" [ngStyle]="{ display: 'flex' }">
           <ion-label>
             <span>My Drive</span>
           </ion-label>
@@ -65,90 +86,190 @@
       </ion-row>
     </ng-template>
   </ion-grid>
-  <!-- Content Wrapper -->
-  <ion-card class="ion-no-padding">
-    <!-- Items Content -->
-    <ion-grid 
-        *ngIf="(items$|async) as items" 
-        dDriveDropable 
+  <ng-container *ngIf="items$ | async as items; else skeletonHTML">
+    <!-- Content Wrapper -->
+    <ion-card *ngIf="items.length > 0; else noItems" class="ion-no-padding">
+      <!-- Items Content -->
+      <ion-grid
+        dDriveDropable
         (fileDropped)="actions('onFileChange', $event)"
-        class="ion-no-padding">
-      <!-- Back to parrent folder Row -->
-      <ng-container *ngIf="(breadcrumbs$|async) as breadcrumbs" >
-        <ion-row 
-            *ngIf="breadcrumbs.length > 1" 
-            class="item ion-align-items-center ion-padding-start">
-          <ion-col size="auto" class="ion-padding-end">
-            <ion-fab-button size="small" translucent="true" mode="ios" (click)="actions('navTo', {item: breadcrumbs[breadcrumbs.length - 2]})">
-              <ion-icon name="ellipsis-horizontal" size="small" color="primary"></ion-icon>
+        class="ion-no-padding"
+      >
+        <!-- Back to parrent folder Row -->
+        <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
+          <ion-row
+            *ngIf="breadcrumbs.length > 1"
+            class="item ion-align-items-center ion-padding-start"
+          >
+            <ion-col size="auto" class="ion-padding-end">
+              <ion-fab-button
+                size="small"
+                translucent="true"
+                mode="ios"
+                (click)="
+                  actions('navTo', {
+                    item: breadcrumbs[breadcrumbs.length - 2]
+                  })
+                "
+              >
+                <ion-icon
+                  name="ellipsis-horizontal"
+                  size="small"
+                  color="primary"
+                ></ion-icon>
+              </ion-fab-button>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        <!-- Items List Rows-->
+        <ion-row
+          role="article"
+          *ngFor="
+            let item of items | slice: 0:maxItemToDisplay$.value;
+            trackBy: trackByfn
+          "
+          (click)="item.isFolder ? actions('navTo', {item}) : actions('preview', {item})"
+          class="item clickable ion-align-items-center ion-padding-start"
+        >
+          <ion-col
+            class="ion-align-items-center"
+            size="auto"
+            [ngStyle]="{ display: 'flex' }"
+          >
+            <ion-icon
+              size="large"
+              name="folder-outline"
+              *ngIf="item.isFolder === true"
+            ></ion-icon>
+            <ion-icon
+              size="large"
+              name="document-outline"
+              *ngIf="item.isFolder !== true"
+            ></ion-icon>
+          </ion-col>
+          <ion-col
+            class="ion-align-items-center ion-text-wrap"
+            size="auto"
+            [ngStyle]="{ display: 'flex' }"
+          >
+            <ion-text class="ion-padding-start">
+              {{ item.name }}
+            </ion-text>
+          </ion-col>
+          <ion-col size="auto" class="ion-hide-md-down">
+            <ion-chip
+              color="primary"
+              size="small"
+              class="ion-margin-start"
+              *ngIf="
+                item.encryptedSymmetricKey &&
+                item.isFolder !== true &&
+                (item.accessControlConditions | isShared: account$.value)
+              "
+              (click)="$event.stopPropagation(); actions('share', {item})"
+            >
+              <ion-icon size="small" name="share-social-outline"></ion-icon>
+              <ion-label> shared </ion-label>
+            </ion-chip>
+            <ion-chip
+              color="primary"
+              size="small"
+              class="ion-margin-start"
+              *ngIf="!item.encryptedSymmetricKey && item.isFolder !== true"
+              (click)="$event.stopPropagation(); actions('lockFile', item)"
+            >
+              <ion-icon size="small" name="lock-open-outline"></ion-icon>
+              <ion-label> public </ion-label>
+            </ion-chip>
+          </ion-col>
+          <ion-col
+            class="ion-text-right ion-align-items-center ion-justify-content-end"
+            [ngStyle]="{ display: 'flex' }"
+          >
+            <ion-text
+              *ngIf="item.isFolder !== true"
+              color="medium"
+              class="ion-hide-md-down"
+            >
+              {{ item.size | bytesToSize }}
+            </ion-text>
+            <ion-fab-button
+              size="small"
+              translucent="true"
+              mode="ios"
+              (click)="
+                $event.stopPropagation();
+                actions('openOptions', { event: $event, item })
+              "
+            >
+              <ion-icon
+                color="medium"
+                size="small"
+                color="primary"
+                name="ellipsis-vertical"
+              ></ion-icon>
             </ion-fab-button>
           </ion-col>
         </ion-row>
-      </ng-container>
-      <!-- Items List Rows-->
-      <ion-row 
+        <!-- Dropable zone -->
+        <ion-row
+          *ngIf="items.length <= 0"
+          (click)="addFileElement.click()"
+          class="droppable-container ion-align-items-center ion-padding"
+        >
+          <ion-col>
+            <ion-img src="./assets/images/upload-file.svg"></ion-img>
+            <ion-text color="primary">
+              <span>Drop Files Here to Upload</span>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+    <ion-infinite-scroll
+      *ngIf="items.length > 0"
+      threshold="100px"
+      (ionInfinite)="actions('displayMoreItem', $event)"
+    >
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data..."
+      >
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <!-- No Items -->
+    <ng-template #noItems>
+      <ion-grid class="ion-text-center">
+        <ion-row>
+          <ion-col>
+            <ion-text color="medium">
+              <h3>No shared medias</h3>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+  </ng-container>
+  <!-- Skeleton loading HTML -->
+  <ng-template #skeletonHTML>
+    <ion-card class="ion-no-padding">
+      <ion-grid class="ion-no-padding">
+        <ion-row
+          *ngFor="let el of [].constructor(10)"
           role="article"
-          *ngFor="let item of items|slice: 0 : maxItemToDisplay$.value; trackBy:trackByfn" 
-          (click)="item.isFolder ? actions('navTo', {item}) : actions('preview', {item})"
-          class="item clickable ion-align-items-center ion-padding-start">
-        <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
-          <ion-icon size="large" name="folder-outline" *ngIf="item.isFolder === true"></ion-icon>
-          <ion-icon size="large" name="document-outline" *ngIf="item.isFolder !== true"></ion-icon>
-        </ion-col>
-        <ion-col class="ion-align-items-center ion-text-wrap" size="auto" [ngStyle]="{'display': 'flex'}">
-          <ion-text class="ion-padding-start">
-            {{item.name}}
-          </ion-text>
-        </ion-col>
-        <ion-col size="auto" class="ion-hide-md-down">
-          <ion-chip 
-              color="primary"  
-              size="small" 
-              class="ion-margin-start" 
-              *ngIf="item.encryptedSymmetricKey && item.isFolder !== true && (item.accessControlConditions|isShared:account$.value)"
-              (click)="$event.stopPropagation(); actions('share', {item})">
-            <ion-icon size="small" name="share-social-outline"></ion-icon>
-            <ion-label>
-              shared
-            </ion-label>
-          </ion-chip>
-          <ion-chip 
-              color="primary"  
-              size="small" 
-              class="ion-margin-start" 
-              *ngIf="!item.encryptedSymmetricKey && item.isFolder !== true"
-              (click)="$event.stopPropagation(); actions('lockFile', item)">
-            <ion-icon size="small" name="lock-open-outline"></ion-icon>
-            <ion-label>
-              public
-            </ion-label>
-          </ion-chip>
-        </ion-col>
-        <ion-col class="ion-text-right ion-align-items-center ion-justify-content-end" [ngStyle]="{'display': 'flex'}">
-          <ion-text *ngIf="item.isFolder !== true" color="medium" class="ion-hide-md-down">
-            {{item.size|bytesToSize}}
-          </ion-text>
-          <ion-fab-button size="small" translucent="true" mode="ios" (click)="$event.stopPropagation();actions('openOptions', {event: $event, item})">
-            <ion-icon color="medium" size="small" color="primary" name="ellipsis-vertical"></ion-icon>
-          </ion-fab-button>
-        </ion-col>
-      </ion-row>
-      <!-- Dropable zone -->
-      <ion-row  *ngIf="items.length <= 0" (click)="addFileElement.click()"  class="droppable-container ion-align-items-center ion-padding">
-        <ion-col>
-          <ion-img src="./assets/images/upload-file.svg"></ion-img>
-          <ion-text color="primary">
-            <span>Drop Files Here to Upload</span>
-          </ion-text>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="actions('displayMoreItem',$event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Loading more data...">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-  
+          class="item clickable ion-align-items-center ion-padding-start"
+        >
+          <ion-col size="1" class="ion-padding">
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-col>
+          <ion-col size="9" class="ion-padding-vertical">
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-col>
+          <ion-col size="2" class="ion-padding">
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </ng-template>
 </ion-content>

@@ -19,14 +19,14 @@ export class MediaFileService {
     'root'
   );
   private readonly _items$: BehaviorSubject<IMediaFile[]> = new BehaviorSubject(
-    [] as IMediaFile[]
+    null as any
   );
   public readonly breadcrumbs$ = combineLatest([
     this._items$.asObservable(),
     this._filterBy$.asObservable(),
   ]).pipe(
     map(([items, path]) => {
-      if (!items.length) {
+      if (!items?.length) {
         return [];
       }
       const breadcrumbs: { _id: string; name: string }[] = [];
@@ -52,7 +52,7 @@ export class MediaFileService {
     this._queryFilterBy$.asObservable(),
   ]).pipe(
     map(([items, filterBy, queryFilter]) =>
-      items.filter((item) =>
+      items?.filter((item) =>
         queryFilter
           ? item.name.toLowerCase().includes(queryFilter.toLowerCase())
           : item.parent === filterBy
