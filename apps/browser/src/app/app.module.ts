@@ -48,6 +48,14 @@ import { SharedPageComponent } from './containers/shared-page/shared-page.compon
 import { DropableComponent } from './components/dropable/dropable.component';
 import { SharedMediaService } from './services/shared-media.service';
 
+const ERROR_PROVIDER = 
+  environment.production
+    ? [{
+        provide: ErrorHandler,
+        useClass: GlobalErrorHandlerService,
+      }]
+    : [];
+
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
     const onboarding = new MetaMaskOnboarding();
@@ -126,7 +134,7 @@ const getProviderFactory =
       { path: 'setup', component: SetupPageComponent },
       { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: '**', redirectTo: '/404', pathMatch: 'full' },
-    ]),
+    ], { useHash: true,  }),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
@@ -150,10 +158,7 @@ const getProviderFactory =
     AlertService,
     NFTService,
     SharedMediaService,
-    // {
-    //   provide: ErrorHandler,
-    //   useClass: GlobalErrorHandlerService,
-    // },
+    ...ERROR_PROVIDER,
     {
       provide: APP_INITIALIZER,
       useFactory: getProviderFactory,
