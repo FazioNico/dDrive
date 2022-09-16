@@ -38,25 +38,27 @@
           </ion-col>
           <ion-col class="ion-align-items-center ion-text-wrap" size="auto" [ngStyle]="{'display': 'flex'}">
             <ion-text class="ion-padding-start">
-              {{item.name}}
+              {{item.metadata.name}}
             </ion-text>
           </ion-col>
           <ion-col size="auto" class="ion-hide-md-down">
             <ion-chip 
                 color="primary"  
                 size="small" 
-                class="ion-margin-start" 
-                *ngIf="item.encryptedSymmetricKey && (item.accessControlConditions|isShared:account$.value)"
-                (click)="$event.stopPropagation(); actions('share', {item})">
-              <ion-icon size="small" name="share-social-outline"></ion-icon>
+                class="ion-margin-start"
+                outline="true">
+              <ion-icon size="small" name="person-sharp"></ion-icon>
               <ion-label>
-                shared
+                from <i>{{ item.senderAddress| sliceAddress }}</i>
               </ion-label>
-            </ion-chip>>
+            </ion-chip>
           </ion-col>
           <ion-col class="ion-text-right ion-align-items-center ion-justify-content-end" [ngStyle]="{'display': 'flex'}">
             <ion-text color="medium" class="ion-hide-md-down">
-              {{item.size|bytesToSize}}
+              {{item.createdISODateTime|date:'short'}}
+            </ion-text>
+            <ion-text color="medium" class="ion-hide-md-down">
+              {{item.metadata.size|bytesToSize}}
             </ion-text>
             <ion-fab-button size="small" translucent="true" mode="ios" (click)="$event.stopPropagation();actions('openOptions', {event: $event, item})">
               <ion-icon color="medium" size="small" color="primary" name="ellipsis-vertical"></ion-icon>

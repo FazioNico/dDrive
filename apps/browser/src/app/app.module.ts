@@ -46,6 +46,7 @@ import { IsSharePipe } from './pipes/is-shared.pipe';
 import { DropableDirective } from './directives/dropable.directive';
 import { SharedPageComponent } from './containers/shared-page/shared-page.component';
 import { DropableComponent } from './components/dropable/dropable.component';
+import { SharedMediaService } from './services/shared-media.service';
 
 const getProviderFactory =
   (_alertCtrl: AlertController, _router: Router) => async () => {
@@ -148,6 +149,7 @@ const getProviderFactory =
     NotificationService,
     AlertService,
     NFTService,
+    SharedMediaService,
     // {
     //   provide: ErrorHandler,
     //   useClass: GlobalErrorHandlerService,

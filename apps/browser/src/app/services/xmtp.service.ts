@@ -63,7 +63,7 @@ export class XMTPService {
 
   async getPreviousMessagesFromExistingConverstion(
     opts?: ListMessagesOptions | undefined
-  ) {
+  ): Promise<IXMTPMessage[]> {
     const xmtp = this._xmtp.value;
     const messages = [];
     const conversations = this._conversations.getValue();
