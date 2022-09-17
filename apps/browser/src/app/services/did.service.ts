@@ -35,21 +35,24 @@ export class DIDService {
     if (!chainId) {
       throw 'No chainId found. Please unlock your Ethereum account, refresh the page and try again.';
     }
-    this.chainId$.next(chainId);
+    console.log('[INFO] chainId: ', chainId);    
+    this.chainId$.next(chainId.replace('0x', ''));
     // Create an EthereumAuthProvider using the Ethereum provider and requested account
     const account: string = accounts[0];
-    const authProvider = new EthereumAuthProvider(this.web3Provider.provider, account);
+    this.accountId$.next(account);
+    // console.log('[INFO] create DID');      
+    this.did = new DID();
+    return this.did;
+  }
+
+  async connect() {
+    const authProvider = new EthereumAuthProvider(this.web3Provider.provider, this.accountId$.value);
     // Connect the created EthereumAuthProvider to the 3ID Connect instance so it can be used to
     // generate the authentication secret
     const threeID = new ThreeIdConnect()
     await threeID.connect(authProvider);
-    this.accountId$.next(account);
-    // console.log('[INFO] create DID');      
-    this.did = new DID({
-      // Get the DID provider from the 3ID Connect instance
-      provider: threeID.getDidProvider(),
-    });
-    return this.did;
+    // Set the DID provider from the 3ID Connect instance
+    this.did.setProvider(threeID.getDidProvider());
   }
 
   async disconnect() {
@@ -69,13 +72,13 @@ export class DIDService {
     web3Provider.on('accountsChanged',  (accounts: string[]) => {
       window.location.reload();   
     });
-    web3Provider.on("network", (newNetwork, oldNetwork) => {
-      // When a Provider makes its initial connection, it emits a "network"
-      // event with a null oldNetwork along with the newNetwork. So, if the
-      // oldNetwork exists, it represents a changing network
-      if (oldNetwork) {
-          window.location.reload();
-      }      
-    });
+    // web3Provider.on("network", (newNetwork, oldNetwork) => {
+    //   // When a Provider makes its initial connection, it emits a "network"
+    //   // event with a null oldNetwork along with the newNetwork. So, if the
+    //   // oldNetwork exists, it represents a changing network
+    //   if (oldNetwork) {
+    //       window.location.reload();
+    //   }      
+    // });
   }
 }

@@ -8,7 +8,7 @@ export class LitService {
   public readonly chain = environment.defaultChain;
   public readonly standardContractType = ''
   public readonly contractAddress = '';
-  public defaultAccessControls = [
+  public defaultAccessControls: IAccessControlConditions[] = [
     {
       chain: this.chain,
       contractAddress: this.contractAddress,
@@ -24,6 +24,12 @@ export class LitService {
 
   private _litNodeClient: any;
 
+  constructor() {
+    console.log('[INFO] ALL_LIT_CHAINS: ', LitJsSdk.ALL_LIT_CHAINS);
+    console.log('[INFO] LIT_AUTH_SIG_CHAIN_KEYS: ', LitJsSdk.LIT_AUTH_SIG_CHAIN_KEYS);
+    
+  }
+
   private async _connect() {
     const client: {connect: () => Promise<void>} = new LitJsSdk.LitNodeClient({debug: false});
     await client.connect();
@@ -35,7 +41,7 @@ export class LitService {
     await this._connect();
   }
 
-  async encrypt(file: File | Blob, accessControlConditions: any[]): Promise<{
+  async encrypt(file: File | Blob, accessControlConditions: IAccessControlConditions[]): Promise<{
     encryptedFile: Blob;
     encryptedSymmetricKey: string;
   }> {

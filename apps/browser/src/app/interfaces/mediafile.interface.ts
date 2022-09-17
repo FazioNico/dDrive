@@ -1,6 +1,8 @@
 
 export interface IAccessControlConditions {
+  chain?: string;
   contractAddress?: string;
+  standardContractType?: string;
   method: string;
   parameters: string[];
   returnValueTest: {

@@ -12,6 +12,18 @@ export const environment = {
     apiHost: process.env['NG_APP_CERAMIC_API_HOST']
   },
   defaultChain: 'mumbai',
+  availableChainsId: {
+    // ETH
+    '1': 'ethereum', // mainnet
+    '3': 'ropsten',
+    '4': 'rinkeby',
+    // POLYGON
+    '89': 'polygon', // mainnet
+    '13881': 'mumbai',
+    // BNB
+    '38': 'binance smart chain', // mainnet
+    '61': 'binance smart chain testnet',
+  }
 };
 
 /*

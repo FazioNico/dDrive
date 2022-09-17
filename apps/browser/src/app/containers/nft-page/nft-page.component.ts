@@ -67,12 +67,11 @@ export class NFTPageComponent implements OnInit {
       case type === 'searchByName': {
         const {detail: {value = null}} = payload;
         this._nftService.searchByName(value);
-        this.actions('toogleChain', 0);
         break;
       }
       case type === 'toogleChain': {
         this.header.searchbarElement.nativeElement.value = '';
-        const chains = [...this._chainNames];
+        const chains = [...this._chainNames];          
         chains.forEach((chain) => {
           chain.selected = false;
         });
@@ -86,6 +85,7 @@ export class NFTPageComponent implements OnInit {
         break;
       }
       case type === 'displayMoreItem': {
+        console.log('displayMoreItem');        
         const totalItem = await firstValueFrom(this.nfts$).then(items => items.length)
         const max = this.maxItemToDisplay$.value;
         const t = setTimeout(async () => {

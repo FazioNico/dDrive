@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AlertController, LoadingController, ToastController, ToastOptions } from "@ionic/angular";
+import { AlertController, AlertOptions, LoadingController, ToastController, ToastOptions } from "@ionic/angular";
 
 @Injectable()
 export class AlertService {
@@ -9,14 +9,17 @@ export class AlertService {
     private readonly _toastCtrl: ToastController
   ) {}
 
-  async presentAlert(title: string, message: string, type: 'ERROR' | 'SUCCESS' = 'ERROR') {
-    await this.closeExistingCtrl();
+  async presentAlert(title: string, message: string, type: 'ERROR' | 'SUCCESS' = 'ERROR', opts: AlertOptions = {}, closeExisting = true) {
+    if (closeExisting) {
+      await this.closeExistingCtrl();
+    }
     // build alert options
     const alert = await this._alertCtrl.create({
       header: title,
       message,
       buttons: ["OK"],
       cssClass: this._getAlertStyle(type),
+      ...opts
     });
     // present alert
     await alert.present();
