@@ -147,7 +147,24 @@ export class AuthService {
           endTime: new Date(),
         }
       : undefined;
+    // display loader for a better UX
+    const loading = await this._loadingCtrl.create({
+      message: `
+        Sign message form your wallet to load your share notifications using <br/>
+        <a rel="noopener" href="https://xmtp.com" title="XMTP website" target="_blank">
+          XMTP protocol <ion-icon size="small" name="open-outline"></ion-icon>
+        </a>
+      `,
+      translucent: true,
+      animated: false,
+      spinner: null,
+      cssClass: 'ion-text-center',
+
+    });
+    await loading.present();
     // init xmtp service with options
     await this._xmtp.init(this._did.web3Provider, opts);
+    // close loader
+    await loading.dismiss();
   }
 }
