@@ -85,7 +85,7 @@ export class LitService {
     if (!this._litNodeClient) {
       await this._connect();
     }
-    console.log('>>>> decrypt rules: ', accessControlConditions);
+    console.log('>>>> decrypt chain: ', chain);
 
     if (!this._authSig) {
       this._authSig = await this._getAuthSig(chain);

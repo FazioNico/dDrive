@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { IMediaFile } from "../interfaces/mediafile.interface";
 import { ISharedMediaFile } from "../interfaces/shared-mediafile.interface";
+import { NetwokNamePipe } from "../pipes/network-name.pipe";
+import { DIDService } from "./did.service";
 import { IPFSService } from "./ipfs.service";
 import { LitService } from "./lit.service";
 import { XMTPService } from "./xmtp.service";
@@ -14,6 +16,7 @@ export class SharedMediaService {
     private readonly _xmtpService: XMTPService,
     private readonly _ipfsService: IPFSService,
     private readonly _litService: LitService,
+    private readonly _didService: DIDService
   ) {}
 
   async getMedias() {
@@ -53,10 +56,12 @@ export class SharedMediaService {
       const result: { file: File } = { file: fileFromCID };
       // decrypt file if needed
       if (file.encryptedSymmetricKey && file.accessControlConditions) {
+        const chainName = new NetwokNamePipe().transform(this._didService.chainId$.value);
         const { decryptedArrayBuffer } = await this._litService.decrypt(
           fileFromCID,
           file.encryptedSymmetricKey,
           file.accessControlConditions,
+          chainName
         );
         // convert array buffer to file and overwrite result object
         result.file = new File([decryptedArrayBuffer], file.name, { type: file.type });
