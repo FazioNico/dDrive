@@ -1,12 +1,13 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
 import LitJsSdk from 'lit-js-sdk';
-import { environment } from "../../environments/environment";
-import { IAccessControlConditions } from "../interfaces/mediafile.interface";
+import { environment } from '../../environments/environment';
+import { IAccessControlConditions } from '../interfaces/mediafile.interface';
 
 @Injectable()
 export class LitService {
   public readonly chain = environment.defaultChain;
-  public readonly standardContractType = ''
+  public readonly standardContractType = '';
   public readonly contractAddress = '';
   public defaultAccessControls: IAccessControlConditions[] = [
     {
@@ -17,43 +18,51 @@ export class LitService {
       parameters: [':userAddress', 'latest'],
       returnValueTest: {
         comparator: '>=',
-        value: '0',  // 0.000001 ETH
+        value: '0', // 0.000001 ETH
       },
     },
   ];
 
   private _litNodeClient: any;
+  private _authSig!: any;
 
-  constructor() {
+  constructor(private readonly _loadingCtrl: LoadingController) {
     console.log('[INFO] ALL_LIT_CHAINS: ', LitJsSdk.ALL_LIT_CHAINS);
-    console.log('[INFO] LIT_AUTH_SIG_CHAIN_KEYS: ', LitJsSdk.LIT_AUTH_SIG_CHAIN_KEYS);
-    
+    console.log(
+      '[INFO] LIT_AUTH_SIG_CHAIN_KEYS: ',
+      LitJsSdk.LIT_AUTH_SIG_CHAIN_KEYS
+    );
   }
 
   private async _connect() {
-    const client: {connect: () => Promise<void>} = new LitJsSdk.LitNodeClient({debug: false});
+    const client: { connect: () => Promise<void> } = new LitJsSdk.LitNodeClient(
+      { debug: false }
+    );
     await client.connect();
-    console.log('[INFO] LitNode connected');    
+    console.log('[INFO] LitNode connected');
     this._litNodeClient = client;
   }
 
-  public async connect(){
+  public async connect() {
     await this._connect();
   }
 
-  async encrypt(file: File | Blob, accessControlConditions: IAccessControlConditions[]): Promise<{
+  async encrypt(
+    file: File | Blob,
+    accessControlConditions: IAccessControlConditions[]
+  ): Promise<{
     encryptedFile: Blob;
     encryptedSymmetricKey: string;
   }> {
     if (!this._litNodeClient) {
-      await this._connect()
+      await this._connect();
     }
-
-    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: this.chain })
-
-    const { encryptedFile, symmetricKey } = await LitJsSdk.encryptFile({ file: file });
-    console.log('>>>> encrypt rules: ', accessControlConditions);
-    
+    if (!this._authSig) {
+      this._authSig = await this._getAuthSig();
+    }
+    const { encryptedFile, symmetricKey } = await LitJsSdk.encryptFile({
+      file: file,
+    });
     // [
     //   {
     //     chain: this.chain,
@@ -71,43 +80,76 @@ export class LitService {
     const encryptedSymmetricKey = await this._litNodeClient.saveEncryptionKey({
       accessControlConditions,
       symmetricKey,
-      authSig,
+      authSig: this._authSig,
       chain: this.chain,
       permanent: false,
     });
     return {
       encryptedFile,
-      encryptedSymmetricKey: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
-    }
+      encryptedSymmetricKey: LitJsSdk.uint8arrayToString(
+        encryptedSymmetricKey,
+        'base16'
+      ),
+    };
   }
 
-  async decrypt(encryptedFile: File|Blob, encryptedSymmetricKey: string, accessControlConditions: IAccessControlConditions[]): Promise<{decryptedArrayBuffer: ArrayBuffer}> {
+  async decrypt(
+    encryptedFile: File | Blob,
+    encryptedSymmetricKey: string,
+    accessControlConditions: IAccessControlConditions[]
+  ): Promise<{ decryptedArrayBuffer: ArrayBuffer }> {
     if (!this._litNodeClient) {
-      await this._connect()
+      await this._connect();
     }
     console.log('>>>> decrypt rules: ', accessControlConditions);
-    
-    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: this.chain })
-    console.log('[INFO] Message signed, try to get encryption key from LitNode');    
+
+    if (!this._authSig) {
+      this._authSig = await this._getAuthSig();
+    }
+    console.log(
+      '[INFO] Message signed, try to get encryption key from LitNode'
+    );
     const symmetricKey = await this._litNodeClient.getEncryptionKey({
       accessControlConditions,
       toDecrypt: encryptedSymmetricKey,
       chain: this.chain,
-      authSig
-    })
+      authSig: this._authSig,
+    });
     console.log('[INFO] Encryption key retrieved, try to decrypt file');
-    const decryptedArrayBuffer:ArrayBuffer = await LitJsSdk.decryptFile({
+    const decryptedArrayBuffer: ArrayBuffer = await LitJsSdk.decryptFile({
       symmetricKey: symmetricKey,
       file: encryptedFile,
     });
-    return { decryptedArrayBuffer }
+    return { decryptedArrayBuffer };
   }
 
   async disconnect() {
     if (!this._litNodeClient) {
       return;
     }
-    await LitJsSdk.disconnectWeb3()
-    console.log('[INFO] LitNode disconnected');    
+    await LitJsSdk.disconnectWeb3();
+    console.log('[INFO] LitNode disconnected');
+  }
+
+  private async _getAuthSig() {
+    // display loader for a better UX
+    const loading = await this._loadingCtrl.create({
+      message: `
+        Please connect your wallet to LitNode and sign message to continue.
+      `,
+      translucent: true,
+      animated: false,
+      spinner: null,
+      cssClass: 'ion-text-center',
+    });
+    await loading.present();
+    console.log('befor sign auth message');
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const authSig = await LitJsSdk.checkAndSignAuthMessage({
+      chain: this.chain,
+    });
+    console.log('after sign auth message');
+    loading.dismiss();
+    return authSig;
   }
 }
