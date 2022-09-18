@@ -38,7 +38,7 @@
           <ion-avatar slot="start">
             <ion-img
               [ngClass]="{ 'online':  (isConnected$|async) === true }"
-              [src]="accountId | addressToAvatar"></ion-img>
+              [src]="accountId | addressToAvatar | async"></ion-img>
           </ion-avatar>
           <ion-label>
             {{ accountId | sliceAddress }}
@@ -72,7 +72,7 @@
             <ion-avatar slot="start" >
               <ion-img
                 [ngClass]="{'online': isConnected$|async}"
-                [src]="accountId | addressToAvatar"></ion-img>
+                [src]="accountId | addressToAvatar | async"></ion-img>
             </ion-avatar>
             <ion-label class="ion-text-nowrap">
               <label>
