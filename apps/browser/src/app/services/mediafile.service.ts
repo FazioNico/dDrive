@@ -10,6 +10,7 @@ import {
 } from '../interfaces/mediafile.interface';
 import { DIDService } from './did.service';
 import { NotificationService } from './notification.service';
+import { NetwokNamePipe } from '../pipes/network-name.pipe';
 
 @Injectable()
 export class MediaFileService {
@@ -118,8 +119,9 @@ export class MediaFileService {
       };
     // encrypt file if needed
     if (accessControlConditions.length > 0) {
+      const chainName = new NetwokNamePipe().transform(this._didService.chainId$.value);
       const { encryptedFile, encryptedSymmetricKey } =
-        await this._litService.encrypt(file, accessControlConditions);
+        await this._litService.encrypt(file, accessControlConditions, chainName);
       // update file variable with encrypted file
       file = encryptedFile;
       // update variables with encrypted data
@@ -255,10 +257,12 @@ export class MediaFileService {
     const result: { file: File } = { file: fileFromCID };
     // decrypt file if needed
     if (encryptedSymmetricKey && accessControlConditions) {
+      const chainName = new NetwokNamePipe().transform(this._didService.chainId$.value);
       const { decryptedArrayBuffer } = await this._litService.decrypt(
         fileFromCID,
         encryptedSymmetricKey,
-        accessControlConditions
+        accessControlConditions,
+        chainName
       );
       // convert array buffer to file and overwrite result object
       result.file = new File([decryptedArrayBuffer], name || cid, { type });
