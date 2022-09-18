@@ -112,6 +112,8 @@ export class LitService {
       return;
     }
     await LitJsSdk.disconnectWeb3();
+    this._litNodeClient = null;
+    this._authSig = null;
     console.log('[INFO] LitNode disconnected');
   }
 
