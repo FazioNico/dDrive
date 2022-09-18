@@ -44,7 +44,10 @@ ion-avatar ion-img::after {
     right: -8%;
     width: 30%;
     height: 30%;
-    background: var(--ion-color-success);
+    background: var(--ion-color-medium);
+}
+ion-avatar ion-img.online::after {
+  background: var(--ion-color-success);
 }
 
 ion-avatar {

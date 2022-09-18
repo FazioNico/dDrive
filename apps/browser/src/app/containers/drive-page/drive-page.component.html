@@ -28,7 +28,7 @@
           routerDirection="root"
           routerLinkActive="active-link"
           (click)="menuElement.close()">
-          <ion-label >Shared</ion-label>
+          <ion-label>Shared</ion-label>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -36,7 +36,9 @@
       <ion-toolbar>
         <ion-item *ngIf="accountId$ | async as accountId" class="clickable">
           <ion-avatar slot="start">
-            <ion-img [src]="accountId | addressToAvatar"></ion-img>
+            <ion-img
+              [ngClass]="{ 'online':  (isConnected$|async) === true }"
+              [src]="accountId | addressToAvatar"></ion-img>
           </ion-avatar>
           <ion-label>
             {{ accountId | sliceAddress }}
@@ -68,7 +70,9 @@
         <ion-content class="ion-padding">
           <ion-item *ngIf="accountId$ | async as accountId" lines="none" class="item-profil"> 
             <ion-avatar slot="start" >
-              <ion-img [src]="accountId | addressToAvatar"></ion-img>
+              <ion-img
+                [ngClass]="{'online': isConnected$|async}"
+                [src]="accountId | addressToAvatar"></ion-img>
             </ion-avatar>
             <ion-label class="ion-text-nowrap">
               <label>

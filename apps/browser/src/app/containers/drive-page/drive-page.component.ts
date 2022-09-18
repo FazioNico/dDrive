@@ -15,6 +15,7 @@ export class DrivePageComponent implements OnInit, OnDestroy {
   public readonly isProduction: boolean = environment.production;
   public readonly accountId$ = this._didService.accountId$.asObservable();
   public readonly chainId$ = this._didService.chainId$.asObservable();
+  public readonly isConnected$ = this._notificationService.isConnected$; 
   private readonly _subs: Subscription[] = [];
   constructor(
     private readonly _didService: DIDService,

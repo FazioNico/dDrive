@@ -53,6 +53,7 @@ export class NotificationService {
       }
     })
   );
+  public readonly isConnected$ = this._xmtp.isConnected$;
 
   constructor(
     private readonly _xmtp: XMTPService,

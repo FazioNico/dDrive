@@ -5,7 +5,7 @@ import {
   ListMessagesOptions,
   Message,
 } from '@xmtp/xmtp-js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { ethers } from 'ethers';
 
 export interface IXMTPMessage {
@@ -25,6 +25,9 @@ export class XMTPService {
     new BehaviorSubject<Conversation[]>([]);
   private readonly _xmtp: BehaviorSubject<Client> = new BehaviorSubject<Client>(
     null as any
+  );
+  public readonly isConnected$ = this._xmtp.asObservable().pipe(
+    map((xmtp) => xmtp !== null)
   );
 
   async init(web3Provider: ethers.providers.Web3Provider, opts?: ListMessagesOptions | undefined) {
@@ -47,6 +50,7 @@ export class XMTPService {
       return;
     }
     await xmtp.close();
+    this._xmtp.next(null as any);
   }
 
   async getConversations() {
