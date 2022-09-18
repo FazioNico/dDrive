@@ -150,7 +150,7 @@ export class AuthService {
     // display loader for a better UX
     const loading = await this._loadingCtrl.create({
       message: `
-        Sign message form your wallet to load your share notifications using <br/>
+        Sign message form your wallet to load share notifications using <br/>
         <a rel="noopener" href="https://xmtp.com" title="XMTP website" target="_blank">
           XMTP protocol <ion-icon size="small" name="open-outline"></ion-icon>
         </a>
