@@ -2,7 +2,7 @@ import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
 import { Injectable } from '@angular/core';
 import { DID } from 'dids';
 import { BehaviorSubject } from 'rxjs';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -75,12 +75,12 @@ export class DIDService {
     web3Provider.on('accountsChanged',  (accounts: string[]) => {
       window.location.reload();   
     });
-    web3Provider.on("network", (newNetwork, oldNetwork) => {
+    web3Provider.on("network", (newNetwork: {chainId: number}, oldNetwork) => {
       // When a Provider makes its initial connection, it emits a "network"
       // event with a null oldNetwork along with the newNetwork. So, if the
       // oldNetwork exists, it represents a changing network
       if (oldNetwork) {
-          this.chainId$.next(newNetwork.replace('0x', ''));
+          this.chainId$.next(utils.hexValue(newNetwork.chainId).replace('0x', ''));
           const isUnautorizzed = this._isUnauthorizedChain();
           if (isUnautorizzed) {
             window.location.reload(); 
