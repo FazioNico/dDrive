@@ -49,6 +49,16 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
   - [x] File encryption 
   - [x] File access control with wallet address
 
+## Technology Stack
+
+- [x] [IFPS Core](./apps/browser/src/app/services/ipfs.service.ts) as SDK to manage files storage and retrieval to IPFS network
+- [x] [Ceramic](./apps/browser/src/app/services/ceramic.service.ts) as Decentralized database to manage storage metadata and user profile data
+- [x] [Lit Protocol](./apps/browser/src/app/services/lit.service.ts) as Cryptography Access Control service to encrypt files and manage access control
+- [x] [XMTP](./apps/browser/src/app/services/xmtp.service.ts) as Decentralized messaging service to manage notifications
+- [x] [3id Connect](./apps/browser/src/app/services/did.service.ts) as Decentralized authentication service to manage user identity
+- [x] [Etherjs](./apps/browser/src/app/services/did.service.ts) as Ethereum SDK to manage Web3 wallet connection and account management 
+- [x] [Moralis SDK](./apps/browser/src/app/services/nft.services.ts) as SDK to manage NFTs from Evm networks
+- [x] [Valist](.github/workflows/actions.yml) as Software distribution tool to manage releases and updates hosted on IPFS
 
 ## ⚙️ Installation
 
@@ -62,7 +72,9 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
 - This project was generated using [Nx](https://nx.dev).
 
 ## Build
-- Run `nx build` to build the dDrive application for the browser as PWA. The build artifacts will be stored in the `dist/` directory.
+- Run `nx build` to build the dDrive application for the browser as PWA. 
+
+The build artifacts will be stored in the `dist/` directory.
 
 ## 💻 Contributing
 
