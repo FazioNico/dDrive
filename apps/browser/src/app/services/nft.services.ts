@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 
 @Injectable()
 export class NFTService {
-  private readonly _nfts$ = new BehaviorSubject([] as EvmNft[]);
+  private readonly _nfts$: BehaviorSubject<EvmNft[]|null> = new BehaviorSubject(null as any);
   private readonly _queryFilterBy$: BehaviorSubject<string | null> =
   new BehaviorSubject(null as any);
   private _core!: MoralisCore;

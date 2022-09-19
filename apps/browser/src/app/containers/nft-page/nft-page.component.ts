@@ -28,14 +28,12 @@ export class NFTPageComponent implements OnInit {
     this.chainNames$,
   ]).pipe(
     map(([nfts, chainNames]) => {
-      
       // only show nfts from selected chains
       const selectedChainNames = chainNames.filter((chain) => chain.selected).map((chain) => chain.name?.toLowerCase());
-      console.log('>>', selectedChainNames);
       if (selectedChainNames.length === 0 || selectedChainNames[0] === 'all') {
         return nfts;
       } else {
-        return nfts.filter((nft) => selectedChainNames.includes(nft.chain.name?.toLowerCase()|| 'unknown'));
+        return nfts?.filter((nft) => selectedChainNames.includes(nft.chain.name?.toLowerCase()|| 'unknown'));
       }
     })
   );

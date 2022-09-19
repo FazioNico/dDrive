@@ -25,4 +25,10 @@
   ion-card {
     margin-bottom: 2.618rem;
   }
+
+  ion-thumbnail.skeleton {
+    width: 100%;
+    min-height: 200px;
+  }
+  
 }
