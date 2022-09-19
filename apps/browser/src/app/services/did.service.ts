@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { DID } from 'dids';
 import { BehaviorSubject } from 'rxjs';
 import { ethers } from 'ethers';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class DIDService {
@@ -12,6 +13,8 @@ export class DIDService {
   public readonly accountId$ = new BehaviorSubject(null as any);
   public readonly chainId$ = new BehaviorSubject(null as any);
   public web3Provider!: ethers.providers.Web3Provider;
+  public readonly availableChainsId = environment.availableChainsId;
+
 
   async init(ethereumProvider: any) { 
     if (this.did) {
@@ -72,13 +75,31 @@ export class DIDService {
     web3Provider.on('accountsChanged',  (accounts: string[]) => {
       window.location.reload();   
     });
-    // web3Provider.on("network", (newNetwork, oldNetwork) => {
-    //   // When a Provider makes its initial connection, it emits a "network"
-    //   // event with a null oldNetwork along with the newNetwork. So, if the
-    //   // oldNetwork exists, it represents a changing network
-    //   if (oldNetwork) {
-    //       window.location.reload();
-    //   }      
-    // });
+    web3Provider.on("network", (newNetwork, oldNetwork) => {
+      // When a Provider makes its initial connection, it emits a "network"
+      // event with a null oldNetwork along with the newNetwork. So, if the
+      // oldNetwork exists, it represents a changing network
+      if (oldNetwork) {
+          this.chainId$.next(newNetwork.replace('0x', ''));
+          const isUnautorizzed = this._isUnauthorizedChain();
+          if (isUnautorizzed) {
+            window.location.reload(); 
+          }
+      }      
+    });
+  }
+
+  private _isUnauthorizedChain(){
+      const provider = this.web3Provider;
+      const chainId = this.chainId$.value;
+      if (!provider.send||!chainId) {
+        throw 'No provider found';
+      }
+      // check if the user is connected to available network
+      if (!(this.availableChainsId as any)[chainId]) {
+       return true
+      } else {
+        return false;
+      }
   }
 }
