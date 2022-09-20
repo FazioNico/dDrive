@@ -61,14 +61,14 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
 
 ## Technology Stack
 
-- [IFPS Core](./apps/browser/src/app/services/ipfs.service.ts) as SDK to manage files storage and retrieval to IPFS network
-- [Ceramic](./apps/browser/src/app/services/ceramic.service.ts) as Decentralized database to manage storage metadata files and user profile data
-- [Lit Protocol](./apps/browser/src/app/services/lit.service.ts) as Cryptography Access Control service to encrypt files and manage access control
-- [XMTP](./apps/browser/src/app/services/xmtp.service.ts) as Decentralized messaging service to manage in app notifications
-- [3id Connect](./apps/browser/src/app/services/did.service.ts) as Decentralized authentication service to manage user identity
-- [Etherjs](./apps/browser/src/app/services/did.service.ts) as Ethereum SDK to manage Web3 wallet connection and account management 
-- [Moralis SDK](./apps/browser/src/app/services/nft.services.ts) as SDK to manage NFTs from Evm networks
-- [Valist](.github/workflows/actions.yml) as Software distribution tool to manage releases and updates hosted on IPFS
+- [IFPS Core](https://js.ipfs.tech) Browser implementation of the IPFS protocol to manage files storage and retrieval to IPFS network 
+- [Ceramic](https://ceramic.network) Decentralized database to manage storage metadata files and user profile data
+- [Lit Protocol](https://litprotocol.com) Decentralized Cryptography Access Control service to encrypt files and manage access control
+- [XMTP](https://xmtp.org/) Decentralized messaging service to manage in app notifications
+- [Ceramic 3id Connect](https://github.com/ceramicstudio/js-3id) Decentralized authentication service to manage user identity
+- [Ethersjs](https://docs.ethers.io/v5/) Ethereum SDK to manage Web3 wallet connection and account management 
+- [Moralis NFT API](https://moralis.io) SDK to manage NFTs from Evm networks
+- [Valist](https://app.valist.io/) Software distribution tool to manage releases and updates hosted on IPFS
 
 ## Usage & Installation
 
