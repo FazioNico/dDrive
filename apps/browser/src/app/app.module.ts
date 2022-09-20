@@ -47,6 +47,7 @@ import { DropableDirective } from './directives/dropable.directive';
 import { SharedPageComponent } from './containers/shared-page/shared-page.component';
 import { DropableComponent } from './components/dropable/dropable.component';
 import { SharedMediaService } from './services/shared-media.service';
+import { PinataPinningService } from './services/pinata-pinning.service';
 
 const ERROR_PROVIDER = 
   environment.production
@@ -56,8 +57,8 @@ const ERROR_PROVIDER =
       }]
     : [];
 
-const getProviderFactory =
-  (_alertCtrl: AlertController, _router: Router) => async () => {
+const initWeb3Factory =
+  (_alertCtrl: AlertController) => async () => {
     const onboarding = new MetaMaskOnboarding();
     if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
       const ionAlert = await _alertCtrl.create({
@@ -72,7 +73,7 @@ const getProviderFactory =
     } else {
       onboarding.stopOnboarding();
     }
-    console.log('[INFO] dDrive version: ');
+    console.log('[INFO] dDrive version: ', environment.version);
     // manage console.log(); in production
     if (environment.production) {
       console.log = function (arg) {
@@ -161,10 +162,18 @@ const getProviderFactory =
     ...ERROR_PROVIDER,
     {
       provide: APP_INITIALIZER,
-      useFactory: getProviderFactory,
+      useFactory: initWeb3Factory,
       multi: true,
-      deps: [AlertController, Router],
+      deps: [AlertController],
     },
+    {
+      provide: 'APP_PINNING_SERVICE_CONFIG',
+      useValue: environment.ipfs,
+    },
+    {
+      provide: 'APP_IPFS_PINNING_SERVICE',
+      useClass: PinataPinningService
+    }
   ],
   bootstrap: [AppComponent],
 })

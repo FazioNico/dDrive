@@ -1,9 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { create, IPFS } from 'ipfs-core';
+import { IPFSPinningService } from '../interfaces/ipfs-pinning-service.interface';
 
 @Injectable()
 export class IPFSService {
   private _ipfsNode!: IPFS;
+
+  constructor(
+    @Inject('APP_IPFS_PINNING_SERVICE')
+    private readonly _pinningService: IPFSPinningService
+  ) {}
 
   async disconect() {
     if (this._ipfsNode) {
@@ -13,7 +19,9 @@ export class IPFSService {
 
   async add(file: File | Blob) {
     if (!this._ipfsNode) {
-      this._ipfsNode = await create();
+      this._ipfsNode = await create({
+        config: {},
+      });
     }
     const nodeIsOnline = this._ipfsNode.isOnline();
     if (!nodeIsOnline) {
@@ -26,34 +34,16 @@ export class IPFSService {
     });
     await this.pin(cid.toString());
     return {
-      cid: cid.toString()
+      cid: cid.toString(),
     };
   }
 
   async pin(cid: string) {
-    if (!this._ipfsNode) {
-      this._ipfsNode = await create();
-    }
-    const nodeIsOnline = this._ipfsNode.isOnline();
-    if (!nodeIsOnline) {
-      throw new Error('IPFS node is not online');
-    }
-    await this._ipfsNode.pin.add(cid, {
-      timeout: 10000,
-    });
+    await this._pinningService.pin(cid);
   }
 
   async unpin(cid: string) {
-    if (!this._ipfsNode) {
-      this._ipfsNode = await create();
-    }
-    const nodeIsOnline = this._ipfsNode.isOnline();
-    if (!nodeIsOnline) {
-      throw new Error('IPFS node is not online');
-    }
-    await this._ipfsNode.pin.rm(cid, {
-      timeout: 10000,
-    });
+    await this._pinningService.unpin(cid);
   }
 
   async getFromCID(cid: string, type?: string): Promise<File> {

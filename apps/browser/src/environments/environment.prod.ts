@@ -7,6 +7,11 @@ export const environment = {
   ceramic: {
     apiHost: process.env['NG_APP_CERAMIC_API_HOST']
   },
+  ipfs: {
+    pinning_service_token: process.env['NG_APP_PINATA_JWT'],
+    pinning_service_endpoint: process.env['NG_APP_PINATA_PINNING_ENDPOINT'],
+    unpinning_service_endpoint: process.env['NG_APP_PINATA_UNPINNING_ENDPOINT'],
+  },
   defaultChain: 'polygon',
   availableChainsId: {
     // ETH
