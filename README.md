@@ -104,14 +104,13 @@ dDrive use 3id Connect to manage user identity and Etherjs to manage Web3 wallet
       if ((accounts?.length||0) === 0) {
         throw 'No accounts found. Please unlock your Ethereum account, refresh the page and try again.';
       }
-      // listen event from provider
-      this._listenEvent(this.web3Provider);
       const { chainId =  (await this.web3Provider?.getNetwork())?.chainId} = (this.web3Provider.provider as any);
       if (!chainId) {
         throw 'No chainId found. Please unlock your Ethereum account, refresh the page and try again.';
       }
-      console.log('[INFO] chainId: ', chainId);    
       this.chainId$.next(chainId.replace('0x', ''));
+      // listen event from provider
+      this._listenEvent(this.web3Provider);
       // Create an EthereumAuthProvider using the Ethereum provider and requested account
       const account: string = accounts[0];
       this.accountId$.next(account);
@@ -649,7 +648,13 @@ Project is Open Source and available under the [MIT License](LICENSE).
 
 ## Team
 
-- [**@fazionico**](https://github.com/FazioNico) - **Nico Fazio** 
+- [**@fazionico**](https://github.com/FazioNico) - **Nicolas Fazio** 
+  
+  Software Architect & Blockchain Developer
+
+  Mr. Fazio is a software architect and blockchain developer with over 15 years of industry experience. He has worked on a variety of projects ranging from cloud enterprise software to blockchain applications focusing last 3 years exclusively in the Web 3 industry. He is passionate about building decentralized solutions and is currently working on the dDrive project.
+
+  LinkedIn: [https://www.linkedin.com/in/fazio-nicolas/](https://www.linkedin.com/in/fazio-nicolas/)
 
 ## Support
 
