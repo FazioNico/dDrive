@@ -380,9 +380,9 @@ dDrive use IPFS-Core to manage file storage.
 </details>
 <hr/>
 
-### Cryptography Access Control: lit Protocol
+### Cryptography Access Control: Lit Protocol
 
-dDrive use lit Protocol to encrypt datas saving to IPFS and manage access control datas to enable users to share mediafile with other users have supported blockain wallet address.
+dDrive use Lit Protocol to encrypt datas saving to IPFS and manage access control datas to enable users to share mediafile with other users have supported blockain wallet address.
 
 <details>
   <summary><b>Click to toggle contents of `code` implementaion</b></summary>
