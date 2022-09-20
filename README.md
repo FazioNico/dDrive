@@ -754,4 +754,4 @@ Project is Open Source and available under the [MIT License](LICENSE).
 
 ## Support
 
-If you like this project, please consider supporting it by giving a ⭐️
+If you like this project, please consider supporting it by giving a ⭐️ on Github and sharing it with your friends! 
