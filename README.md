@@ -74,7 +74,7 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
 
 dDrive is a web application that can be used in any modern browser that have a [Metamask](https://metamask.io/download.html) Extension install. 
 
-You can also install dDrive as a desktop application using Progressive Web App (PWA) technology by click `install` icon from browser url section or from `options` section of your browser. Yoou can find more informations about PWA installation and specification [here](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Add_to_home_screen).
+You can also install dDrive as a desktop application using Progressive Web App (PWA) technology by click `install` icon from browser url section or from `options` section of your browser. You can find more informations about PWA installation and specification [here](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Add_to_home_screen).
 
 **Distribution link to install dDrive PWA application:** [https://app.valist.io/d-drive/d-drive-pwa](https://app.valist.io/d-drive/d-drive-pwa)
 
@@ -337,7 +337,7 @@ dDrive use IPFS-Core to manage file storage.
 
 ### Cryptography Access Control: lit Protocol
 
-dDrive use lit Protocol to encrypt datas saving to IPFS and manage access control datas too enable users to share mediafile with other users have supported blockain wallet address.
+dDrive use lit Protocol to encrypt datas saving to IPFS and manage access control datas to enable users to share mediafile with other users have supported blockain wallet address.
 
 <details>
   <summary><b>Click to toggle contents of `code` implementaion</b></summary>
@@ -635,7 +635,7 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
 - Clone the dDrive repository
 - Install dependencies using NodeJS and NPM
 - Install Nx Workspace CLI to manage workspace project
-- Run develooppment server using `nx serve` command will open the dDrive application in the browser
+- Run developpment server using `nx serve` command will open the dDrive application in the browser
 - This project was generated using [Nx Workspace](https://nx.dev).
 
 ## Build
@@ -643,7 +643,7 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
 
 The build artifacts will be stored in the `dist/` directory.
 
-## Deplooyment 
+## Deployment 
 
 dDrive is deployed automatically using Github Actions. Every commit to the `main` branch will trigger a new deployment.
 
