@@ -613,7 +613,16 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
   <summary><b>Click to toggle contents of `code` implementaion</b></summary>
 
   ```yaml
-  # comming soon
+
+      - name: Valist Deploy
+      - uses: valist-io/valist-github-action@v2.5.6
+        with:
+          private-key: ${{ secrets.VALIST_SIGNER }}
+          account: d-drive
+          project: d-drive-pwa
+          release: ${{ github.ref_name }}
+          path: dist/apps/browser
+      
   ```
 
   > full implementation can be found here: [.github/workflows/actions.yml](.github/workflows/actions.yml)
