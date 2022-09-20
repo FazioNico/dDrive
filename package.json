@@ -9,7 +9,8 @@
     "build": "nx build",
     "test": "nx test",
     "webpack-analyzer:analyze:browser:prod": "nx build --prod --stats-json",
-    "webpack-analyzer:browser": "npx webpack-bundle-analyzer dist/apps/browser/stats.json"
+    "webpack-analyzer:browser": "npx webpack-bundle-analyzer dist/apps/browser/stats.json",
+    "docs:browser": "nx run browser:compodoc"
   },
   "private": true,
   "dependencies": {
@@ -64,12 +65,14 @@
     "@angular/compiler-cli": "~14.1.1",
     "@angular/language-service": "~14.1.1",
     "@angular/pwa": "^14.2.1",
+    "@compodoc/compodoc": "^1.1.15",
     "@nrwl/cli": "14.5.10",
     "@nrwl/cypress": "14.5.10",
     "@nrwl/eslint-plugin-nx": "14.5.10",
     "@nrwl/jest": "14.5.10",
     "@nrwl/linter": "14.5.10",
     "@nrwl/workspace": "14.5.10",
+    "@twittwer/compodoc": "^1.8.0",
     "@types/jest": "27.4.1",
     "@types/node": "16.11.7",
     "@types/uuid": "^8.3.4",

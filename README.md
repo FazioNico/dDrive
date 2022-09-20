@@ -634,6 +634,46 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
 
 The build artifacts will be stored in the `dist/` directory.
 
+## Documentation
+
+- Run `npm run docs:browser` to generate the appplication documentation
+
+The documentation will be generate in the `dist/` directory. Open the `dist/browser/index.html` file in browser to see the documentation as website.
+
+## Environment Variables
+
+Environment variables are set in the `.env` file in the root of the project. The following variables are required:
+
+  - `NG_APP_VERSION` - NPM Package version
+  - `NG_APP_COMMIT` - Github commit hash
+  - `NG_APP_MORALIS_API_KEY` - Moralis API Key
+  - `NG_APP_CERAMIC_API_HOST` - Ceramic API Host
+
+Environment variables can be update for each mode. Go to the `environment` folder and update the `environment.{MODE}.ts` file to change the environment variables for the desired mode.
+
+## Architecture overview
+
+The application is build using [Angular](https://angular.io) and [Ionic framework](https://ionicframework.com) to provide scalable and maintainable web application. The follder architecture is based on [Nx Workspace](https://nx.dev) to provide a configurable workspace that can contain multiple applications in the `./apps` folder and multiple libraries in the `./libs` folder. This is very useful for building large scale applications with multiple components and features that can be easily maintained and updated.
+
+The `main` application is stored in `./apps/browser` folder and it contains files and folders organized according to Angulars's best practices structure:
+
+- `./apps/browser/src/app` - contains the application source code
+- `./apps/browser/src/app/components` - contains the application components that can be reused in other components
+- `./apps/browser/src/app/containers` - contains the application containers pages
+- `./apps/browser/src/app/directives` - contains the application directives that are used to extend the functionality of HTML elements
+- `./apps/browser/src/app/guards` - contains the application guards that are used to protect routes
+- `./apps/browser/src/app/interfaces` - contains the application interfaces that are used to define the structure of objects
+- `./apps/browser/src/app/pipes` - contains the application pipes that are used to transform data
+- `./apps/browser/src/app/services` - contains the application services that are used to provide data to the application
+- `./apps/browser/src/app/app-routing.module.ts` - contains the application routing
+- `./apps/browser/src/app/app.component.ts` - contains the application root component
+- `./apps/browser/src/app/app.module.ts` - contains the application root module
+- `./apps/browser/src/assets` - contains the application assets
+- `./apps/browser/src/environments` - contains the application environment variables
+- `./apps/browser/src/thems` - contains the application theming variables
+- `./apps/browser/src/index.html` - contains the application HTML template
+- `./apps/browser/src/main.ts` - contains the application entry point
+
 ## Contributing
 
 Thanks for taking the time to help out and improve the project! 🎉

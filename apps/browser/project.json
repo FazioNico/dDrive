@@ -5,9 +5,7 @@
   "targets": {
     "build": {
       "executor": "@ngx-env/builder:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/browser",
         "index": "apps/browser/src/index.html",
@@ -199,20 +197,27 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/browser/**/*.ts",
-          "apps/browser/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/browser/**/*.ts", "apps/browser/**/*.html"]
       }
     },
     "test": {
       "executor": "@ngx-env/builder:karma",
-      "outputs": [
-        "coverage/apps/browser"
-      ],
+      "outputs": ["coverage/apps/browser"],
       "options": {
         "jestConfig": "apps/browser/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "compodoc": {
+      "executor": "@twittwer/compodoc:compodoc",
+      "options": {
+        "tsConfig": "apps/browser/tsconfig.editor.json",
+        "outputPath": "dist/compodoc/browser"
+      },
+      "configurations": {
+        "json": {
+          "exportFormat": "json"
+        }
       }
     }
   },
