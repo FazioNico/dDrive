@@ -638,7 +638,7 @@ The build artifacts will be stored in the `dist/` directory.
 
 - Run `npm run docs:browser` to generate the appplication documentation
 
-The documentation will be generate in the `dist/` directory. Open the `dist/browser/index.html` file in browser to see the documentation as website.
+The documentation will be generate in the `dist/` directory. Open the `dist/compodoc/browser/index.html` file in browser to see the documentation as website.
 
 ## Environment Variables
 
@@ -657,22 +657,24 @@ The application is build using [Angular](https://angular.io) and [Ionic framewor
 
 The `main` application is stored in `./apps/browser` folder and it contains files and folders organized according to Angulars's best practices structure:
 
-- `./apps/browser/src/app` - contains the application source code
-- `./apps/browser/src/app/components` - contains the application components that can be reused in other components
-- `./apps/browser/src/app/containers` - contains the application containers pages
-- `./apps/browser/src/app/directives` - contains the application directives that are used to extend the functionality of HTML elements
-- `./apps/browser/src/app/guards` - contains the application guards that are used to protect routes
-- `./apps/browser/src/app/interfaces` - contains the application interfaces that are used to define the structure of objects
-- `./apps/browser/src/app/pipes` - contains the application pipes that are used to transform data
-- `./apps/browser/src/app/services` - contains the application services that are used to provide data to the application
-- `./apps/browser/src/app/app-routing.module.ts` - contains the application routing
-- `./apps/browser/src/app/app.component.ts` - contains the application root component
-- `./apps/browser/src/app/app.module.ts` - contains the application root module
-- `./apps/browser/src/assets` - contains the application assets
-- `./apps/browser/src/environments` - contains the application environment variables
-- `./apps/browser/src/thems` - contains the application theming variables
-- `./apps/browser/src/index.html` - contains the application HTML template
-- `./apps/browser/src/main.ts` - contains the application entry point
+| File                             | Description                                                           |
+|----------------------------------|-----------------------------------------------------------------------|
+| `/src/app`                       | contains the application source code                                  |
+| `/src/app/components`            | Components that can be reused in other components                     |
+| `/src/app/containers`            | Containers pages                                                      |
+| `/src/app/directives`            | Directives that are used to extend the functionality of HTML elements |
+| `/src/app/guards`                | Guards that are used to protect routes                                |
+| `/src/app/interfaces`            | Interfaces that are used to define the structure of objects           |
+| `/src/app/pipes`                 | Pipes that are used to transform data                                 |
+| `/src/app/services`              | Services that are used to provide data to the application             |
+| `/src/app/app-routing.module.ts` | Application routing                                                   |
+| `/src/app/app.component.ts`      | Application root component                                            |
+| `/src/app/app.module.ts`         | Application root module                                               |
+| `/src/assets`                    | Application assets                                                    |
+| `/src/environments`              | Application environment variables                                     |
+| `/src/thems`                     | Application theming variables                                         |
+| `/src/index.html`                | Application HTML Entry point template                                 |
+| `/src/main.ts`                   | Application Entry point template                                      |
 
 ## Contributing
 
