@@ -64,3 +64,6 @@ if (!(window as any).Buffer) {
   // add Buffer polyfill 
   (global as any).Buffer = Buffer;
 }
+
+// polyfill for Share API
+import 'share-api-polyfill';

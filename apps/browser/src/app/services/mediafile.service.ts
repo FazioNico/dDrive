@@ -291,6 +291,16 @@ export class MediaFileService {
     await this.delete(file._id);
   }
 
+  async shareWithWebAPI(mediaFile: IMediaFile, url: string) {
+    const {file} = await this.downloadFile(mediaFile._id, false);
+    await navigator.share({
+      title: 'dDrive Share file',
+      text: `You received a file from dDrive. You can click here to download from IPFS Network: ${url}`,
+      url,
+      files: [file]
+    });
+  }
+
   searchByName(name: string | null) {
     if (name) {
       this._filterBy$.next('root');

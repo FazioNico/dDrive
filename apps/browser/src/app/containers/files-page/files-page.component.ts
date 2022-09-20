@@ -333,7 +333,7 @@ export class FilesPageComponent {
         if (!item.accessControlConditions && !item.encryptedSymmetricKey) {
           // TODO: use browser API too share CID link from IPFS gateway
           const url = `https://ipfs.io/ipfs/${item.cid}`;
-          throw 'share() from public file not implemented yet';
+          await this._mediaFileService.shareWithWebAPI(item, url);
         } else {
           // open share modal
           const ionModal = await this._modalCtrl.create({

@@ -168,7 +168,11 @@ const initWeb3Factory =
     },
     {
       provide: 'APP_PINNING_SERVICE_CONFIG',
-      useValue: environment.ipfs,
+      useValue: {
+        pinning_endpoint: environment.ipfs.pinning_service_endpoint,
+        unpinning_endpoint: environment.ipfs.pinning_service_endpoint,
+        token: environment.ipfs.pinning_service_token,
+      },
     },
     {
       provide: 'APP_IPFS_PINNING_SERVICE',
