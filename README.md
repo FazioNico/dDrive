@@ -5,8 +5,10 @@
 
 > An alternative storage solution to Google Drive, open-source and fully decentralized that is built on top of the InterPlanetary File System (IPFS) 
 
+Launch dDrive PWA with Valist distribution software [https://app.valist.io/d-drive/d-drive-pwa](https://app.valist.io/d-drive/d-drive-pwa)
+
 ## Project Description
-dDrive is a fully decentralized and open-source Storage which replace traditional storage providers having centralized governance, cumbersome infrastructure, inadequate security and privacy measures with users datasets. 
+dDrive is a fully decentralized and open-source Storage solution which replace traditional storage providers having centralized governance, cumbersome infrastructure, inadequate security and privacy measures with users datasets. 
 
 dDrive is build on top of IPFS and inherits all the features of Blockchain Technology to emerge as an immutable, censorship-resistant, tamper-proof and privacy complient with user dataset.
 
