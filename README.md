@@ -62,6 +62,7 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
 ## Technology Stack
 
 - [IFPS Core](https://js.ipfs.tech) Browser implementation of the IPFS protocol to manage files storage and retrieval to IPFS network 
+- [Pinata API](https://pinata.cloud) Pinning CID service to pin files to IPFS network
 - [Ceramic](https://ceramic.network) Decentralized database to manage storage metadata files and user profile data
 - [Lit Protocol](https://litprotocol.com) Decentralized Cryptography Access Control service to encrypt files and manage access control
 - [XMTP](https://xmtp.org/) Decentralized messaging service to manage in app notifications
@@ -245,7 +246,7 @@ dDrive use Ceramic Network to manage storage metadata files and user profile dat
 </details> 
 <hr/>
 
-### File Storage: IPFS-Core
+### File Storage: IPFS-Core & Pinata API
 
 dDrive use IPFS-Core to manage file storage.
 
@@ -256,6 +257,10 @@ dDrive use IPFS-Core to manage file storage.
   export class IPFSService {
     private _ipfsNode!: IPFS;
 
+    constructor(
+      private readonly _pinningService: IPFSPinningService
+    ) {}
+    
     async disconect() {
       if (this._ipfsNode) {
         await this._ipfsNode.stop();
@@ -275,7 +280,7 @@ dDrive use IPFS-Core to manage file storage.
         preload: true,
         progress: (prog) => console.log(`received: ${prog}`),
       });
-      // default cll pin method
+      // default call pin method
       await this.pin(cid.toString());
       return {
         cid: cid.toString()
@@ -283,29 +288,11 @@ dDrive use IPFS-Core to manage file storage.
     }
 
     async pin(cid: string) {
-      if (!this._ipfsNode) {
-        this._ipfsNode = await create();
-      }
-      const nodeIsOnline = this._ipfsNode.isOnline();
-      if (!nodeIsOnline) {
-        throw new Error('IPFS node is not online');
-      }
-      await this._ipfsNode.pin.add(cid, {
-        timeout: 10000,
-      });
+      await this._pinningService.pin(cid);
     }
 
     async unpin(cid: string) {
-      if (!this._ipfsNode) {
-        this._ipfsNode = await create();
-      }
-      const nodeIsOnline = this._ipfsNode.isOnline();
-      if (!nodeIsOnline) {
-        throw new Error('IPFS node is not online');
-      }
-      await this._ipfsNode.pin.rm(cid, {
-        timeout: 10000,
-      });
+      await this._pinningService.unpin(cid);
     }
 
     async getFromCID(cid: string, type?: string): Promise<File> {
@@ -331,6 +318,64 @@ dDrive use IPFS-Core to manage file storage.
   ```
 
   > full implementation can be found here: [./apps/browser/src/app/services/ipfs.service.ts](./apps/browser/src/app/services/ipfs.service.ts)
+
+  ```typescript
+  export class PinataPinningService implements IPFSPinningService {
+
+    constructor(
+      private _pinningServiceConfig: {
+        pinning_endpoint: string;
+        unpinning_endpoint: string;
+        token: string;
+      }
+    ) {
+    }
+
+    async pin(cid: string) {
+      const url = this._pinningServiceConfig.pinning_endpoint;
+      const token = this._pinningServiceConfig.token;
+      if (!url || !token) {
+        throw new Error('IPFS pinning service is not configured');
+      }
+      const body = JSON.stringify({
+        "hashToPin": cid
+      });
+      const config: RequestInit = {
+        method: 'POST',
+        body,
+        headers: new Headers({ 
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json'
+        })
+      };
+      await fetch(url, config)
+        .then(res => res.json())
+        .catch(err => {
+          throw err;
+        });   
+    }
+
+    async unpin(cid: string) {
+      const url = `${this._pinningServiceConfig.unpinning_endpoint}/${cid}`;
+      const token = this._pinningServiceConfig.token;
+      if (!url || !token) {
+        throw new Error('IPFS pinning service is not configured');
+      }
+      const config: RequestInit = {
+        method: 'DELETE',
+        headers: new Headers({ 
+          'Authorization': `Bearer ${token}`, 
+        })
+      };
+      await fetch(url, config)
+        .catch(err => {
+          throw err;
+        });
+    }
+  }
+  ```
+
+  > full implementation can be found here: [./apps/browser/src/app/services/pinata-pinning.service.ts](./apps/browser/src/app/services/pinata-pinning.service.ts)
   
 </details>
 <hr/>
@@ -635,6 +680,7 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
 - Clone the dDrive repository
 - Install dependencies using NodeJS and NPM
 - Install Nx Workspace CLI to manage workspace project
+- Provide environment variables in `.env` file (see `Environment Variables` section)
 - Run developpment server using `nx serve` command will open the dDrive application in the browser
 - This project was generated using [Nx Workspace](https://nx.dev).
 
@@ -655,12 +701,7 @@ The documentation will be generate in the `dist/` directory. Open the `dist/comp
 
 ## Environment Variables
 
-Environment variables are set in the `.env` file in the root of the project. The following variables are required:
-
-  - `NG_APP_VERSION` - NPM Package version
-  - `NG_APP_COMMIT` - Github commit hash
-  - `NG_APP_MORALIS_API_KEY` - Moralis API Key
-  - `NG_APP_CERAMIC_API_HOST` - Ceramic API Host
+Environment variables are set in the `.env` file in the root of the project. The following file  `.env.example` at the root of the project contains the list of environment variables used in the project with example values. 
 
 Environment variables can be update for each mode. Go to the `environment` folder and update the `environment.{MODE}.ts` file to change the environment variables for the desired mode.
 
