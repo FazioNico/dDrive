@@ -4,7 +4,8 @@
 
 # Core goals
 
-- provide a simple and easy storage solution
+- provide a censorship-resistant and decentralized storage solution for the web 3.0
+- provide a simple and easy UI/UX to increase users adoption of web 3.0 technologies
 
 # Stack developpement
 
@@ -15,7 +16,7 @@
 - Prettier to makes our code look nice and helps with Pull Requests
 - Nx Workspace to provide a professionnal workspace with packages management and build tools.
 - Nx CLI to provide a simple and easy to use CLI to interact with Nx
-
+- Commitizen to provide a simple and easy to use CLI to interact with Nx
 
 # Getting started
 
