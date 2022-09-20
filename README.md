@@ -41,27 +41,577 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
   - [x] Search NFTs by name
   - [x] Filter NFTs by chain
 
-**Options**
+**Others**
 
   - [x] Dark mode support
   - [x] Multi chain support
   - [x] Shared file Notifications
   - [x] File encryption 
   - [x] File access control with wallet address
+  - [x] Desktop app support using PWA technology
 
 ## Technology Stack
 
 - [IFPS Core](./apps/browser/src/app/services/ipfs.service.ts) as SDK to manage files storage and retrieval to IPFS network
-- [Ceramic](./apps/browser/src/app/services/ceramic.service.ts) as Decentralized database to manage storage metadata and user profile data
+- [Ceramic](./apps/browser/src/app/services/ceramic.service.ts) as Decentralized database to manage storage metadata files and user profile data
 - [Lit Protocol](./apps/browser/src/app/services/lit.service.ts) as Cryptography Access Control service to encrypt files and manage access control
-- [XMTP](./apps/browser/src/app/services/xmtp.service.ts) as Decentralized messaging service to manage notifications
+- [XMTP](./apps/browser/src/app/services/xmtp.service.ts) as Decentralized messaging service to manage in app notifications
 - [3id Connect](./apps/browser/src/app/services/did.service.ts) as Decentralized authentication service to manage user identity
 - [Etherjs](./apps/browser/src/app/services/did.service.ts) as Ethereum SDK to manage Web3 wallet connection and account management 
 - [Moralis SDK](./apps/browser/src/app/services/nft.services.ts) as SDK to manage NFTs from Evm networks
 - [Valist](.github/workflows/actions.yml) as Software distribution tool to manage releases and updates hosted on IPFS
 
-## ⚙️ Installation
+## ⚙️ Usage & Installation
 
+dDrive is a web application that can be used in any modern browser that have a [Metamask](https://metamask.io/download.html) Extension install. 
+
+You can also install dDrive as a desktop application using Progressive Web App (PWA) technology by click `install` icon from browser url section or from `options` section of your browser. Yoou can find more informations about PWA installation and specification [here](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Add_to_home_screen).
+
+**Distribution link to install dDrive PWA application:** [https://app.valist.io/d-drive/d-drive-pwa](https://app.valist.io/d-drive/d-drive-pwa)
+
+## How it's built
+
+### Authentication: 3id Connect & Etherjs
+
+dDrive use 3id Connect to manage user identity and Etherjs to manage Web3 wallet connection and account management. 
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```typescript
+  export class DIDService {
+
+    async init(ethereumProvider: any) { 
+      if (this.did) {
+        return this.did;
+      }
+      this.web3Provider = new ethers.providers.Web3Provider(ethereumProvider, 'any');
+      // Request accounts from the Ethereum provider
+      const accounts = await this.web3Provider
+        .send('eth_requestAccounts', [])
+        .catch((err: any) => {
+          throw `Error during Web3 Authetication: ${err?.message||'Unknown error'}`;
+        });
+      if ((accounts?.length||0) === 0) {
+        throw 'No accounts found. Please unlock your Ethereum account, refresh the page and try again.';
+      }
+      // listen event from provider
+      this._listenEvent(this.web3Provider);
+      const { chainId =  (await this.web3Provider?.getNetwork())?.chainId} = (this.web3Provider.provider as any);
+      if (!chainId) {
+        throw 'No chainId found. Please unlock your Ethereum account, refresh the page and try again.';
+      }
+      console.log('[INFO] chainId: ', chainId);    
+      this.chainId$.next(chainId.replace('0x', ''));
+      // Create an EthereumAuthProvider using the Ethereum provider and requested account
+      const account: string = accounts[0];
+      this.accountId$.next(account);
+      this.did = new DID();
+      return this.did;
+    }
+
+    async connect() {
+      const authProvider = new EthereumAuthProvider(this.web3Provider.provider, this.accountId$.value);
+      // Connect the created EthereumAuthProvider to the 3ID Connect instance so it can be used to
+      // generate the authentication secret
+      const threeID = new ThreeIdConnect()
+      await threeID.connect(authProvider);
+      // Set the DID provider from the 3ID Connect instance
+      this.did.setProvider(threeID.getDidProvider());
+    }
+  }
+  ```
+
+  >  full implementation can be found here: [./apps/browser/src/app/services/did.service.ts](./apps/browser/src/app/services/did.service.ts)
+
+</details>
+<hr/>
+
+### Database: Ceramic Network
+
+dDrive use Ceramic Network to manage storage metadata files and user profile data.
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```typescript
+  export class CeramicService {
+
+    private readonly _db: CeramicClient = new CeramicClient(environment.ceramic.apiHost);
+    private readonly _datastore: DIDDataStore = new DIDDataStore({ ceramic: this._db, model: this._getAliases() });
+  
+
+    async getAll() {
+      if (!this._db?.did) {
+        throw 'No DID found';
+      }
+      const {dDrive: {documentID = null} = {}} = await this._getProfileFromCeramic()||{};
+      if (!documentID) {
+        throw new Error('No documentID found');
+      }
+      this._mainDocuumentId = documentID;
+      const datas = await this.getData(documentID);
+      return datas;
+    }
+
+    async saveData(data: {
+      [key: string|number]: any;
+    }) {
+      if (!this._db?.did) {
+        throw 'No DID found';
+      }
+      const doc = await TileDocument.create(this._db, data);
+      const _id = doc.id.toString();
+      // The stream ID of the created document can then be accessed as the `id` property
+      return {_id};
+    }
+
+    async updateData(data: {
+      [key: string|number]: any;
+    }, docId?: string) {
+      if (!data?.['_id'] && !docId) {
+        throw new Error('No _id found');
+      }
+      if (!this._db?.did) {
+        throw 'No DID found';
+      }
+      data['lastModifiedIsoDateTime'] =  new Date().toISOString();
+      const doc = await TileDocument.load(this._db, docId||data['_id']);
+      await doc.update(data);
+      return {
+        ...doc.content as any,
+      };
+    }
+
+    async getData(key: string) {
+      if (!this._db?.did) {
+        throw 'No DID found';
+      }
+      const doc = await TileDocument.load(this._db, key);
+      return {
+        ...doc.content as any,
+        _id: doc.id.toString()
+      };
+    }
+
+    async updateUserProfil(value: Partial<IUserProfil>) {
+      if (!this._db?.did) {
+        throw 'No DID found';
+      }
+      const {dDrive: {documentID = null, ...previousProfilData} = {}} = await this._getProfileFromCeramic()||{};
+      if (!documentID) {
+        throw new Error('No documentID found');
+      }
+      // save the document `id` to the profile data
+      const dDrive: IUserProfil = {
+        ...previousProfilData,
+        ...value,
+        latestConnectionISODatetime: new Date().toISOString(),
+        documentID,
+      } as IUserProfil;
+      const updatedProfil = { dDrive };
+      await this._datastore.merge('BasicProfile', updatedProfil);
+      return updatedProfil;
+    }
+   
+    private async _setupProfile() {
+      // create Document to store all files data
+      const doc = await TileDocument.create(this._db, {
+        files: [],
+        lastModifiedIsoDateTime: new Date().toISOString()
+      });
+      // save the document `id` to the profile data
+      const dDrive: IUserProfil = {
+        latestConnectionISODatetime: new Date().toISOString(),
+        creationISODatetime: new Date().toISOString(),
+        documentID: doc.id.toString(),
+      };
+      await this._datastore.merge('BasicProfile', { dDrive });
+      return dDrive;
+    }
+  }
+  ```
+  
+  > full implementation can be found here: [./apps/browser/src/app/services/ceramic.service.ts](./apps/browser/src/app/services/ceramic.service.ts)
+  
+</details> 
+<hr/>
+
+### File Storage: IPFS-Core
+
+dDrive use IPFS-Core to manage file storage.
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```typescript
+  export class IPFSService {
+    private _ipfsNode!: IPFS;
+
+    async disconect() {
+      if (this._ipfsNode) {
+        await this._ipfsNode.stop();
+      }
+    }
+
+    async add(file: File | Blob) {
+      if (!this._ipfsNode) {
+        this._ipfsNode = await create();
+      }
+      const nodeIsOnline = this._ipfsNode.isOnline();
+      if (!nodeIsOnline) {
+        throw new Error('IPFS node is not online');
+      }
+      const { cid } = await this._ipfsNode.add(file, {
+        timeout: 10000,
+        preload: true,
+        progress: (prog) => console.log(`received: ${prog}`),
+      });
+      // default cll pin method
+      await this.pin(cid.toString());
+      return {
+        cid: cid.toString()
+      };
+    }
+
+    async pin(cid: string) {
+      if (!this._ipfsNode) {
+        this._ipfsNode = await create();
+      }
+      const nodeIsOnline = this._ipfsNode.isOnline();
+      if (!nodeIsOnline) {
+        throw new Error('IPFS node is not online');
+      }
+      await this._ipfsNode.pin.add(cid, {
+        timeout: 10000,
+      });
+    }
+
+    async unpin(cid: string) {
+      if (!this._ipfsNode) {
+        this._ipfsNode = await create();
+      }
+      const nodeIsOnline = this._ipfsNode.isOnline();
+      if (!nodeIsOnline) {
+        throw new Error('IPFS node is not online');
+      }
+      await this._ipfsNode.pin.rm(cid, {
+        timeout: 10000,
+      });
+    }
+
+    async getFromCID(cid: string, type?: string): Promise<File> {
+      if (!this._ipfsNode) {
+        this._ipfsNode = await create();
+      }
+      const nodeIsOnline = this._ipfsNode.isOnline();
+      if (!nodeIsOnline) {
+        throw new Error('IPFS node is not online');
+      }
+      const asyncUint8Array = this._ipfsNode.cat(cid, {
+        timeout: 10000,
+        preload: true,
+      });
+      const blobsPart = [];
+      for await (const chunk of asyncUint8Array) {
+        blobsPart.push(chunk);
+      }
+      const file = new File(blobsPart, cid, { type });
+      return file;
+    }
+  }
+  ```
+
+  > full implementation can be found here: [./apps/browser/src/app/services/ipfs.service.ts](./apps/browser/src/app/services/ipfs.service.ts)
+  
+</details>
+<hr/>
+
+### Cryptography Access Control: lit Protocol
+
+dDrive use lit Protocol to encrypt datas saving to IPFS and manage access control datas too enable users to share mediafile with other users have supported blockain wallet address.
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```typescript
+  export class LitService {
+
+    private async _connect() {
+      const client: { connect: () => Promise<void> } = new LitJsSdk.LitNodeClient(
+        { debug: false }
+      );
+      await client.connect();
+      this._litNodeClient = client;
+    }
+
+    async encrypt(
+      file: File | Blob,
+      accessControlConditions: IAccessControlConditions[],
+      chain = this._chain
+    ): Promise<{
+      encryptedFile: Blob;
+      encryptedSymmetricKey: string;
+    }> {
+      if (!this._litNodeClient) {
+        await this._connect();
+      }
+      if (!this._authSig) {
+        this._authSig = await this._getAuthSig(chain);
+      }
+      const { encryptedFile, symmetricKey } = await LitJsSdk.encryptFile({
+        file: file,
+      });
+
+      const encryptedSymmetricKey = await this._litNodeClient.saveEncryptionKey({
+        accessControlConditions,
+        symmetricKey,
+        authSig: this._authSig,
+        chain,
+        permanent: false,
+      });
+      return {
+        encryptedFile,
+        encryptedSymmetricKey: LitJsSdk.uint8arrayToString(
+          encryptedSymmetricKey,
+          'base16'
+        ),
+      };
+    }
+
+    async decrypt(
+      encryptedFile: File | Blob,
+      encryptedSymmetricKey: string,
+      accessControlConditions: IAccessControlConditions[],
+      chain = this._chain
+    ): Promise<{ decryptedArrayBuffer: ArrayBuffer }> {
+      if (!this._litNodeClient) {
+        await this._connect();
+      }
+      if (!this._authSig) {
+        this._authSig = await this._getAuthSig(chain);
+      }
+      const symmetricKey = await this._litNodeClient.getEncryptionKey({
+        accessControlConditions,
+        toDecrypt: encryptedSymmetricKey,
+        chain,
+        authSig: this._authSig,
+      });
+      const decryptedArrayBuffer: ArrayBuffer = await LitJsSdk.decryptFile({
+        symmetricKey: symmetricKey,
+        file: encryptedFile,
+      });
+      return { decryptedArrayBuffer };
+    }
+
+    async disconnect() {
+      if (!this._litNodeClient) {
+        return;
+      }
+      await LitJsSdk.disconnectWeb3();
+      this._litNodeClient = null;
+      this._authSig = null;
+    }
+  }
+  ```
+
+  > full implementation can be found here: [./apps/browser/src/app/services/lit.service.ts](./apps/browser/src/app/services/lit.service.ts)
+  
+</details>  
+<hr/>
+
+### Notifications: XMTP Protocol
+
+dDrive use XMTP Protocol to send notifications to users when they receive new shared mediafile from other users.
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```typescript
+  export class XMTPService {
+
+    async init(web3Provider: ethers.providers.Web3Provider, opts?: ListMessagesOptions | undefined) {
+      this._web3Provider = web3Provider;
+      // Create the client with your wallet.
+      // This will connect to the XMTP development network by default
+      const xmtp = await Client.create(this._web3Provider.getSigner());
+      this._xmtp.next(xmtp);
+      const {conversations = []} = await this.getConversations();
+      this._conversations.next(conversations);
+      const messages = await this.getPreviousMessagesFromExistingConverstion(opts);
+      this.messages$.next(messages);
+      this._listenAllUpcomingMessages();
+      return xmtp;
+    }
+
+    async disconnect() {
+      const xmtp = this._xmtp.getValue();
+      if (!xmtp) {
+        return;
+      }
+      await xmtp.close();
+      this._xmtp.next(null as any);
+    }
+
+    async getConversations() {
+      if (!this._web3Provider) {
+        throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      }
+      let xmtp = this._xmtp.getValue();
+      if (!xmtp) {
+        xmtp = await this.init(this._web3Provider);
+      }
+      const conversations = await xmtp.conversations.list();
+      return { conversations };
+    }
+
+    async getPreviousMessagesFromExistingConverstion(
+      opts?: ListMessagesOptions | undefined
+    ): Promise<IXMTPMessage[]> {
+      const xmtp = this._xmtp.value;
+      const messages = [];
+      const conversations = this._conversations.getValue();
+      for (const conversation of conversations) {
+        // All parameters are optional and can be omitted
+        opts = opts
+          ? opts
+          : {
+              // Only show messages from last 24 hours
+              startTime: new Date(new Date().setDate(new Date().getDate() - 1)),
+              endTime: new Date(),
+            };
+        // get messages from conversation
+        const messagesInConversation = await conversation
+          .messages(opts)
+          .then((messages) => {
+            // filter out messages from self and return
+            return messages.filter(
+              (message) => message.senderAddress !== xmtp.address
+            );
+          });
+        // add conversation and messages to messages array
+        if (messagesInConversation.length > 0) {
+          messages.push({
+            conversation,
+            messagesInConversation,
+          });
+        }
+      };
+      return messages;
+    }
+
+    async sendMessage(conversation: Conversation, message: string) {
+      if (!this._web3Provider) {
+        throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      }
+      await conversation.send(message);
+    }
+
+    async startNewConversation(address: string) {
+      if (!this._web3Provider) {
+        throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      }
+      let xmtp = this._xmtp.getValue();
+      if (!xmtp) {
+        xmtp = await this.init(this._web3Provider);
+      }
+      const conversation = await xmtp.conversations
+        .newConversation(address)
+        .catch((e) => {
+          throw e?.message || `Failed to start conversation with ${address}`;
+        });
+      // this._addListener(conversation);
+      this._conversations.next([...this._conversations.getValue(), conversation]);
+      return { conversation };
+    }
+
+    private async _listenAllUpcomingMessages() {
+      if (!this._web3Provider) {
+        throw '{XMTPService} Web3Provider not found. Please unlock your Ethereum account, refresh the page and try again.';
+      }
+      const xmtp = this._xmtp.value;
+      // Listen for new messages in existing conversations and new conversations
+      const streamAllMessages = await xmtp.conversations.streamAllMessages();
+      for await (const message of streamAllMessages) {
+        // filter out messages from self
+        if (message.senderAddress !== xmtp.address) {
+          this.messages$.next([
+            ...this.messages$.getValue(),
+            { messagesInConversation: [message] }
+          ]);
+        }
+        break;
+      }
+    }
+  }
+  ```
+
+  > full implementation can be found here: [./apps/browser/src/app/services/xmtp.service.ts](./apps/browser/src/app/services/xmtp.service.ts)
+  
+</details>
+<hr/>
+
+### NFTs: Moralis SDK
+
+dDrive use Moralis SDK to list and manage user NFTs.
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```typescript
+  export class NFTService {
+
+    async connect() {
+      this._core = MoralisCore.create();
+      this._evmApi = MoralisEvmApi.create(this._core);
+      this._core.registerModules([this._evmApi]);
+      await this._core.start({
+        apiKey: environment.moralis.apiKey,
+      });
+    }
+
+    async getWalletNFTs(address: string, chain: EvmChain = EvmChain.MUMBAI) {
+      Moralis.start({
+        apiKey: environment.moralis.apiKey
+      });
+      const response = await Moralis.EvmApi.nft.getWalletNFTs({
+        address,
+        chain,
+      });    
+      return response.result;
+    }
+
+    async getWalletNFTsFromAllChain(address: string) {
+      const chains = this._chains;
+      const nfts = await Promise.all(
+        chains.map(async (chain) => this.getWalletNFTs(address, chain))
+      ).then((nfts) => nfts.flat());
+      this._nfts$.next(nfts);
+      return nfts;
+    }
+  }
+  ```
+
+  > full implementation can be found here: [./apps/browser/src/app/services/nft.service.ts](./apps/browser/src/app/services/nft.service.ts)
+
+</details>
+<hr/>
+
+### Distribution: Valist
+
+dDrive is distributed using Valist. Valist is a decentralized Software distribution tool to manage releases and updates hosted on IPFS.
+
+<details>
+  <summary><b>Click to toggle contents of `code` implementaion</b></summary>
+
+  ```yaml
+  # comming soon
+  ```
+
+  > full implementation can be found here: [.github/workflows/actions.yml](.github/workflows/actions.yml)
+  
+</details>
+<hr/>
 
 ## Development
 
@@ -69,7 +619,7 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
 - Install dependencies using NodeJS and NPM
 - Install Nx Workspace CLI to manage workspace project
 - Run develooppment server using `nx serve` command will open the dDrive application in the browser
-- This project was generated using [Nx](https://nx.dev).
+- This project was generated using [Nx Workspace](https://nx.dev).
 
 ## Build
 - Run `nx build` to build the dDrive application for the browser as PWA. 
@@ -86,4 +636,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 📃 License
 
-See [LICENSE](LICENSE)
+Project is Open Source and available under the [MIT License](LICENSE).
+
+## 🙌 Team
+
+- [**@fazionico**](https://github.com/FazioNico) - **Nico Fazio** 
+
+## ⭐️ Support
+
+If you like this project, please consider supporting it by giving a ⭐️
