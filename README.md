@@ -1,4 +1,9 @@
+<img src="./apps/browser/src/assets/icons/icon-72x72.png" />
+
+
 # dDrive - Decentralized Drive System 
+
+> An alternative storage solution to Google Drive, open-source and fully decentralized that is built on top of the InterPlanetary File System (IPFS) 
 
 ## Project Description
 dDrive is a fully decentralized and open-source Storage which replace traditional storage providers having centralized governance, cumbersome infrastructure, inadequate security and privacy measures with users datasets. 
@@ -8,13 +13,15 @@ dDrive is build on top of IPFS and inherits all the features of Blockchain Techn
 ## Value Proposition
 dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage and share their files in a decentralized way. Few of the core value propositions are:
 
-1 Increased User Adoption: 
+- Increased User Adoption: 
   Providing a smooth and intuitive process with seamless user experience to store, manage and share files in a decentralized way will increase the adoption of IPFS and Filecoin.
 
-2 Real-world utility: 
+- Real-world utility: 
   dDrive provide a real-world utility for censorship-resistant, tamper-proof and privacy complient storage solution by providing multi services composition that allow users to store and share files with total privacy and security controls of data access by using Encryption and Decryption technologies to increase data acces security.
 
 ## 👀 Overview
+
+<img src="./ddrive-screenshot-001.png" />
 
 ## 🚀 Features
 
@@ -61,7 +68,7 @@ dDrive integrat IPFS Core powered by Filecoin to enable users to store, manage a
 - [Moralis SDK](./apps/browser/src/app/services/nft.services.ts) as SDK to manage NFTs from Evm networks
 - [Valist](.github/workflows/actions.yml) as Software distribution tool to manage releases and updates hosted on IPFS
 
-## ⚙️ Usage & Installation
+## Usage & Installation
 
 dDrive is a web application that can be used in any modern browser that have a [Metamask](https://metamask.io/download.html) Extension install. 
 
@@ -626,7 +633,7 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
 
 The build artifacts will be stored in the `dist/` directory.
 
-## 💻 Contributing
+## Contributing
 
 Thanks for taking the time to help out and improve the project! 🎉
 
@@ -634,14 +641,14 @@ The following is a set of guidelines for contributions and may change over time.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-## 📃 License
+## License
 
 Project is Open Source and available under the [MIT License](LICENSE).
 
-## 🙌 Team
+## Team
 
 - [**@fazionico**](https://github.com/FazioNico) - **Nico Fazio** 
 
-## ⭐️ Support
+## Support
 
 If you like this project, please consider supporting it by giving a ⭐️
