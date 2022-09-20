@@ -634,6 +634,10 @@ dDrive is distributed using Valist. Valist is a decentralized Software distribut
 
 The build artifacts will be stored in the `dist/` directory.
 
+## Deplooyment 
+
+dDrive is deployed automatically using Github Actions. Every commit to the `main` branch will trigger a new deployment.
+
 ## Documentation
 
 - Run `npm run docs:browser` to generate the appplication documentation
