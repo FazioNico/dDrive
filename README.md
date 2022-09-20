@@ -668,7 +668,7 @@ Environment variables can be update for each mode. Go to the `environment` folde
 
 The application is build using [Angular](https://angular.io) and [Ionic framework](https://ionicframework.com) to provide scalable and maintainable web application. The follder architecture is based on [Nx Workspace](https://nx.dev) to provide a configurable workspace that can contain multiple applications in the `./apps` folder and multiple libraries in the `./libs` folder. This is very useful for building large scale applications with multiple components and features that can be easily maintained and updated.
 
-The `main` application is stored in `./apps/browser` folder and it contains files and folders organized according to Angulars's best practices structure:
+The `main` application is stored in `./apps/browser` folder and it contains files and folders organized according to Angular's best practices structure:
 
 | File                             | Description                                                           |
 |----------------------------------|-----------------------------------------------------------------------|
