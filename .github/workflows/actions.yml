@@ -26,24 +26,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set Version variable
+        run: | 
+          CURRENT_VERSION=$(grep '"version":' package.json | cut -d\" -f4);
+          echo "version=$CURRENT_VERSION" >> $GITHUB_ENV
+
       - name: Build Browser App
         run: npm run build
         env:
-          NG_APP_VERSION: $(grep '"version":' package.json | cut -d\" -f4)
-          NG_APP_MORALIS_API_KEY: ${{ env.NG_APP_MORALIS_API_KEY }}
-          NG_APP_CERAMIC_API_HOST: ${{ env.NG_APP_CERAMIC_API_HOST }}
-          NG_APP_PINATA_API_KEY: ${{ env.NG_APP_PINATA_API_KEY }}
-          NG_APP_PINATA_API_SECRET: ${{ env.NG_APP_PINATA_API_SECRET }}
-          NG_APP_PINATA_JWT: ${{ env.NG_APP_PINATA_JWT }}
-          NG_APP_PINATA_PINNING_ENDPOINT: ${{ env.NG_APP_PINATA_PINNING_ENDPOINT }}
-          NG_APP_PINATA_UNPINNING_ENDPOINT: ${{ env.NG_APP_PINATA_UNPINNING_ENDPOINT }}
+          NG_APP_VERSION: ${{env.version}}
+          NG_APP_MORALIS_API_KEY: ${{ secrets.NG_APP_MORALIS_API_KEY }}
+          NG_APP_CERAMIC_API_HOST: ${{ secrets.NG_APP_CERAMIC_API_HOST }}
+          NG_APP_PINATA_API_KEY: ${{ secrets.NG_APP_PINATA_API_KEY }}
+          NG_APP_PINATA_API_SECRET: ${{ secrets.NG_APP_PINATA_API_SECRET }}
+          NG_APP_PINATA_JWT: ${{ secrets.NG_APP_PINATA_JWT }}
+          NG_APP_PINATA_PINNING_ENDPOINT: ${{ secrets.NG_APP_PINATA_PINNING_ENDPOINT }}
+          NG_APP_PINATA_UNPINNING_ENDPOINT: ${{ secrets.NG_APP_PINATA_UNPINNING_ENDPOINT }}
 
       - name: Tag last-release
         shell: bash
         run: |
-          CURRENT_VERSION=$(grep '"version":' package.json | cut -d\" -f4);
-          git tag -f $CURRENT_VERSION;
-          git push origin $CURRENT_VERSION --force
+          git tag -f  ${{ env.version }};
+          git push origin  ${{ env.version }} --force
 
       - name: Valist Deploy
         uses: valist-io/valist-github-action@v2.5.6
@@ -51,5 +55,5 @@ jobs:
           private-key: ${{ secrets.VALIST_SIGNER }}
           account: d-drive
           project: d-drive-pwa
-          release: $(grep '"version":' package.json | cut -d\" -f4)
+          release: ${{ env.version }}
           path: dist/apps/browser
