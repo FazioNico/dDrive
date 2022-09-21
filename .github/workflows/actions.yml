@@ -29,6 +29,7 @@ jobs:
       - name: Build Browser App
         run: npm run build
         env:
+          NG_APP_VERSION: $(grep '"version":' package.json | cut -d\" -f4)
           NG_APP_MORALIS_API_KEY: ${{ env.NG_APP_MORALIS_API_KEY }}
           NG_APP_CERAMIC_API_HOST: ${{ env.NG_APP_CERAMIC_API_HOST }}
           NG_APP_PINATA_API_KEY: ${{ env.NG_APP_PINATA_API_KEY }}
@@ -50,5 +51,5 @@ jobs:
           private-key: ${{ secrets.VALIST_SIGNER }}
           account: d-drive
           project: d-drive-pwa
-          release: grep '"version":' package.json | cut -d\" -f4
+          release: $(grep '"version":' package.json | cut -d\" -f4)
           path: dist/apps/browser
