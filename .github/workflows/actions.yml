@@ -6,7 +6,7 @@ on:
       - main
     types: [closed]
 
-jobs:
+jobs: 
   valist_publish:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
@@ -21,12 +21,11 @@ jobs:
         with:
           node-version: '14.17.1'
 
-     - name: Install dependencies
+      - name: Install dependencies
         run: npm ci
 
       - name: Build Browser App
-        run: |
-          npm run build
+        run: npm run build
       
       - name: Version
         shell: bash
