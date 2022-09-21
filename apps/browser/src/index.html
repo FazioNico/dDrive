@@ -2,12 +2,146 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Browser</title>
+    <title>dDrive</title>
     <base href="/" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#34797d" />
+    <meta name="color-scheme" content="light dark" />
+
+    <link
+      rel="image_src"
+      type="image/png"
+      href="./assets/icons/icon-512x512.png"
+    />
+    <meta name="author" content="Nicolas Fazio" />
+    <meta name="application-name" content="dDrive" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <meta name="apple-mobile-web-app-title" content="dDrive" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="msapplication-tooltip" content="dDrive" />
+    <meta name="msapplication-starturl" content="/" />
+    <meta name="msapplication-TileColor" content="#34797d" />
+    <meta
+      name="msapplication-TileImage"
+      content="./assets/icons/icon-144x144.png"
+    />
+
+    <!-- link to all app icon for PWA -->
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="./assets/icons/icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="96x96"
+      href="./assets/icons/icon-96x96.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="128x128"
+      href="./assets/icons/icon-128x128.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="./assets/icons/icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="assets/icons/icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="192x192"
+      href="./assets/icons/icon-192x192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="512x512"
+      href="./assets/icons/icon-512x512.png"
+    />
+    <link
+      rel="icon"
+      sizes="192x192"
+      href="./assets/icons/icon-192x192.png"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      sizes="96x96"
+      href="./assets/icons/icon-96x96.png"
+      type="image/png"
+    />
+
   </head>
-  <body>
-    <d-drive-root></d-drive-root>
+  <style>
+    html, body {
+      background: #152122;
+    }
+  </style>
+  <body class="dark">
+    <d-drive-root>
+      <style>
+        html:not(.hydrated) body {
+          display: flex !important;
+        }
+        html,
+        body {
+          font-family: Arial, Helvetica, sans-serif;
+          height: 100%;
+          background:  rgb(244,248,248);
+          text-align: center;
+        }
+        body.dark {
+          background: #152122;
+        }
+        h1 {
+          margin: 0;
+          font-weight: 600 !important;
+          font-size: 3rem !important;
+          color: rgba(52, 121, 125, 1);
+          padding: 0;
+        }
+        body {
+          max-height: 100%;
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          align-content: center;
+        }
+        p {
+          margin: 0.5rem;
+          color: rgb(53, 53, 53);
+        }
+        body.dark p {
+          background: #152122;
+          color: #e9edec;
+        }
+        img {
+          margin: 1rem auto;
+          max-width: 280px;
+        }
+      </style>
+      <img src="./assets/images/ipfs-logo.svg" alt="dDrive Logo" />
+      <h1>dDrive</h1>
+			<p>Web3	Cloud Storage</p>
+    </d-drive-root>
+    <noscript>
+      Please enable JavaScript to continue using this application.
+    </noscript>
   </body>
 </html>

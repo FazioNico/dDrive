@@ -54,3 +54,16 @@ import 'zone.js'; // Included with Angular CLI.
 if (typeof window !== 'undefined') {
   (window as any).global = window;
 }
+// define global `process` variable
+(global as any).process = {
+  env: { DEBUG: undefined },
+};
+
+import { Buffer } from 'buffer';
+if (!(window as any).Buffer) {
+  // add Buffer polyfill 
+  (global as any).Buffer = Buffer;
+}
+
+// polyfill for Share API
+import 'share-api-polyfill';

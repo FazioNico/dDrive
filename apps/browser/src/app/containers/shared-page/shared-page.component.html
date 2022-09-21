@@ -1,0 +1,108 @@
+<ion-header mode="ios" collapse="fade" [translucent]="true">
+  <d-drive-header
+    (actions)="actions($event.type, $event.payload)"
+  ></d-drive-header>
+</ion-header>
+<ion-content class="ion-padding" fullscreen role="feed">
+  <ion-grid class="header-grid ion-padding-start">
+    <ion-row class="ion-align-items-center">
+      <ion-col size="auto" [ngStyle]="{ display: 'flex' }">
+        <ion-label>
+          <span>Shared medias</span>
+        </ion-label>
+      </ion-col>
+      <ion-col>
+        <ion-item lines="none" class="ion-float-end item-stats ion-text-end">
+          <ion-label color="medium"
+            >{{ (medias$ | async)?.length || 0 }} Medias</ion-label
+          >
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- Content Wrapper -->
+  <ng-container *ngIf="(medias$|async) as items;else skeletonHTML">
+    <ion-card *ngIf="items.length > 0;else noItems" class="ion-no-padding">
+      <!-- Items Content -->
+      <ion-grid 
+          *ngIf="(medias$|async) as items" 
+          class="ion-no-padding">
+        <!-- Items List Rows-->
+        <ion-row 
+            role="article"
+            *ngFor="let item of items|slice: 0 : maxItemToDisplay$.value; trackBy:trackByfn" 
+            (click)="actions('preview', {item})"
+            class="item clickable ion-align-items-center ion-padding-start">
+          <ion-col class="ion-align-items-center" size="auto" [ngStyle]="{'display': 'flex'}">
+            <ion-icon size="large" name="document-outline"></ion-icon>
+          </ion-col>
+          <ion-col class="ion-align-items-center ion-text-wrap" size="auto" [ngStyle]="{'display': 'flex'}">
+            <ion-text class="ion-padding-start">
+              {{item.metadata.name}}
+            </ion-text>
+          </ion-col>
+          <ion-col size="auto" class="ion-hide-md-down">
+            <ion-chip 
+                color="primary"  
+                size="small" 
+                class="ion-margin-start"
+                outline="true">
+              <ion-icon size="small" name="person-sharp"></ion-icon>
+              <ion-label>
+                from <i>{{ item.senderAddress| sliceAddress }}</i>
+              </ion-label>
+            </ion-chip>
+          </ion-col>
+          <ion-col class="ion-text-right ion-align-items-center ion-justify-content-end" [ngStyle]="{'display': 'flex'}">
+            <ion-text color="medium" class="ion-hide-md-down">
+              {{item.createdISODateTime|date:'short'}}
+            </ion-text>
+            <ion-text color="medium" class="ion-hide-md-down">
+              {{item.metadata.size|bytesToSize}}
+            </ion-text>
+            <ion-fab-button size="small" translucent="true" mode="ios" (click)="$event.stopPropagation();actions('openOptions', {event: $event, item})">
+              <ion-icon color="medium" size="small" color="primary" name="ellipsis-vertical"></ion-icon>
+            </ion-fab-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+    <ion-infinite-scroll *ngIf="items.length > 0" threshold="100px" (ionInfinite)="actions('displayMoreItem', $event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <!-- No Items -->
+    <ng-template #noItems>
+      <ion-grid class="ion-text-center">
+        <ion-row>
+          <ion-col>
+            <ion-text color="medium">
+              <h3>No shared medias</h3>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+  </ng-container>
+  <!-- Skeleton loading HTML -->
+  <ng-template #skeletonHTML>
+    <ion-card class="ion-no-padding">
+      <ion-grid  class="ion-no-padding">
+        <ion-row *ngFor="let el of [].constructor(10)" role="article" class="item clickable ion-align-items-center ion-padding-start">
+          <ion-col size="1" class="ion-padding">
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-col>
+          <ion-col size="9" class="ion-padding-vertical">
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-col>
+          <ion-col size="2" class="ion-padding">
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </ng-template>
+
+</ion-content>

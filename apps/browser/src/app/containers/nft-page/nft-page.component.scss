@@ -1,0 +1,34 @@
+:host {
+  ion-content {
+    --background: var(--ion-container-background)!important;
+  }
+
+  ion-chip.chain-chip {
+    text-transform: capitalize;
+  }
+
+  ion-card {
+    border-radius:  0.618rem!important;
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+    box-shadow: none;
+
+    ion-item, ion-list {
+      background: transparent;
+      --background: transparent;
+    }
+    &:hover {
+      background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+      color: var(--ion-color-primary);
+    }
+  }
+
+  ion-card {
+    margin-bottom: 2.618rem;
+  }
+
+  ion-thumbnail.skeleton {
+    width: 100%;
+    min-height: 200px;
+  }
+  
+}

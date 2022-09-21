@@ -1,0 +1,14 @@
+:host {
+  ion-item.header {
+    --background: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
+  .container {
+    background: rgba(var(--ion-color-primary-rgb), 0.05);
+    ion-item {
+      --background: transparent;
+    }
+  }
+  .logo-lit {
+    max-width: 96px;
+  }
+}

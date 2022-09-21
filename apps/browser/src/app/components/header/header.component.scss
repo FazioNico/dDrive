@@ -1,0 +1,10 @@
+:host {
+  ion-toolbar {
+    --opacity: 1!important;
+    --background:transparent;
+  }
+  ion-searchbar {
+    padding-bottom: 0!important;
+    --background: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
+}

@@ -4,7 +4,7 @@
   "prefix": "d-drive",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@ngx-env/builder:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/browser",
@@ -15,12 +15,13 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/browser/src/favicon.ico",
-           "apps/browser/src/assets",
-           {
+          "apps/browser/src/assets",
+          {
             "glob": "**/*.svg",
             "input": "node_modules/ionicons/dist/ionicons/svg",
             "output": "./svg"
-          }
+          },
+          "apps/browser/src/manifest.webmanifest"
         ],
         "styles": [
           "apps/browser/src/styles.scss",
@@ -58,7 +59,89 @@
             "input": "apps/browser/src/theme/variables.scss"
           }
         ],
-        "scripts": []
+        "scripts": [],
+        "allowedCommonJsDependencies": [
+          "denque",
+          "err-code",
+          "iso-random-stream",
+          "@stablelib/chacha20poly1305",
+          "@stablelib/hkdf",
+          "@stablelib/sha256",
+          "@stablelib/x25519",
+          "it-length",
+          "k-bucket",
+          "delay",
+          "it-pushable",
+          "it-pipe",
+          "it-sort",
+          "it-take",
+          "level",
+          "receptacle",
+          "varint-decoder",
+          "blob-to-it",
+          "browser-readablestream-to-it",
+          "it-all",
+          "it-last",
+          "it-parallel",
+          "it-first",
+          "it-filter",
+          "it-map",
+          "it-drain",
+          "it-peekable",
+          "it-to-buffer",
+          "is-domain-name",
+          "ipfs-utils/src/files/url-source.js",
+          "stream-to-it/source.js",
+          "bytes",
+          "just-safe-get",
+          "mortice",
+          "it-parallel-batch",
+          "iso-constants",
+          "event-iterator",
+          "lit-js-sdk",
+          "near-api-js",
+          "flat",
+          "multihashes",
+          "@stablelib/random",
+          "lodash.clonedeep",
+          "varint",
+          "cross-fetch",
+          "lru_map",
+          "bn.js",
+          "aes-js",
+          "scrypt-js",
+          "bech32",
+          "hash.js",
+          "dataloader",
+          "@tableland/evm",
+          "@tableland/evm/proxies.js",
+          "siwe",
+          "camelcase",
+          "@walletconnect/window-getters",
+          "@walletconnect/window-metadata",
+          "@walletconnect/socket-transport",
+          "@walletconnect/environment",
+          "query-string",
+          "@stablelib/ed25519",
+          "apg-js/src/apg-api/api.js",
+          "apg-js/src/apg-lib/node-exports.js",
+          "@stablelib/xchacha20poly1305",
+          "is-typedarray",
+          "typedarray-to-buffer",
+          "canonicalize",
+          "elliptic",
+          "js-sha3",
+          "events",
+          "ethereum-blockies-base64",
+          "bowser",
+          "@xmtp/xmtp-js",
+          "moralis",
+          "@moralisweb3/core",
+          "@moralisweb3/evm-api",
+          "@moralisweb3/evm-utils"
+        ],
+        "serviceWorker": true,
+        "ngswConfigPath": "apps/browser/ngsw-config.json"
       },
       "configurations": {
         "production": {
@@ -66,12 +149,12 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "6mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "2kb",
-              "maximumError": "4kb"
+              "maximumWarning": "4kb",
+              "maximumError": "1mb"
             }
           ],
           "fileReplacements": [
@@ -94,7 +177,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@ngx-env/builder:dev-server",
       "configurations": {
         "production": {
           "browserTarget": "browser:build:production"
@@ -106,7 +189,7 @@
       "defaultConfiguration": "development"
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@ngx-env/builder:extract-i18n",
       "options": {
         "browserTarget": "browser:build"
       }
@@ -118,11 +201,29 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@ngx-env/builder:karma",
       "outputs": ["coverage/apps/browser"],
       "options": {
         "jestConfig": "apps/browser/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "compodoc": {
+      "executor": "@twittwer/compodoc:compodoc",
+      "options": {
+        "tsConfig": "apps/browser/tsconfig.editor.json",
+        "outputPath": "dist/compodoc/browser"
+      },
+      "configurations": {
+        "json": {
+          "exportFormat": "json"
+        }
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular"
       }
     }
   },

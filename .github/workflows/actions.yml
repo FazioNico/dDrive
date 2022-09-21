@@ -1,0 +1,50 @@
+name: Valist Publish
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  valist-publish:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.17.1'
+
+     - name: Install dependencies
+        run: npm ci
+
+      - name: Build Browser App
+        run: |
+          npm run build
+      
+      - name: Version
+        shell: bash
+        run: npm run version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag last-release
+        shell: bash
+        run: |
+          git tag -f last-release
+          git push origin last-release --force
+
+      - name: Valist Deploy
+      - uses: valist-io/valist-github-action@v2.5.6
+        with:
+          private-key: ${{ secrets.VALIST_SIGNER }}
+          account: d-drive
+          project: d-drive-pwa
+          release: ${{ github.ref_name }}
+          path: dist/apps/browser

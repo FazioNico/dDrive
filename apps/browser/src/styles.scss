@@ -1,1 +1,222 @@
 /* You can add global styles to this file, and also import other style files */
+ion-router-outlet {
+  background:  var(--ion-container-background)!important;
+}
+
+ion-progress-bar {
+  height: 0.8rem;
+}
+
+ion-split-pane {
+  --side-max-width: 236px;
+
+  ion-menu {
+    ion-content {
+      .logo {
+        width: 100px;
+        height: 100px;
+        display: block;
+        margin: 4rem auto 1rem;
+      }
+      .menu-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0rem auto 5rem;
+        text-align: center;
+        display: block;
+        position: relative;
+      }
+    }
+
+    ion-list, ion-item, ion-footer, ion-toolbar {
+      background: transparent;
+      --background: transparent;
+    }
+  }
+}
+
+ion-avatar ion-img::after {
+  content: "";
+    border-radius: 100%;
+    border: solid 3px var(--ion-background-color);
+    position: absolute;
+    bottom: -5%;
+    right: -8%;
+    width: 30%;
+    height: 30%;
+    background: var(--ion-color-medium);
+}
+ion-avatar ion-img.online::after {
+  background: var(--ion-color-success);
+}
+
+ion-avatar {
+    position: relative;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.isDevMod {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 18px;
+  font-size: 0.7rem;
+  background: var(--ion-color-warning);
+  color: var(--ion-color-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+}
+
+.header-grid {
+
+  ion-icon {
+    font-size: 0.8rem;
+  }
+  .item-stats {
+    --background: transparent;
+  }
+}
+
+code {
+  background: rgba(var(--ion-color-primary-rgb), 0.15);
+  padding: 0.05rem 0.3rem;
+}
+
+.modalAlert {
+  --width: fit-content;
+  --min-width: 250px;
+  --max-width: 650px;
+  --height: fit-content;
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+
+  .ion-accordion-toggle-icon {
+    display: none;
+  }
+}
+
+.alert-wrapper {
+  border-radius:  0.618rem!important;
+  border: 1px solid var(--ion-border-color)!important;
+  // background: #fff!important;
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.12)!important;
+}
+
+ion-backdrop {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.3);
+}
+.danger {
+  ion-backdrop {
+    background-color: rgba(var(--ion-color-danger-rgb), 0.5);
+  }
+}
+
+.modalSelectFolder {
+  --min-width: 280px;
+  --max-width: 350px;
+  --max-height: 320px;
+  --height: fit-content;
+
+  ion-content {
+    min-height: 200px;
+  }
+}
+
+.ion-modal-preview-file {
+  --width: 100%;
+  --height: 100%;
+  --border-radius: 0;
+}
+
+ion-toast.notification-toast {
+  --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
+  --background: #fff;
+  --max-width: 300px;
+  --start: 1;
+
+  &::part(button) {
+    border-left: 1px solid #d2d2d2;
+    color: #030207;
+    font-size: 15px;
+  }
+}
+body.dark ion-toast.notification-toast {
+  --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
+  --background: var(--ion-item-background);
+  --max-width: 300px;
+  --start: 1;
+
+
+  &::part(button) {
+    border-left: 1px solid var(--ion-border-color);
+    color: var(--ion-text-color);
+    font-size: 15px;
+  }
+
+  &::part(container) {
+    border: 1px solid var(--ion-border-color);
+    border-radius: 0.618rem;
+    overflow: hidden;
+  }
+}
+
+// WEB API Share
+body.dark div#shareAPIPolyfill-container {
+  background: var(--ion-item-background);
+
+  .shareAPIPolyfill-header {
+    background: var(--ion-item-background);
+  }
+  .shareAPIPolyfill-header-title {
+    background: var(--ion-container-background);
+    color: var(--ion-text-color);
+  }
+  .shareAPIPolyfill-body {
+    border-top: solid 1px var(--ion-border-color);
+  }
+  .shareAPIPolyfill-footer {
+    opacity: 1;
+    background: var(--ion-border-color);
+    border-top: solid 1px var(--ion-border-color);
+  }
+
+  .shareAPIPolyfill-icons-container.title .email svg path:nth-child(2),
+  .shareAPIPolyfill-icons-container.title .print svg path:nth-child(1),
+  .shareAPIPolyfill-icons-container.title .copy svg path:nth-child(1),
+  .shareAPIPolyfill-icons-container.title .sms svg path:nth-child(1) {
+    fill: var(--ion-color-primary);
+  }
+
+  .shareAPIPolyfill-header-title .the-icon path,
+  button span.the-icon-title {
+    fill: var(--ion-text-color);
+    color: var(--ion-text-color);
+  }
+}
+
+
+// lit connect modal dark mode
+div#lit-connect-modal-container {
+  z-index: 99999;
+  position: absolute;
+}
+body.dark .lcm-modal-container {
+  background: var(--ion-container-background);
+  border-color: #172e30;
+  border-radius: 0.618rem;
+  /* color: #fff; */
+
+  p.lcm-wallet-name {
+    color: #fff;
+  }
+
+  .lcm-wallet-container:hover {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
+}
