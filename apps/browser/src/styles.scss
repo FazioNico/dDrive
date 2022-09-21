@@ -146,6 +146,25 @@ ion-toast.notification-toast {
     font-size: 15px;
   }
 }
+body.dark ion-toast.notification-toast {
+  --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
+  --background: var(--ion-item-background);
+  --max-width: 300px;
+  --start: 1;
+
+
+  &::part(button) {
+    border-left: 1px solid var(--ion-border-color);
+    color: var(--ion-text-color);
+    font-size: 15px;
+  }
+
+  &::part(container) {
+    border: 1px solid var(--ion-border-color);
+    border-radius: 0.618rem;
+    overflow: hidden;
+  }
+}
 
 // lit connect modal dark mode
 div#lit-connect-modal-container {

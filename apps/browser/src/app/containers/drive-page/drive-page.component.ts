@@ -25,8 +25,6 @@ export class DrivePageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.darkMode = this._document.body.classList.contains('dark');
-    console.log('darkMode', this.darkMode);
-    
     const sub = this._notificationService.notifications$.subscribe(
       async (messages) => {
         if (messages.length === 1) {
