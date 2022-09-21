@@ -10,6 +10,7 @@ jobs:
   valist_publish:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    environment: prod
     steps:
 
       - name: Checkout
@@ -35,18 +36,13 @@ jobs:
           NG_APP_PINATA_JWT: ${{ env.NG_APP_PINATA_JWT }}
           NG_APP_PINATA_PINNING_ENDPOINT: ${{ env.NG_APP_PINATA_PINNING_ENDPOINT }}
           NG_APP_PINATA_UNPINNING_ENDPOINT: ${{ env.NG_APP_PINATA_UNPINNING_ENDPOINT }}
-      
-      - name: Version
-        shell: bash
-        run: npm run version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag last-release
         shell: bash
         run: |
-          git tag -f last-release
-          git push origin last-release --force
+          CURRENT_VERSION=$(grep '"version":' package.json | cut -d\" -f4);
+          git tag -f $CURRENT_VERSION;
+          git push origin $CURRENT_VERSION --force
 
       - name: Valist Deploy
         uses: valist-io/valist-github-action@v2.5.6
@@ -54,5 +50,5 @@ jobs:
           private-key: ${{ secrets.VALIST_SIGNER }}
           account: d-drive
           project: d-drive-pwa
-          release: ${{ github.ref_name }}
+          release: grep '"version":' package.json | cut -d\" -f4
           path: dist/apps/browser

@@ -8,7 +8,7 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "version": "nx affected --base=main --target=version",
+    "version:browser": "nx affected --base=main --target=version",
     "webpack-analyzer:analyze:browser:prod": "nx build --prod --stats-json",
     "webpack-analyzer:browser": "npx webpack-bundle-analyzer dist/apps/browser/stats.json",
     "docs:browser": "nx run browser:compodoc",
