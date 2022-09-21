@@ -23,7 +23,19 @@
   <!-- Content -->
   <ng-container *ngIf="nfts$ | async as nfts;else skeletonHTML">
     <ion-grid *ngIf="nfts.length > 0;else noItems">
-      <ion-row *ngIf="nfts.length > 0">
+      <ion-row>
+        <ion-col size="12">
+          <ion-chip
+            (click)="actions('toogleChain', i)"
+            color="primary"
+            class="chain-chip"
+            [outline]="!chain.selected"
+            *ngFor="let chain of chainNames$.value; let i = index"
+            >{{ chain.name }}</ion-chip
+          >
+        </ion-col>
+      </ion-row>
+      <ion-row>
         <ion-col
           siize="12"
           size-sm="6"
