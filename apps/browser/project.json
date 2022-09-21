@@ -70,6 +70,7 @@
           "@stablelib/x25519",
           "it-length",
           "k-bucket",
+          "debug",
           "delay",
           "it-pushable",
           "it-pipe",
