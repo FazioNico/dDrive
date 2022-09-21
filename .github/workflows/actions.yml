@@ -27,6 +27,14 @@ jobs:
 
       - name: Build Browser App
         run: npm run build
+        env:
+          NG_APP_MORALIS_API_KEY: ${{ env.NG_APP_MORALIS_API_KEY }}
+          NG_APP_CERAMIC_API_HOST: ${{ env.NG_APP_CERAMIC_API_HOST }}
+          NG_APP_PINATA_API_KEY: ${{ env.NG_APP_PINATA_API_KEY }}
+          NG_APP_PINATA_API_SECRET: ${{ env.NG_APP_PINATA_API_SECRET }}
+          NG_APP_PINATA_JWT: ${{ env.NG_APP_PINATA_JWT }}
+          NG_APP_PINATA_PINNING_ENDPOINT: ${{ env.NG_APP_PINATA_PINNING_ENDPOINT }}
+          NG_APP_PINATA_UNPINNING_ENDPOINT: ${{ env.NG_APP_PINATA_UNPINNING_ENDPOINT }}
       
       - name: Version
         shell: bash
