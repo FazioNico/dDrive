@@ -134,11 +134,6 @@ export class AuthService {
               (a ? new Date(a).getTime() : new Date().getTime())
           )
           .shift();
-    console.log('mostRecentDate', mostRecentDate, [
-      latestNotifedISODatetime,
-      latestConnectionISODatetime,
-      creationISODatetime,
-    ]);
     // build options for xmtp messages fetching
     // this will only return messages that are newer than the `mostRecentDate` constante
     const opts = mostRecentDate
@@ -159,12 +154,14 @@ export class AuthService {
       animated: false,
       spinner: null,
       cssClass: 'ion-text-center',
-
+      backdropDismiss: true
     });
     await loading.present();
     // init xmtp service with options
-    await this._xmtp.init(this._did.web3Provider, opts);
+    await this._xmtp.init(this._did.web3Provider);
     // close loader
     await loading.dismiss();
+    // call methods to looad notifications
+    await this._xmtp.loadDatas(opts);
   }
 }

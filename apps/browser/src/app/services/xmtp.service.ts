@@ -30,18 +30,21 @@ export class XMTPService {
     map((xmtp) => xmtp !== null)
   );
 
-  async init(web3Provider: ethers.providers.Web3Provider, opts?: ListMessagesOptions | undefined) {
+  async init(web3Provider: ethers.providers.Web3Provider) {
     this._web3Provider = web3Provider;
     // Create the client with your wallet.
     // This will connect to the XMTP development network by default
     const xmtp = await Client.create(this._web3Provider.getSigner());
     this._xmtp.next(xmtp);
+    return xmtp;
+  }
+
+  async loadDatas(opts?: ListMessagesOptions | undefined) {
     const {conversations = []} = await this.getConversations();
     this._conversations.next(conversations);
     const messages = await this.getPreviousMessagesFromExistingConverstion(opts);
     this.messages$.next(messages);
     this._listenAllUpcomingMessages();
-    return xmtp;
   }
 
   async disconnect() {
