@@ -166,6 +166,41 @@ body.dark ion-toast.notification-toast {
   }
 }
 
+// WEB API Share
+body.dark div#shareAPIPolyfill-container {
+  background: var(--ion-item-background);
+
+  .shareAPIPolyfill-header {
+    background: var(--ion-item-background);
+  }
+  .shareAPIPolyfill-header-title {
+    background: var(--ion-container-background);
+    color: var(--ion-text-color);
+  }
+  .shareAPIPolyfill-body {
+    border-top: solid 1px var(--ion-border-color);
+  }
+  .shareAPIPolyfill-footer {
+    opacity: 1;
+    background: var(--ion-border-color);
+    border-top: solid 1px var(--ion-border-color);
+  }
+
+  .shareAPIPolyfill-icons-container.title .email svg path:nth-child(2),
+  .shareAPIPolyfill-icons-container.title .print svg path:nth-child(1),
+  .shareAPIPolyfill-icons-container.title .copy svg path:nth-child(1),
+  .shareAPIPolyfill-icons-container.title .sms svg path:nth-child(1) {
+    fill: var(--ion-color-primary);
+  }
+
+  .shareAPIPolyfill-header-title .the-icon path,
+  button span.the-icon-title {
+    fill: var(--ion-text-color);
+    color: var(--ion-text-color);
+  }
+}
+
+
 // lit connect modal dark mode
 div#lit-connect-modal-container {
   z-index: 99999;
