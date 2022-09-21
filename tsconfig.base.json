@@ -16,7 +16,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "assert": ["./node_modules/assert"],
+      "stream": ["./node_modules/stream-browserify"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
