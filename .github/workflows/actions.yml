@@ -50,5 +50,5 @@ jobs:
           private-key: ${{ secrets.VALIST_SIGNER }}
           account: d-drive
           project: d-drive-pwa
-          release: grep '"version":' package.json | cut -d\" -f4
+          release: $(grep '"version":' package.json | cut -d\" -f4)
           path: dist/apps/browser
